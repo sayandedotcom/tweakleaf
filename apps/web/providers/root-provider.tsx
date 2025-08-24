@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Footer } from "@/components/footer";
 // import { ThemeProvider } from "./theme-provider";
 import { Notifications } from "@/components/natofications";
+import { Suspense } from "react";
 
 export function RootProvider({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -26,7 +27,7 @@ export function RootProvider({ children }: { children: React.ReactNode }) {
           <Navbar />
         </>
       )}
-      {children}
+      <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       {showNabarRoutes.includes(pathname) && <Footer />}
       {/* </ThemeProvider> */}
     </QueryClientProvider>

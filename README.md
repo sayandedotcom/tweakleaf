@@ -1,136 +1,85 @@
-# Turborepo starter
+# tweak.jobs 🚀
 
-This Turborepo starter is maintained by the Turborepo core team.
+**Tweak your resumes and cover letters with AI for your job applications - completely FREE!**
 
-## Using this example
+Transform your job applications with our intelligent AI agent that learns your preferences and creates personalized, ATS-optimized documents using professional LaTeX formatting.
 
-Run the following command:
+## ✨ Why Choose tweak.jobs?
 
-```sh
-npx create-turbo@latest
-```
+### 🆓 **100% Free Forever**
 
-## What's inside?
+- We're powered by $1000 AWS credits, so you can focus on your career without worrying about costs
+- No hidden fees, no premium tiers, no credit card required
 
-This Turborepo includes the following packages/apps:
+### 🎯 **AI-Powered Personalization**
 
-### Apps and Packages
+- **Self-learning AI agent** that continuously adapts to your writing style and preferences
+- **Long-term memory** preserves your context across all interactions
+- **Isolated conversation threads** eliminate AI hallucinations for each job application
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### 📝 **Professional LaTeX Support**
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- **Fast LaTeX editor** for real-time document creation
+- **ATS-optimized formatting** ensures your documents pass through Applicant Tracking Systems
+- **Professional templates** with customizable styling options
 
-### Utilities
+### 🤖 **Multi-Model AI Support**
 
-This Turborepo has some additional tools already setup for you:
+Choose from the best AI models available:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+- **OpenAI GPT** - Industry-leading language model
+- **Claude** - Anthropic's advanced reasoning capabilities
+- **DeepSeek** - Specialized in professional writing
+- **Gemini** - Google's latest AI innovation
 
-### Build
+## 🚀 Key Features
 
-To build all apps and packages, run the following command:
+- **Smart Document Generation** - AI creates tailored resumes and cover letters based on job descriptions
+- **Context-Aware Editing** - Maintains consistency across all your application materials
+- **Real-Time Collaboration** - Work with AI in an intuitive chat interface
+- **Professional Output** - Generate PDFs with industry-standard LaTeX formatting
+- **User Preference Learning** - Gets better at understanding your style with each use
 
-```
-cd my-turborepo
+## 🛠️ Tech Stack
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+- **Frontend**: Next.js with TypeScript
+- **AI Integration**: Multi-model support with intelligent agent architecture
+- **Document Processing**: LaTeX compilation with real-time preview
+- **Backend**: Python-based AI services with FastAPI
+- **Infrastructure**: AWS-powered with SST framework
+- **Database**: Supabase for data persistence
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+## 🚀 Getting Started
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+1. **Visit** [tweak.jobs](https://tweak.jobs)
+2. **Sign up** for free (no credit card required)
+3. **Upload** your current resume or start from scratch
+4. **Chat with AI** to customize your documents
+5. **Generate** professional PDFs with LaTeX formatting
+6. **Apply** with confidence!
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+## 💡 How It Works
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+1. **AI Analysis**: Our agent analyzes job descriptions and your existing materials
+2. **Smart Customization**: Generates tailored content that matches your experience and the job requirements
+3. **Professional Formatting**: Applies LaTeX formatting for ATS compatibility
+4. **Continuous Learning**: Remembers your preferences for future applications
+5. **Quality Output**: Delivers polished, professional documents ready for submission
 
-### Develop
+## 🤝 Contributing
 
-To develop all apps and packages, run the following command:
+We welcome contributions! Check out our [Contributing Guide](CONTRIBUTING.md) to get started.
 
-```
-cd my-turborepo
+## 📄 License
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+This project is licensed under the terms specified in the [LICENSE](LICENSE) file.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+## 🔗 Connect With Us
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+- **Website**: [tweak.jobs](https://tweak.jobs)
+- **Issues**: Report bugs or request features
+- **Discussions**: Join the community conversation
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+---
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
-# tweaknapply
+**Ready to transform your job applications? Start tweaking with AI today - it's completely free! 🎉**
