@@ -1,0 +1,44 @@
+Todo:
+- Programatic SEO
+- Deployement
+- Analytics
+- Pricing with stripe
+- Eslint and prettier everywhere
+- rmimf
+- Opengraph
+- Twitter Card
+- Favicon
+- Sitemap
+- Robots.txt
+- Google Analytics
+- Google Search Console
+
+Features:
+- Tweak Resume
+- Tweak Cover Letter
+- Tweak Emails
+- Tweak DMs
+- Cold Emails
+- Create Profile
+- List all your experiences, projects, skills by level I will select what to show to recuters
+- Do you have any template for writting emails, cover letters, etc?
+
+Tag Line:
+- Apply 100+ companies in one day with just $0.1 with optimization
+
+Tech Stack:
+- Turborepo
+- Next.js
+- Tailwind CSS
+- Shadcn UI
+- Lucid
+- Next Auth
+- Supabase
+- Stripe
+- Prisma
+- Upstash Redis
+- Google Analytics
+- Fast API
+- OpenAI
+- LangChain
+- LangGraph

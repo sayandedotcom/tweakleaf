@@ -1,0 +1,11 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+Next.js frontend sends LaTeX to FastAPI
+FastAPI endpoint receives LaTeX string
+Python subprocess calls pdflatex command
+Return PDF file to frontend
+react-pdf displays result
