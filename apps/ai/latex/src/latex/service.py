@@ -1,7 +1,6 @@
 import subprocess
 import tempfile
 import shutil
-import os
 from pathlib import Path
 from fastapi import HTTPException, UploadFile
 from fastapi.responses import Response
@@ -12,22 +11,7 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 class LatexCompilerService:
-    """Service class for LaTeX compilation operations - Lambda optimized"""
-    
-    def __init__(self):
-        # Set up Lambda-specific environment
-        self._setup_lambda_environment()
-    
-    def _setup_lambda_environment(self):
-        """Set up environment variables and directories for Lambda"""
-        # Set TeX environment variables for Lambda's writable /tmp directory
-        os.environ['TEXMFHOME'] = '/tmp/.texlive/texmf'
-        os.environ['TEXMFCONFIG'] = '/tmp/.texlive/texmf-config'
-        os.environ['TEXMFVAR'] = '/tmp/.texlive/texmf-var'
-        
-        # Ensure directories exist
-        Path('/tmp/.texlive').mkdir(parents=True, exist_ok=True)
-        logger.info("Lambda environment setup complete")
+    """Service class for LaTeX compilation operations"""
     
     def check_latex_availability(self, compiler: str = "xelatex") -> bool:
         """Check if the specified LaTeX compiler is available on the system"""
@@ -54,17 +38,28 @@ class LatexCompilerService:
     
     def copy_required_files(self, temp_path: Path) -> None:
         """Copy required LaTeX files to the temporary directory"""
-        # In Lambda, files are copied to /var/task/ (the Lambda deployment package)
-        # Since your files are in src/latex/, they'll be at /var/task/latex/ after deployment
-        source_cls = Path("/var/task/latex/cover.cls")
+        # Get the current working directory (should be LAMBDA_TASK_ROOT in Lambda)
+        current_dir = Path.cwd()
+        
+        # Copy the existing cover.cls file from templates folder to the temporary directory
+        source_cls = current_dir / "src/latex/templates/cover.cls"
         cls_file = temp_path / "cover.cls"
         
         if not source_cls.exists():
-            # Fallback: try relative path (for local development)
-            source_cls = Path("src/latex/cover.cls")
-            if not source_cls.exists():
-                logger.error(f"cover.cls not found at {source_cls} or /var/task/latex/cover.cls")
-                raise HTTPException(status_code=500, detail="cover.cls file not found in deployment package")
+            # Try alternative paths in case we're in a different context
+            alt_paths = [
+                current_dir / "templates/cover.cls",
+                current_dir / "src/latex/cover.cls",  # fallback to old location
+                current_dir / "cover.cls"
+            ]
+            
+            for alt_path in alt_paths:
+                if alt_path.exists():
+                    source_cls = alt_path
+                    break
+            else:
+                checked_paths = [str(source_cls)] + [str(p) for p in alt_paths]
+                raise HTTPException(status_code=500, detail=f"cover.cls file not found. Checked paths: {', '.join(checked_paths)}")
         
         shutil.copy2(source_cls, cls_file)
         logger.info(f"Copied cover.cls from {source_cls} to: {cls_file}")
@@ -72,10 +67,10 @@ class LatexCompilerService:
         logger.info(f"cover.cls size: {cls_file.stat().st_size} bytes")
         
         # Copy the entire OpenFonts directory structure to the temporary directory
-        source_fonts = Path("/var/task/latex/OpenFonts")
+        source_fonts = current_dir / "latex/OpenFonts"
         if not source_fonts.exists():
-            # Fallback: try relative path (for local development)
-            source_fonts = Path("src/latex/OpenFonts")
+            # Try alternative path
+            source_fonts = current_dir / "OpenFonts"
         
         if source_fonts.exists():
             fonts_dest = temp_path / "OpenFonts"
@@ -83,15 +78,12 @@ class LatexCompilerService:
             logger.info(f"Copied OpenFonts directory from {source_fonts} to: {fonts_dest}")
             logger.info(f"OpenFonts directory exists: {fonts_dest.exists()}")
             
-            # Update font cache with custom fonts in Lambda
-            try:
-                subprocess.run(['fc-cache', '-fv', str(fonts_dest)], 
-                             capture_output=True, text=True, timeout=10)
-                logger.info("Updated font cache with custom fonts")
-            except Exception as e:
-                logger.warning(f"Failed to update font cache: {e}")
+            # Log font files found
+            font_files = list(fonts_dest.glob("*"))
+            logger.info(f"Font files copied: {[f.name for f in font_files]}")
         else:
-            logger.warning("OpenFonts directory not found, fonts may not be available")
+            logger.warning(f"OpenFonts directory not found. Checked paths: {current_dir / 'latex/OpenFonts'}, {current_dir / 'OpenFonts'}")
+            logger.warning("Fonts may not be available for compilation")
     
     async def save_signature_image(self, signature_image: UploadFile, temp_path: Path) -> None:
         """Save signature image if provided"""
@@ -123,28 +115,19 @@ class LatexCompilerService:
         ]
         logger.info(f"Running command: {' '.join(cmd)}")
         
-        # Set up environment for LaTeX compilation
-        env = os.environ.copy()
-        env.update({
-            'TEXMFHOME': '/tmp/.texlive/texmf',
-            'TEXMFCONFIG': '/tmp/.texlive/texmf-config',
-            'TEXMFVAR': '/tmp/.texlive/texmf-var'
-        })
-        
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             cwd=temp_dir,
-            timeout=60,  # Increased timeout for Lambda
-            env=env
+            timeout=30  # 30 second timeout
         )
         
         logger.info(f"{compiler} return code: {result.returncode}")
         if result.stdout:
-            logger.info(f"{compiler} stdout: {result.stdout[-1000:]}")  # Log last 1000 chars
+            logger.info(f"{compiler} stdout: {result.stdout}")
         if result.stderr:
-            logger.error(f"{compiler} stderr: {result.stderr[-1000:]}")  # Log last 1000 chars
+            logger.error(f"{compiler} stderr: {result.stderr}")
         
         return result
     
@@ -158,9 +141,9 @@ class LatexCompilerService:
             # Log the error details for debugging
             error_msg = f"LaTeX compilation failed. Return code: {result.returncode}"
             if result.stderr:
-                error_msg += f"\nStderr: {result.stderr[-500:]}"  # Last 500 chars for Lambda logs
+                error_msg += f"\nStderr: {result.stderr}"
             if result.stdout:
-                error_msg += f"\nStdout: {result.stdout[-500:]}"  # Last 500 chars for Lambda logs
+                error_msg += f"\nStdout: {result.stdout}"
             
             logger.error(error_msg)
             raise HTTPException(status_code=400, detail=error_msg)
@@ -207,17 +190,18 @@ class LatexCompilerService:
             logger.error(f"{compiler} not available")
             raise HTTPException(
                 status_code=503,
-                detail=f"LaTeX compilation service is not available. {compiler} not found in Lambda environment"
+                detail=f"LaTeX compilation service is not available. Please install {compiler}: sudo apt install texlive-{compiler.replace('pdf', '')}"
             )
         
         logger.info(f"{compiler} is available, proceeding with compilation")
         
-        # Create a temporary directory in /tmp (Lambda's writable directory)
-        temp_dir = tempfile.mkdtemp(dir='/tmp')
+        # Create a temporary directory manually to control cleanup
+        temp_dir = tempfile.mkdtemp()
         temp_path = Path(temp_dir)
         
         try:
             logger.info(f"Created temporary directory: {temp_dir}")
+            logger.info(f"Current working directory: {Path.cwd()}")
             
             # Copy required files
             self.copy_required_files(temp_path)
@@ -259,18 +243,28 @@ class LatexCompilerService:
     
     def get_health_status(self) -> dict:
         """Get health check status for LaTeX service"""
-        pdflatex_available = self.check_latex_availability("pdflatex")
-        xelatex_available = self.check_latex_availability("xelatex")
-        any_compiler_available = pdflatex_available or xelatex_available
-        
-        return {
-            "message": "LaTeX service is running in Lambda",
-            "pdflatex_available": pdflatex_available,
-            "xelatex_available": xelatex_available,
-            "any_compiler_available": any_compiler_available,
-            "status": "healthy" if any_compiler_available else "degraded",
-            "environment": "AWS Lambda"
-        }
+        try:
+            pdflatex_available = self.check_latex_availability("pdflatex")
+            xelatex_available = self.check_latex_availability("xelatex")
+            any_compiler_available = pdflatex_available or xelatex_available
+            
+            return {
+                "message": "LaTeX service is running",
+                "pdflatex_available": pdflatex_available,
+                "xelatex_available": xelatex_available,
+                "any_compiler_available": any_compiler_available,
+                "status": "healthy" if any_compiler_available else "degraded"
+            }
+        except Exception as e:
+            logger.error(f"Error checking LaTeX availability: {e}")
+            return {
+                "message": "LaTeX service is running but unable to check compiler availability",
+                "pdflatex_available": False,
+                "xelatex_available": False,
+                "any_compiler_available": False,
+                "status": "error",
+                "error": str(e)
+            }
     
     def get_detailed_status(self) -> dict:
         """Get detailed status of LaTeX service"""
@@ -305,18 +299,12 @@ class LatexCompilerService:
             return {
                 "status": "available",
                 "compilers": status_info,
-                "message": "LaTeX compilation service is ready in Lambda environment",
-                "environment": "AWS Lambda",
-                "texmf_paths": {
-                    "TEXMFHOME": os.environ.get('TEXMFHOME', 'Not set'),
-                    "TEXMFCONFIG": os.environ.get('TEXMFCONFIG', 'Not set'),
-                    "TEXMFVAR": os.environ.get('TEXMFVAR', 'Not set')
-                }
+                "message": "LaTeX compilation service is ready"
             }
         else:
             return {
                 "status": "unavailable",
                 "compilers": status_info,
-                "message": "No LaTeX compilers found in Lambda environment",
-                "environment": "AWS Lambda"
+                "message": "No LaTeX compilers found. Install with: sudo apt install texlive-xetex texlive-pdftex",
+                "installation_command": "sudo apt install texlive-xetex texlive-pdftex texlive-fonts-recommended texlive-latex-extra"
             }

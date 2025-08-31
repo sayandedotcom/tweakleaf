@@ -1,7 +1,7 @@
 [project]
 name = "latex"
 version = "0.1.0"
-description = "Add your description here"
+description = "LaTeX compilation service for AWS Lambda"
 readme = "README.md"
 authors = [
     { name = "Sayan De", email = "sayandeten@gmail.com" }

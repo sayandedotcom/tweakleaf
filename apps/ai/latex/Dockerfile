@@ -1,43 +1,58 @@
-# Start with a TeX Live container
-FROM texlive/texlive:latest as latex-base
+ARG PYTHON_VERSION=3.11
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
-# Now build the Lambda function
-FROM public.ecr.aws/lambda/python:3.11
-
-# Copy TeX Live installation from the texlive container
-COPY --from=latex-base /usr/local/texlive /usr/local/texlive
-COPY --from=latex-base /usr/local/bin/pdflatex /usr/local/bin/pdflatex
-COPY --from=latex-base /usr/local/bin/xelatex /usr/local/bin/xelatex
-
-# Install minimal system dependencies
+# Install system dependencies including Perl modules needed for TeX Live
 RUN yum update -y && \
     yum install -y \
-        git \
-        fontconfig \
-        perl \
-        which \
+    wget \
+    tar \
+    perl \
+    perl-Digest-MD5 \
+    fontconfig \
+    freetype \
+    git \
+    gcc \
+    make \
     && yum clean all
 
-# Set up LaTeX environment
-ENV PATH="/usr/local/texlive/bin/x86_64-linux:/usr/local/bin:${PATH}"
-ENV TEXMFHOME=/tmp/.texlive/texmf
-ENV TEXMFCONFIG=/tmp/.texlive/texmf-config
-ENV TEXMFVAR=/tmp/.texlive/texmf-var
+# Install TeX Live directly
+RUN wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
+    tar -xzf install-tl-unx.tar.gz && \
+    cd install-tl-* && \
+    echo "selected_scheme scheme-basic" > profile && \
+    echo "option_doc 0" >> profile && \
+    echo "option_src 0" >> profile && \
+    ./install-tl -profile profile && \
+    cd .. && \
+    rm -rf install-tl-* install-tl-unx.tar.gz
 
-RUN mkdir -p /tmp/.texlive && \
-    fc-cache -fv
+# Add TeX Live to PATH
+ENV PATH="/usr/local/texlive/2024/bin/x86_64-linux:${PATH}"
 
-# Install Python dependencies
+# Install additional TeX packages
+RUN tlmgr install \
+    xetex \
+    latexmk \
+    graphics \
+    tools \
+    amsmath \
+    amsfonts
+
+# Install UV
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
-RUN uv pip install --system \
-    fastapi \
-    "mangum>=0.17.0" \
-    python-multipart \
-    pylatex \
-    uvicorn
+# Copy fonts
+COPY latex/OpenFonts/ /usr/local/share/fonts/
+RUN fc-cache -fv
 
-# Copy application code
-COPY . ${LAMBDA_TASK_ROOT}
+# Install Python dependencies
+RUN uv pip install pdflatex>=0.1.3 --system
+
+# Copy source code
+COPY latex/ ${LAMBDA_TASK_ROOT}/src/latex
 
 WORKDIR ${LAMBDA_TASK_ROOT}
+
+# Verify installation
+RUN which pdflatex && pdflatex --version
+RUN which xelatex && xelatex --version
