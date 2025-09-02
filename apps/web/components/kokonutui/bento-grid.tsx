@@ -9,7 +9,6 @@ import MistralAI from "@/components/kokonutui/mistral";
 import DeepSeek from "@/components/kokonutui/deepseek";
 import { cn } from "@/lib/utils";
 import {
-  Mic,
   Plus,
   ArrowUpRight,
   CheckCircle2,
@@ -85,7 +84,7 @@ const bentoItems: BentoItem[] = [
   },
   {
     id: "stat1",
-    title: "Self-improving AI Agents",
+    title: "Self-learning AI Agents",
     description:
       "Our AI agents are designed to learn, adapt, to tailor your resume or cover letter.",
     href: "",
@@ -303,7 +302,7 @@ const IconsFeature = () => {
           <MistralAI className="w-7 h-7 transition-transform " />
         </div>
         <span className="text-xs font-medium text-center text-muted-foreground group-hover:text-foreground">
-          Mistral
+          Hugging Face
         </span>
       </motion.div>
       <motion.div className="flex flex-col items-center gap-2 p-3 rounded-xl bg-card border border-border group transition-all duration-300 hover:border-border hover:shadow-md">

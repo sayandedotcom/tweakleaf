@@ -1,37 +1,14 @@
 import { Metadata } from "next";
 
-import { User2, Bot, CreditCard, Fingerprint } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { SettingsHeader } from "@/components/settings/settings-header";
+import { settingsTabs } from "@/configs/settings-tabs";
 
 export const metadata: Metadata = {
   title: "Settings",
   description: "Manage your settings",
 };
-
-const settingsTabs = [
-  {
-    title: "General",
-    info: "General settings",
-    icon: <User2 />,
-  },
-  {
-    title: "Account",
-    info: "Account settings",
-    icon: <Fingerprint />,
-  },
-  {
-    title: "Models",
-    info: "Model settings",
-    icon: <Bot />,
-  },
-  {
-    title: "Billing",
-    info: "Billing settings",
-    icon: <CreditCard />,
-  },
-];
 
 export default function SettingsPage({
   children,

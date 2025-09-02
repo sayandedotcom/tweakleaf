@@ -30,37 +30,46 @@ const defaultSections = [
   {
     title: "Product",
     links: [
-      { name: "Overview", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Marketplace", href: "#" },
-      { name: "Features", href: "#" },
+      { name: "Compare Us", href: "/#compare-us" },
+      { name: "Founder's Tip", href: "/#founder-tip" },
+      // { name: "Pricing", href: "#" },
+      // { name: "Marketplace", href: "#" },
+      // { name: "Features", href: "/#" },
     ],
   },
-  {
-    title: "Company",
-    links: [
-      { name: "About", href: "#" },
-      { name: "Team", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Careers", href: "#" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { name: "Help", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "Advertise", href: "#" },
-      { name: "Privacy", href: "#" },
-    ],
-  },
+  // {
+  //   title: "Company",
+  //   links: [
+  // { name: "About", href: "#" },
+  // { name: "Team", href: "#" },
+  // { name: "Blog", href: "#" },
+  // { name: "Careers", href: "#" },
+  //   ],
+  // },
+  // {
+  //   title: "Resources",
+  //   links: [
+  // { name: "Help", href: "/#" },
+  // { name: "Sales", href: "#" },
+  // { name: "Advertise", href: "#" },
+  // { name: "Privacy", href: "#" },
+  //   ],
+  // },
 ];
 
 const defaultSocialLinks = [
-  { icon: <FaInstagram className="size-5" />, href: "#", label: "Instagram" },
-  { icon: <FaFacebook className="size-5" />, href: "#", label: "Facebook" },
-  { icon: <FaTwitter className="size-5" />, href: "#", label: "Twitter" },
-  { icon: <FaLinkedin className="size-5" />, href: "#", label: "LinkedIn" },
+  // { icon: <FaInstagram className="size-5" />, href: "#", label: "Instagram" },
+  // { icon: <FaFacebook className="size-5" />, href: "#", label: "Facebook" },
+  {
+    icon: <FaTwitter className="size-5" />,
+    href: "https://x.com/sayandedotcom",
+    label: "Twitter",
+  },
+  {
+    icon: <FaLinkedin className="size-5" />,
+    href: "https://www.linkedin.com/in/sayande/",
+    label: "LinkedIn",
+  },
 ];
 
 const defaultLegalLinks = [
@@ -70,15 +79,15 @@ const defaultLegalLinks = [
 
 const Footer = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
+    url: "https://tweak.sayande.com",
+    src: "https://tweak.sayande.com/1.svg",
     alt: "logo",
-    title: "Shadcnblocks.com",
+    title: "Tweak",
   },
   sections = defaultSections,
-  description = "A collection of components for your startup business or side project.",
+  description = "Tweak your resumes and cover letters with AI for your job applications - completely FREE!",
   socialLinks = defaultSocialLinks,
-  copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
+  copyright = "© 2025 Tweak. All rights reserved.",
   legalLinks = defaultLegalLinks,
 }: FooterProps) => {
   return (

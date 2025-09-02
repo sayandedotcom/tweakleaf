@@ -36,10 +36,12 @@ const STORAGE_KEY = "tweak_jobs_model_api_keys";
 export default function ModelsSettingsPage() {
   const [modelKeys, setModelKeys] = useState<ModelKey>({});
   const [editingModel, setEditingModel] = useState<string | null>(null);
+  const [editingModelId, setEditingModelId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showApiKeys, setShowApiKeys] = useState<{ [key: string]: boolean }>(
     {},
   );
+
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Load API keys from localStorage on component mount
@@ -78,7 +80,37 @@ export default function ModelsSettingsPage() {
     const _ = refreshTrigger;
 
     const model = models.find((m) => m.url === modelUrl);
-    return model ? model.isConfigured() : false;
+    if (!model) return false;
+
+    // For Hugging Face, check both API key and model ID from localStorage
+    if (model.name === "Hugging Face") {
+      const hasApiKey = model.isConfigured();
+      const modelIdKey = `${modelUrl.toLowerCase()}_model_id`;
+
+      // Check localStorage directly instead of current state
+      let hasModelId = false;
+
+      // Only check localStorage if we're in the browser
+      if (typeof window !== "undefined") {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY);
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            hasModelId =
+              parsed[modelIdKey] &&
+              typeof parsed[modelIdKey] === "string" &&
+              parsed[modelIdKey].trim().length > 0;
+          }
+        } catch (error) {
+          console.error("Error checking model ID configuration:", error);
+        }
+      }
+
+      return hasApiKey && hasModelId;
+    }
+
+    // For other models, use the existing logic
+    return model.isConfigured();
   };
 
   // Force refresh of configuration status
@@ -152,6 +184,7 @@ export default function ModelsSettingsPage() {
 
   const handleCancel = () => {
     setEditingModel(null);
+    setEditingModelId(null);
   };
 
   const toggleApiKeyVisibility = (modelKey: string) => {
@@ -275,7 +308,7 @@ export default function ModelsSettingsPage() {
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={handleCancel}
+                          onClick={() => handleCancel()}
                           size="sm"
                         >
                           Cancel
@@ -305,7 +338,90 @@ export default function ModelsSettingsPage() {
                       </div>
                     )}
                   </div>
-
+                  {model.name === "Hugging Face" && (
+                    <>
+                      <div className="flex items-center">
+                        <p className="text-sm text-muted-foreground">
+                          Hugging Face requires a model ID in addition to the
+                          API key.
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <Input
+                            id={`model-id-${modelKey}`}
+                            type="text"
+                            value={modelKeys[`${modelKey}_model_id`] || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                `${modelKey}_model_id`,
+                                e.target.value,
+                              )
+                            }
+                            disabled={editingModelId !== modelKey}
+                            placeholder="Enter Hugging Face model ID (e.g., meta-llama/Llama-2-7b-chat-hf)"
+                            className="pr-10"
+                          />
+                        </div>
+                        {editingModelId === modelKey ? (
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => {
+                                setEditingModelId(null);
+                                // Save model ID to localStorage
+                                const updatedKeys = { ...modelKeys };
+                                updatedKeys[`${modelKey}_model_id`] =
+                                  modelKeys[`${modelKey}_model_id`] || "";
+                                saveToLocalStorage(updatedKeys);
+                                setModelKeys(updatedKeys);
+                              }}
+                              size="sm"
+                            >
+                              <Save color="black" className="h-4 w-4 mr-2" />
+                              Save
+                            </Button>
+                            <Button
+                              variant="outline"
+                              onClick={() => handleCancel()}
+                              size="sm"
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => setEditingModelId(modelKey)}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Edit className="h-4 w-4 mr-2" />
+                              {modelKeys[`${modelKey}_model_id`]
+                                ? "Edit"
+                                : "Set Model ID"}
+                            </Button>
+                            {modelKeys[`${modelKey}_model_id`] && (
+                              <Button
+                                onClick={() => {
+                                  // Remove model ID from localStorage
+                                  const updatedKeys = { ...modelKeys };
+                                  delete updatedKeys[`${modelKey}_model_id`];
+                                  saveToLocalStorage(updatedKeys);
+                                  setModelKeys(updatedKeys);
+                                }}
+                                variant="outline"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Remove
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
                   {/* How to get API key info for each model */}
                   <div className="p-3 bg-muted rounded-lg border">
                     <p className="text-sm text-muted-foreground mb-2">

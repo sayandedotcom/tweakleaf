@@ -1,5 +1,5 @@
 export const site = {
-  name: "Tweak.Apply",
+  name: "Tweak",
   description:
     "Tweak.Apply is a platform for job seekers to find jobs and apply to them.",
   url: "https://tweak.Apply.com",
@@ -66,5 +66,5 @@ export const site = {
     headerFive: "About",
     headerSix: "About",
   },
-  notifications: "Tweak.Apply is now live! 🎉",
+  notifications: "Tweak is under development, will be live sooooon ! 🎉",
 };

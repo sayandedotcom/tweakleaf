@@ -162,10 +162,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    * ::selection {
+      color: var(--foreground);
+      background: var(--background);
+    }
   }
   body {
     @apply bg-background text-foreground;
   }
 }
 
-@import "@clerk/themes/shadcn.css"
+@import "@clerk/themes/shadcn.css";

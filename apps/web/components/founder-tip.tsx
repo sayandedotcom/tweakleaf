@@ -6,9 +6,14 @@ export const FounderTip = () => {
           Founder's Tip
         </h2>
         <p className="text-muted-foreground mb-6 text-center">
-          We know how hard to get a job is. We often did mistakes by applying
-          100s of jobs without proper optimization or sync with job description.
-          And I really want to help people !
+          We know how hard to get a job is in this AI world. We often did
+          mistakes by applying 100s of jobs without proper optimization or sync
+          with job description. And I really want to help people!
+        </p>
+        <p className="text-muted-foreground mb-6 text-center">
+          I have use proven prompts from experts to tweak your resume and cover
+          letter to optimize the job application process. Humanized text with
+          LaTex support really helps your document to rank in ATS.
         </p>
         <p className="text-muted-foreground mb-6 text-center">
           This platfrom is absolutely free for you! I am AWS startup Accelerator

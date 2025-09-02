@@ -10,6 +10,7 @@ interface SidebarNavProps {
     title: string;
     info: string;
     icon: React.ReactNode;
+    href: string;
   }>;
 }
 
@@ -19,7 +20,7 @@ export function SidebarNav({ section, items }: SidebarNavProps) {
   return (
     <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
       {items.map((item) => {
-        const href = `/${section}/${item.title.toLowerCase().replace(/\s+/g, "-")}`;
+        const href = item!.href;
         const isActive = pathname === href;
 
         return (

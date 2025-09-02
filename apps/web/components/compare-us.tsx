@@ -14,7 +14,7 @@ export const CompareUs = () => {
               <tr>
                 <th></th>
                 <th className="bg-muted px-6 py-4 font-semibold text-center">
-                  Free AI Chat Models ( Ex: ChatGPT)
+                  AI Chat Models ( Ex: ChatGPT)
                 </th>
                 <th className="px-6 py-4 font-semibold text-center">
                   {site.name}
@@ -35,43 +35,103 @@ export const CompareUs = () => {
                 </td>
               </tr>
               <tr className="border-t border-border">
-                <td className="px-6 py-4">Hallucinations</td>
+                <td className="px-6 py-4">ATS Compatibility</td>
                 <td className="bg-muted px-6 py-4">
-                  After 6-7 messages, the AI starts hallucinating. It forgets
-                  what you have asked for.
+                  Unable to pass Modern ATS that has detection mechanisms for
+                  human-written content & AI-generated content.
                 </td>
                 <td className="px-6 py-4">
-                  We use advanced self learning AI Agent that continuously
-                  learns from user provided context.
+                  Our AI is designed to generate content that is
+                  indistinguishable from human-written text, ensuring
+                  compatibility with ATS.
                 </td>
               </tr>
               <tr className="border-t border-border">
+                <td className="px-6 py-4">Hallucinations</td>
+                <td className="bg-muted px-6 py-4">
+                  After 6-7 messages, the AI starts hallucinating. It forgets
+                  your preferences and context you provided in the long previous
+                  messages & what you have asked for.
+                </td>
+                <td className="px-6 py-4">
+                  We use advanced self learning AI Agent that continuously
+                  learns from user provided context, stores it in long term
+                  memory and uses it to generate content.
+                </td>
+              </tr>
+              {/* <tr className="border-t border-border">
                 <td className="px-6 py-4">Context Engineering</td>
                 <td className="bg-muted px-6 py-4">
                   After long time, they are not aware of your preferences and
-                  context you provided in the long previous messages.
+                  context you provided in the long previous messages &
+                  instructions.
                 </td>
                 <td className="px-6 py-4">
                   We use advanced context engineering to make AI agents to learn
                   about your preferences and continuously remove irrelevant
                   context to decrease context window size.
                 </td>
-              </tr>
+              </tr> */}
               <tr className="border-t border-border">
                 <td className="px-6 py-4">LaTex Support</td>
                 <td className="bg-muted px-6 py-4">
-                  They don&apos;t support LaTex.
+                  They don&apos;t support LaTex. So you have to copy & paste the
+                  content every time.
                 </td>
-                <td className="px-6 py-4">We support LaTex.</td>
+                <td className="px-6 py-4">
+                  We have our own LaTex editor & compiler which supports
+                  professional LaTex format, so you can download the content in
+                  LaTex format.
+                </td>
               </tr>
               <tr className="border-t border-border">
                 <td className="px-6 py-4">Cost</td>
                 <td className="bg-muted px-6 py-4">
-                  We are a startup and we are trying to make it affordable for
-                  everyone.
+                  Once you have used the free AI chat model, most of them
+                  degrade the models, so gradually the quality of the content
+                  decreases.
                 </td>
                 <td className="px-6 py-4">
-                  They are not aware of your preferences and context.
+                  We use advanced context-engineering techniques to reduce the
+                  usage of tokens and make it affordable for everyone.
+                  <br />
+                  <br />
+                  <span className="text-sm text-muted-foreground">
+                    Basically our platform is completely free to use. You just
+                    have to pay for the API key for the models you use. For our
+                    estimated usage, we are charging $0.50 per 100 documents.
+                  </span>
+                </td>
+              </tr>
+              <tr className="border-t border-border">
+                <td className="px-6 py-4">Models variety</td>
+                <td className="bg-muted px-6 py-4">
+                  To choose different models you have to switch between
+                  different websites, which is time consuming and inefficient.
+                </td>
+                <td className="px-6 py-4">
+                  We have a wide variety of models to choose from. You can
+                  choose the model you want to use and we will use it to
+                  generate the content.
+                  <br />
+                  <br />
+                  <span className="text-sm text-muted-foreground">
+                    Currently we are supporting OpenAI, Anthropic, Gemini,
+                    DeepSeek and cherry on top we also support any fine-tuned
+                    models from Hugging Face.
+                  </span>
+                </td>
+              </tr>
+              <tr className="border-t border-border">
+                <td className="px-6 py-4">Long Term Memory</td>
+                <td className="bg-muted px-6 py-4">
+                  Many AI chat models have short term memory. So they forget
+                  your instructions and context after a few messages.
+                </td>
+                <td className="px-6 py-4">
+                  We have our own long term memory that continuously learns from
+                  user provided context, stores it in long term memory and uses
+                  it to generate content.
                 </td>
               </tr>
             </tbody>

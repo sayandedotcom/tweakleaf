@@ -26,5 +26,6 @@ export const navigation = {
     GEMINI: "gemini",
     GROK: "grok",
     DEEPSEEK: "deepseek",
+    HUGGINGFACE: "huggingface",
   },
 };

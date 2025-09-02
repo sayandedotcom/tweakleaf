@@ -9,6 +9,8 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { CompareUs } from "@/components/compare-us";
 import { FounderTip } from "@/components/founder-tip";
+import { Waitlist } from "@clerk/nextjs";
+import { RedditPosts } from "@/components/reddit-posts";
 
 export default function Home() {
   return (
@@ -25,7 +27,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-2xl text-foreground leading-tight text-center font-extrabold">
               Tweak CV & Cover Letters
-              <span className="block">with self-improving AI agents</span>
+              <span className="block">with self-learning AI agents</span>
             </h1>
             <div className="flex flex-row gap-4">
               <Link
@@ -44,15 +46,25 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {/* <div className="flex justify-center mt-10 mb-20" id="join-waitlist">
+        <Waitlist />
+      </div> */}
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-10 pt-7">
           <div className="text-center max-w-5xl mx-auto">
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Apply to 100s of jobs in just $0.5. We optimize your cost by
-              advance context engineering, making AI agents continously learn
-              about your preferences through reinforcement learning.
+            <p className="text-xl text-muted-foreground mb-8 mx-auto leading-relaxed">
+              Apply to hundreds of jobs in just 10 minutes for only $0.50 with
+              AI that creates tailored cover letters and CVs written in a
+              humanized way to avoid ATS detection and achieve better rankings.
+              All documents are generated in LaTeX for superior ATS
+              compatibility, while our proven prompts ensure strong keyword
+              usage for maximum impact. We reduce hallucinations and cut costs
+              with advanced context engineering, and our AI agents continuously
+              learn your preferences to make every document faster, more
+              optimized, and more effective.
             </p>
             <CompareUs />
             {/* Video Demo Section */}
@@ -105,6 +117,25 @@ export default function Home() {
         {/* <Bento /> */}
         <BentoGrid />
       </div>
+      <div
+        className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-20"
+        id="reddit"
+      >
+        <h2 className="text-3xl font-bold  mb-6 text-center">Special thanks</h2>
+        <p className="text-muted-foreground mb-6 text-center">
+          Reddit posts that helped us to shape and improve our product.
+        </p>
+        <RedditPosts />
+        <div className="flex flex-col items-center justify-center mt-6">
+          <span className="text-muted-foreground mb-6 text-center flex flex-row items-center justify-center gap-2">
+            If you have any suggestions or feedback, please let us know
+            <a href="http://x.com/sayandedotcom" className="text-primary">
+              @sayandedotcom
+            </a>
+          </span>
+        </div>
+      </div>
+
       <div className="relative z-10 container mx-auto pb-20" id="testimonials">
         <h2 className="text-3xl font-bold  mb-6 text-center">
           What our users say

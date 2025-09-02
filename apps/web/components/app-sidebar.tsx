@@ -37,6 +37,7 @@ import { AlertDialogComponent } from "./alert-dialog-component";
 import { Button } from "./ui/button";
 import { NavFileUploads } from "./nav-file-uploads";
 import { models } from "@/configs/models";
+import { settingsTabs } from "@/configs/settings-tabs";
 
 const data = {
   user: {
@@ -172,26 +173,12 @@ const data = {
     // },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      items: settingsTabs.map((tab) => ({
+        title: tab.title,
+        url: tab.href,
+      })),
     },
   ],
   models: models,
@@ -256,7 +243,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavFileUploads />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

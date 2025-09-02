@@ -7,29 +7,62 @@ export default $config({
       removal: input?.stage === "production" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),
       home: "aws",
+      providers: {
+        aws: {
+          region: "us-east-1",
+        },
+      },
     };
   },
   async run() {
+    // Keep FastAPI as serverless function
     const fastapi = new sst.aws.Function("FastAPI", {
-      handler: "functions/src/functions/api.handler",
-      runtime: "python3.10",
+      handler: "./functions/src/functions/api.handler",
+      runtime: "python3.11",
       url: true,
     });
 
-    const latex = new sst.aws.Function("LatexApi", {
-      python: {
-        container: true,
-      },
-      handler: "latex/src/latex/api.handler",
-      runtime: "python3.10",
-      url: true,
-      timeout: "5 minutes",
-      memory: "2048 MB",
+    // Notice you don't need to import pulumi, it is already part of sst.
+    const securityGroup = new aws.ec2.SecurityGroup("web-secgrp", {
+      ingress: [
+        {
+          protocol: "tcp",
+          fromPort: 80,
+          toPort: 80,
+          cidrBlocks: ["0.0.0.0/0"],
+        },
+      ],
+    });
+
+    // Find the latest Ubuntu AMI
+    const ami = aws.ec2.getAmi({
+      filters: [
+        {
+          name: "name",
+          values: ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"],
+        },
+      ],
+      mostRecent: true,
+      owners: ["099720109477"], // Canonical
+    });
+
+    // User data to set up a simple web server
+    const userData = `#!/bin/bash
+  echo "Hello, World!" > index.html
+  nohup python3 -m http.server 80 &`;
+
+    // Create an EC2 instance
+    const server = new aws.ec2.Instance("web-server", {
+      instanceType: "t2.micro",
+      ami: ami.then((ami) => ami.id),
+      userData: userData,
+      vpcSecurityGroupIds: [securityGroup.id],
+      associatePublicIpAddress: true,
     });
 
     return {
       fastapi: fastapi.url,
-      latex: latex.url,
+      app: server.publicIp,
     };
   },
 });

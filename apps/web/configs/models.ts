@@ -75,4 +75,14 @@ export const models: ModelConfig[] = [
     apiKeyUrl: "https://platform.deepseek.com",
     isConfigured: () => checkModelConfiguration(navigation.MODEL.DEEPSEEK),
   },
+  {
+    name: "Hugging Face",
+    logo: llmModelsSvg.huggingface,
+    url: navigation.MODEL.HUGGINGFACE,
+    model: "huggingface-chat",
+    configured: false, // This will be dynamically updated
+    apiKeyUrl:
+      "https://huggingface.co/docs/huggingface_hub/v0.13.2/en/guides/inference",
+    isConfigured: () => checkModelConfiguration(navigation.MODEL.HUGGINGFACE),
+  },
 ];
