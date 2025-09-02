@@ -19,7 +19,7 @@ const redditPosts = [
   {
     title: "How I write genuinely good cover letters with ChatGPT",
     url: "https://www.reddit.com/r/ChatGPT/comments/1au2qx8/how_i_write_genuinely_good_cover_letters_with/",
-    username: "u/Cover-Letter-Genius",
+    username: "u/satzz10",
     subreddit: "ChatGPT",
   },
   {
@@ -27,6 +27,18 @@ const redditPosts = [
     url: "https://www.reddit.com/r/ArtificialInteligence/comments/1c0jsa5/how_to_humanize_aigenerated_texts/",
     username: "u/LeoPiano22",
     subreddit: "ArtificialInteligence",
+  },
+  {
+    title: "ChatGPT prompts that helped transform my cover letter",
+    url: "https://www.reddit.com/r/ChatGPTPromptGenius/comments/1kz2v63/chatgpt_prompts_that_helped_transform_my_cover/",
+    username: "u/ranyelsazam",
+    subreddit: "ChatGPTPromptGenius",
+  },
+  {
+    title: "10 prompts I used to fix my resume",
+    url: "https://www.reddit.com/r/jobsearchhacks/comments/1mdhwph/10_prompts_i_used_to_fix_my_resume/",
+    username: "u/kmac23",
+    subreddit: "jobsearchhacks",
   },
 ];
 

@@ -87,13 +87,21 @@ export const CompareUs = () => {
               <tr className="border-t border-border">
                 <td className="px-6 py-4">Cost</td>
                 <td className="bg-muted px-6 py-4">
-                  Once you have used the free AI chat model, most of them
-                  degrade the models, so gradually the quality of the content
-                  decreases.
+                  Most chat models provide free plans but once you have used the
+                  free plan, most of them degrade the models, so gradually the
+                  quality of the content decreases.
+                  <br />
+                  <br />
+                  <span className="text-sm text-muted-foreground">
+                    The pricing is too high & too much for just tweaking
+                    documents. Most models average base plans is around
+                    $20/month.
+                  </span>
                 </td>
                 <td className="px-6 py-4">
                   We use advanced context-engineering techniques to reduce the
-                  usage of tokens and make it affordable for everyone.
+                  usage of tokens & context window size and make it affordable
+                  for everyone.
                   <br />
                   <br />
                   <span className="text-sm text-muted-foreground">
@@ -126,7 +134,8 @@ export const CompareUs = () => {
                 <td className="px-6 py-4">Long Term Memory</td>
                 <td className="bg-muted px-6 py-4">
                   Many AI chat models have short term memory. So they forget
-                  your instructions and context after a few messages.
+                  your instructions and context after a few messages or changing
+                  chat threads.
                 </td>
                 <td className="px-6 py-4">
                   We have our own long term memory that continuously learns from

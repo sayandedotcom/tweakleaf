@@ -55,6 +55,7 @@ export default function Home() {
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-10 pt-7">
           <div className="text-center max-w-5xl mx-auto">
             {/* Subtitle */}
+            <h2 className="mb-4 text-3xl">tl;dr</h2>
             <p className="text-xl text-muted-foreground mb-8 mx-auto leading-relaxed">
               Apply to hundreds of jobs in just 10 minutes for only $0.50 with
               AI that creates tailored cover letters and CVs written in a
