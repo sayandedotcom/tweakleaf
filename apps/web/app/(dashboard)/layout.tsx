@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { navigation } from "@/configs/navigation";
 import { site } from "@/configs/site";
-import { Plus, UserRoundCog } from "lucide-react";
+import { Bot, UserRoundCog } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function DashboardLayout({
@@ -72,6 +72,18 @@ export default function DashboardLayout({
           </div>
           <div className="flex items-center gap-2">
             <AlertDialogComponent
+              title="Configure Models"
+              description="Are you sure you want to configure the models?"
+              onConfirm={() => {
+                router.push("/settings/models");
+              }}
+            >
+              <Button className="h-8 text-xs">
+                <Bot color="black" className="w-4 h-4" />
+                Configure Models
+              </Button>
+            </AlertDialogComponent>
+            {/* <AlertDialogComponent
               title="New Application"
               description="Are you sure you want to create a new application? Old data will be lost."
               onConfirm={() => {
@@ -90,7 +102,7 @@ export default function DashboardLayout({
               <Button className="h-8 text-xs">
                 <Plus color="black" className="w-4 h-4" /> New Application
               </Button>
-            </AlertDialogComponent>
+            </AlertDialogComponent> */}
             <AlertDialogComponent
               title="Update Profile"
               description="Are you sure you want to update your profile?"
