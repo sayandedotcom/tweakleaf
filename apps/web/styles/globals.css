@@ -163,8 +163,8 @@
   * {
     @apply border-border outline-ring/50;
     * ::selection {
-      color: var(--foreground);
-      background: var(--background);
+      color: var(--background);
+      background: var(--foreground);
     }
   }
   body {
