@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from fastapi import HTTPException, UploadFile
 from fastapi.responses import Response
+from typing import Optional
 import logging
 
 # Set up logging
@@ -85,7 +86,7 @@ class LatexCompilerService:
             logger.warning(f"OpenFonts directory not found. Checked paths: {current_dir / 'latex/OpenFonts'}, {current_dir / 'OpenFonts'}")
             logger.warning("Fonts may not be available for compilation")
     
-    async def save_signature_image(self, signature_image: UploadFile, temp_path: Path) -> None:
+    async def save_signature_image(self, signature_image: Optional[UploadFile], temp_path: Path) -> None:
         """Save signature image if provided"""
         if signature_image:
             signature_path = temp_path / "signature.png"

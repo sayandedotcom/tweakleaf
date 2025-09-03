@@ -10,10 +10,16 @@ logger = logging.getLogger(__name__)
 # Create FastAPI app
 app = FastAPI(title="LaTeX Compilation API", version="1.0.0")
 
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://tweak.sayande.com"
+]
+
 # Configure Cross-Origin Resource Sharing (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
