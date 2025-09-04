@@ -1,11 +1,7 @@
-from functions.config import settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
-# from latex.router import router as latex_router
 from tweak.router import router as tweak_router
-# from src.clerk.router import router as clerk_router
-# from src.auth.dashboard import router as auth_router
 
 from dotenv import load_dotenv
 
@@ -13,27 +9,30 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Create a FastAPI app instance with the specified title from settings
-app = FastAPI(title=settings.APP_NAME)
+app = FastAPI(title="Main AI API")
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://tweak.sayande.com"
+]
 
 # Configure Cross-Origin Resource Sharing (CORS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-@app.get("/health")
+@app.get("/tweak/health")
 async def healthcheck() -> bool:
     return True
 
-
-# app.include_router(latex_router, prefix="/latex", tags=["Latex"])
 app.include_router(tweak_router, prefix="/tweak", tags=["Tweak"])
-# app.include_router(clerk_router, prefix="/clerk", tags=["Clerk"])
-# app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 
 # Create handler for AWS Lambda with specific configuration
-handler = Mangum(app, api_gateway_base_path=None, lifespan="off")
+handler = Mangum(app, lifespan="off")
+# api_gateway_base_path=None

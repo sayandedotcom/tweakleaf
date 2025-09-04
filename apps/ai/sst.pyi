@@ -10,8 +10,7 @@ class Resource:
         name: str
         type: str
         url: str
-    class LatexApi:
-        name: str
+    class LaTeXAPIRouter:
         type: str
         url: str
 

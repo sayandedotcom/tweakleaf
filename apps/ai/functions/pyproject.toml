@@ -6,15 +6,15 @@ readme = "README.md"
 authors = [
     { name = "Sayan De", email = "sayandeten@gmail.com" }
 ]
-requires-python = ">=3.10"
+requires-python = "==3.10.*"
 dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "mangum>=0.19.0",
     "tweak",
-    "latex"
 ]
 
 [tool.uv.sources]
 tweak = { workspace = true }
-latex = { workspace = true }
 
 [project.scripts]
 functions = "functions:main"
