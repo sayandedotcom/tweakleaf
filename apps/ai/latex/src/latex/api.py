@@ -28,7 +28,7 @@ app.add_middleware(
 # Create an instance of the service
 latex_service = LatexCompilerService()
 
-@app.post("/latex/compile")
+@app.post("/compile")
 async def compile_latex(
     latex_content: str = Form(...),
     compiler: str = Form("xelatex"),  # Default to xelatex since it's more feature-rich
@@ -42,17 +42,17 @@ async def compile_latex(
         signature_image=signature_image
     )
 
-@app.get("/latex/health")
+@app.get("/health")
 def latex_health():
     """Health check for LaTeX service"""
     return latex_service.get_health_status()
 
-@app.get("/latex/status")
+@app.get("/status")
 def latex_status():
     """Detailed status of LaTeX service"""
     return latex_service.get_detailed_status()
 
-@app.get("/latex")
+@app.get("/")
 def root():
     """Root endpoint"""
     return {
@@ -65,14 +65,14 @@ def root():
         ]
     }
 
-@app.get("/")
-def api_root():
-    """API Root endpoint"""
-    return {
-        "service": "LaTeX Compilation API",
-        "status": "running",
-        "deployment": "EC2"
-    }
+# @app.get("/")
+# def api_root():
+#     """API Root endpoint"""
+#     return {
+#         "service": "LaTeX Compilation API",
+#         "status": "running",
+#         "deployment": "EC2"
+#     }
 
 # For EC2 deployment, we don't need the Mangum handler
 # The app will be run directly with uvicorn
