@@ -35,6 +35,16 @@ export const CompareUs = () => {
                 </td>
               </tr>
               <tr className="border-t border-border">
+                <td className="px-6 py-4">Prompts</td>
+                <td className="bg-muted px-6 py-4">
+                  Your prompts are not optimized for ATS.
+                </td>
+                <td className="px-6 py-4">
+                  We use prompts that are gathered from experts and different
+                  sources that are proven to be high ATS ranking.
+                </td>
+              </tr>
+              <tr className="border-t border-border">
                 <td className="px-6 py-4">ATS Compatibility</td>
                 <td className="bg-muted px-6 py-4">
                   Unable to pass Modern ATS that has detection mechanisms for
