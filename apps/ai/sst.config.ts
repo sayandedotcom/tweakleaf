@@ -101,10 +101,9 @@ fi
 # Create startup script
 cat > /app/start_latex_api.sh << 'EOF'
 #!/bin/bash
-cd /app/tweak.jobs/apps/ai/latex
-source .venv/bin/activate
-export PYTHONPATH=/app/tweak.jobs/apps/ai/latex/src
-python3 -m uvicorn src.latex.api:app --host 0.0.0.0 --port 8000
+cd /app/tweak.jobs/apps/ai/latex/src/latex
+source /app/tweak.jobs/apps/ai/latex/.venv/bin/activate
+python3 -m uvicorn api:app --host 0.0.0.0 --port 8000
 EOF
 
 chmod +x /app/start_latex_api.sh
