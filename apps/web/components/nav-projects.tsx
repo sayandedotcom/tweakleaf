@@ -37,11 +37,11 @@ export function NavProjects({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <Button
-                disabled={item.url !== navigation.RIGHT_PANEL.COVER_LETTER}
+                // disabled={item.url !== navigation.RIGHT_PANEL.COVER_LETTER}
                 variant="ghost"
                 onClick={() => {
                   params.set(navigation.RIGHT_PANEL.PARAM, item.url);
-                  router.push(`?${params.toString()}`);
+                  router.push(`/tweak?${params.toString()}`);
                 }}
                 className={cn(
                   "justify-start",
@@ -50,9 +50,9 @@ export function NavProjects({
               >
                 <item.icon />
                 <span>{item.name}</span>
-                {item.url !== navigation.RIGHT_PANEL.COVER_LETTER && (
+                {/* {item.url !== navigation.RIGHT_PANEL.COVER_LETTER && (
                   <CommingSoon />
-                )}
+                )} */}
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>

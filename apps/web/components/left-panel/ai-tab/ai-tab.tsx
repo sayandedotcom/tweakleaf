@@ -26,9 +26,7 @@ export function AiTab() {
       }}
     >
       <TabsList className="w-full flex gap-2 justify-between px-2 py-0.5 border-b">
-        <TabsTrigger disabled value={navigation.RIGHT_PANEL.RESUME}>
-          Resume <CommingSoon />
-        </TabsTrigger>
+        <TabsTrigger value={navigation.RIGHT_PANEL.RESUME}>Resume</TabsTrigger>
         <TabsTrigger value={navigation.RIGHT_PANEL.COVER_LETTER}>
           Cover Letter
         </TabsTrigger>

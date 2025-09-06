@@ -162,10 +162,10 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    * ::selection {
-      color: var(--background);
-      background: var(--foreground);
-    }
+    /* * ::selection {
+      color: var(--muted);
+      background: var(--muted-foreground);
+    } */
   }
   body {
     @apply bg-background text-foreground;
