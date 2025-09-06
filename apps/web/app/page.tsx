@@ -25,9 +25,9 @@ export default function Home() {
         <div className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {/* Main Heading */}
           <div className="flex flex-col items-center justify-center">
-            <h1 className="text-2xl text-foreground leading-tight text-center font-extrabold">
+            <h1 className="text-3xl text-foreground leading-tight text-center font-extrabold">
               Tweak CV & Cover Letters
-              <span className="block">with self-learning AI agents</span>
+              <span className="block">with AI agents</span>
             </h1>
             <div className="flex flex-row gap-4">
               <Link
@@ -118,6 +118,22 @@ export default function Home() {
         {/* <Bento /> */}
         <BentoGrid />
       </div>
+      <div className="relative z-10 container mx-auto pb-20" id="testimonials">
+        <h2 className="text-3xl font-bold  mb-6 text-center">
+          What our users say
+        </h2>
+        <p className="text-muted-foreground mb-6 text-center">
+          Like hips uses don't lie.
+        </p>
+        <TweetGridComponent />
+      </div>
+      {/* <div
+        style={{ maxWidth: "800px", margin: "0 auto", padding: "0 1rem" }}
+        id="pricing"
+      >
+        <PricingTable />
+      </div> */}
+      <FounderTip />
       <div
         className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-20"
         id="reddit"
@@ -137,22 +153,6 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="relative z-10 container mx-auto pb-20" id="testimonials">
-        <h2 className="text-3xl font-bold  mb-6 text-center">
-          What our users say
-        </h2>
-        <p className="text-muted-foreground mb-6 text-center">
-          Like hips uses don't lie.
-        </p>
-        <TweetGridComponent />
-      </div>
-      {/* <div
-        style={{ maxWidth: "800px", margin: "0 auto", padding: "0 1rem" }}
-        id="pricing"
-      >
-        <PricingTable />
-      </div> */}
-      <FounderTip />
       {/* <div className="relative z-10 container mx-auto pb-20">
         <h2 className="text-3xl font-bold  mb-6 text-center">How it works</h2>
         <p className="text-muted-foreground mb-6 text-center">

@@ -1,23 +1,16 @@
 [project]
-name = "functions"
+name = "database"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
     { name = "Sayan De", email = "sayandeten@gmail.com" }
 ]
-requires-python = "==3.10.*"
+requires-python = ">=3.10"
 dependencies = [
-    "fastapi[standard]>=0.116.1",
-    "mangum>=0.19.0",
-    "tweak",
+    "python-dotenv>=1.1.1",
+    "supabase>=2.18.1",
 ]
-
-[tool.uv.sources]
-tweak = { workspace = true }
-
-[project.scripts]
-functions = "functions:main"
 
 [build-system]
 requires = ["hatchling"]

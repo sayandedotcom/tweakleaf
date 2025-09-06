@@ -238,7 +238,7 @@ echo "=== Setup Complete ===" >> /app/setup.log`;
 
     // Lambda FastAPI function
     const fastapi = new sst.aws.Function("FastAPI", {
-      handler: "functions/src/functions/api.handler",
+      handler: "tweak/src/tweak/api.handler",
       runtime: "python3.10",
       url: true,
     });

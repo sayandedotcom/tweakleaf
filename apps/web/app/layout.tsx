@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { ClerkProvider } from "@/providers/clerk-provider";
 import { Space_Mono } from "next/font/google";
 import { RootProvider } from "@/providers/root-provider";
@@ -27,6 +28,7 @@ export default function RootLayout({
         <body className={spaceMono.className}>
           <RootProvider>{children}</RootProvider>
           <Toaster position="bottom-left" />
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
