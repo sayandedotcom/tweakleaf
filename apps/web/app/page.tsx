@@ -9,7 +9,6 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { CompareUs } from "@/components/compare-us";
 import { FounderTip } from "@/components/founder-tip";
-import { Waitlist } from "@clerk/nextjs";
 import { RedditPosts } from "@/components/reddit-posts";
 
 export default function Home() {
