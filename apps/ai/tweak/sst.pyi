@@ -3,14 +3,17 @@
 from typing import Any
 
 class Resource:
+    class APIRouter:
+        type: str
+        url: str
     class App:
         name: str
         stage: str
-    class FastAPI:
+    class CompilerAPIFunction:
         name: str
         type: str
         url: str
-    class LatexApi:
+    class TweakAPIFunction:
         name: str
         type: str
         url: str
