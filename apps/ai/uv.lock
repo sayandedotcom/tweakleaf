@@ -13,7 +13,6 @@ members = [
     "auth",
     "compiler",
     "database",
-    "latex",
     "tweak",
 ]
 
@@ -928,25 +927,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/0c/84/2f01d51a557d14a9a5590c32de5dde3b466b00a55521450c2c9e77ffa438/langsmith-0.4.25.tar.gz", hash = "sha256:56f0c45810384fba37582ca17fdbcf6ead51934d26d72672e5a810452c0d4ae3", size = 940274, upload-time = "2025-09-04T23:59:33.97Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a5/85/8a5ca8f6044bd74acd0d364878b459d84ec460cf40aec17ed9cd5716e908/langsmith-0.4.25-py3-none-any.whl", hash = "sha256:adb61784ff58e65f0290ba45770626219fb06a776e69fbcf98aec580478b4686", size = 379416, upload-time = "2025-09-04T23:59:31.72Z" },
-]
-
-[[package]]
-name = "latex"
-version = "0.1.0"
-source = { editable = "latex" }
-dependencies = [
-    { name = "fastapi", extra = ["standard"] },
-    { name = "pdflatex" },
-    { name = "python-dotenv" },
-    { name = "uvicorn" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", extras = ["standard"], specifier = ">=0.116.1" },
-    { name = "pdflatex", specifier = ">=0.1.3" },
-    { name = "python-dotenv", specifier = ">=1.1.1" },
-    { name = "uvicorn", specifier = ">=0.35.0" },
 ]
 
 [[package]]

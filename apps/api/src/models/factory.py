@@ -29,7 +29,7 @@ class ModelFactory:
         
         if provider == 'openai':
             # return ChatOpenAI(model=model_name, api_key=api_key, **params)
-            return ChatOpenAI(base_url="https://models.github.ai/inference", model="openai/gpt-4.1", api_key=api_key, **params)
+            return ChatOpenAI(base_url="https://models.github.ai/inference", model="openai/gpt-4.1", api_key="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")
         elif provider == 'anthropic':
             return ChatAnthropic(model=model_name, api_key=api_key, **params)
         elif provider == 'gemini':

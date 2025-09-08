@@ -39,6 +39,7 @@ NEXT_PUBLIC_API_URL=http://localhost:7000
 ```bash
 cd apps/api
 uvicorn app:app --reload --host 0.0.0.0 --port 7000
+uvicorn app:app --port 7000
 ```
 
 ## API Endpoints

@@ -1,0 +1,3 @@
+If you do sst remove then
+1. Delete cloudfront CNAME from vercel and then add a new one with the same name and same domain
+2. Add HTTP only in Cloudfront /latex/* distribution
