@@ -23,7 +23,7 @@ export const CompareUs = () => {
             </thead>
             <tbody className="text-white">
               <tr className="border-t border-border">
-                <td className="px-6 py-4">Time</td>
+                <td className="px-6 py-4 text-center">Time</td>
                 <td className="bg-muted px-6 py-4">
                   Every time you have to copy from chat and paste the in your
                   document. It is not efficient & time consuming.
@@ -35,29 +35,54 @@ export const CompareUs = () => {
                 </td>
               </tr>
               <tr className="border-t border-border">
-                <td className="px-6 py-4">Prompts</td>
+                <td className="px-6 py-4 text-center">Prompts</td>
                 <td className="bg-muted px-6 py-4">
-                  Your prompts are not optimized for ATS.
+                  Your prompts may be not be optimized for ATS.
                 </td>
                 <td className="px-6 py-4">
                   We use prompts that are gathered from experts and different
                   sources that are proven to be high ATS ranking.
+                  <br />
+                  <a href="#reddit" className="text-sm text-muted-foreground">
+                    Check this.
+                  </a>
                 </td>
               </tr>
               <tr className="border-t border-border">
-                <td className="px-6 py-4">ATS Compatibility</td>
+                <td className="px-6 py-4 text-center">LaTex Support</td>
                 <td className="bg-muted px-6 py-4">
-                  Unable to pass Modern ATS that has detection mechanisms for
+                  They don&apos;t support LaTex. So you have to copy & paste the
+                  content every time.
+                </td>
+                <td className="px-6 py-4">
+                  We have our own LaTex editor & compiler which supports
+                  professional LaTex format, so you can download the content in
+                  LaTex format.
+                </td>
+              </tr>
+              <tr className="border-t border-border">
+                <td className="px-6 py-4 whitespace-nowrap text-center">
+                  ATS Compatibility
+                </td>
+                <td className="bg-muted px-6 py-4">Not aware of ATS.</td>
+                <td className="px-6 py-4">
+                  Our AI is designed to generate content that is aware of ATS.
+                </td>
+              </tr>
+              <tr className="border-t border-border">
+                <td className="px-6 py-4 text-center">AI Detectibility</td>
+                <td className="bg-muted px-6 py-4">
+                  Unable to pass ATS that has detection mechanisms for
                   human-written content & AI-generated content.
                 </td>
                 <td className="px-6 py-4">
                   Our AI is designed to generate content that is
                   indistinguishable from human-written text, ensuring
-                  compatibility with ATS.
+                  detectibility with ATS.
                 </td>
               </tr>
               <tr className="border-t border-border">
-                <td className="px-6 py-4">Hallucinations</td>
+                <td className="px-6 py-4 text-center">Hallucinations</td>
                 <td className="bg-muted px-6 py-4">
                   After 6-7 messages, the AI starts hallucinating. It forgets
                   your preferences and context you provided in the long previous
@@ -83,19 +108,7 @@ export const CompareUs = () => {
                 </td>
               </tr> */}
               <tr className="border-t border-border">
-                <td className="px-6 py-4">LaTex Support</td>
-                <td className="bg-muted px-6 py-4">
-                  They don&apos;t support LaTex. So you have to copy & paste the
-                  content every time.
-                </td>
-                <td className="px-6 py-4">
-                  We have our own LaTex editor & compiler which supports
-                  professional LaTex format, so you can download the content in
-                  LaTex format.
-                </td>
-              </tr>
-              <tr className="border-t border-border">
-                <td className="px-6 py-4">Cost</td>
+                <td className="px-6 py-4 text-center">Costs</td>
                 <td className="bg-muted px-6 py-4">
                   Most chat models provide free plans but once you have used the
                   free plan, most of them degrade the models, so gradually the
@@ -122,7 +135,7 @@ export const CompareUs = () => {
                 </td>
               </tr>
               <tr className="border-t border-border">
-                <td className="px-6 py-4">Models variety</td>
+                <td className="px-6 py-4 text-center">Models variety</td>
                 <td className="bg-muted px-6 py-4">
                   To choose different models you have to switch between
                   different websites, which is time consuming and inefficient.
@@ -141,7 +154,7 @@ export const CompareUs = () => {
                 </td>
               </tr>
               <tr className="border-t border-border">
-                <td className="px-6 py-4">Long Term Memory</td>
+                <td className="px-6 py-4 text-center">Long Term Memory</td>
                 <td className="bg-muted px-6 py-4">
                   Many AI chat models have short term memory. So they forget
                   your instructions and context after a few messages or changing

@@ -162,6 +162,25 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* width */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: var(--color-background);
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-border);
+    }
     /* * ::selection {
       color: var(--muted);
       background: var(--muted-foreground);
