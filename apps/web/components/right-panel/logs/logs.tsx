@@ -17,7 +17,7 @@ interface LogsTabProps {
   maxCompilationAttempts?: number;
 }
 
-export function LogsTab({
+function LogsTab({
   compilationError,
   isPending,
   onRetry,
@@ -135,3 +135,5 @@ export function LogsTab({
     </div>
   );
 }
+
+export default LogsTab;

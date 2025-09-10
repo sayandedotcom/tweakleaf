@@ -34,7 +34,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function JobTab() {
+function JobTab() {
   const [companyBio, setCompanyBio] = useLocalStorage("companyBio", "");
   const [jobDescription, setJobDescription] = useLocalStorage(
     "jobDescription",
@@ -127,3 +127,5 @@ export function JobTab() {
     </Form>
   );
 }
+
+export default JobTab;

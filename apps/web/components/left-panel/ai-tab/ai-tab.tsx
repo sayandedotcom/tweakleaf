@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
 import { CommingSoon } from "@/components/comming-soon";
 
-export function AiTab() {
+function AiTab() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get(navigation.RIGHT_PANEL.PARAM);
@@ -49,3 +49,5 @@ export function AiTab() {
     </Tabs>
   );
 }
+
+export default AiTab;

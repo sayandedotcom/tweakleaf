@@ -7,7 +7,7 @@ interface CoverLetterPdfProps {
   pdfBlob: Blob | null;
 }
 
-export function CoverLetterPdf({ pdfBlob }: CoverLetterPdfProps) {
+function CoverLetterPdf({ pdfBlob }: CoverLetterPdfProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   // FIXED: Update PDF URL when pdfBlob changes - removed pdfUrl from dependency array
@@ -83,3 +83,5 @@ export function CoverLetterPdf({ pdfBlob }: CoverLetterPdfProps) {
     );
   }
 }
+
+export default CoverLetterPdf;

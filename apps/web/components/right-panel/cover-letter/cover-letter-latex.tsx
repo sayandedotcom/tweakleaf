@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { EditorState } from "@codemirror/state";
 import {
   EditorView,
@@ -16,9 +16,9 @@ import {
   defaultHighlightStyle,
 } from "@codemirror/language";
 import { latex } from "codemirror-lang-latex";
-import { DEFAULT_COVER_LETTER_LATEX } from "@/configs/default-cover-letter-latex";
 import useLocalStorage from "use-local-storage";
 import { latexEditorTheme } from "@/configs/latex-editor-theme";
+import { coverLetterTemplates } from "@/configs/cover-letter-templates";
 
 interface CoverLetterLatexProps {
   onUserEditing?: (isEditing: boolean) => void;
@@ -32,11 +32,27 @@ const latexOptions = {
   autoCloseBrackets: false, // Disable as it interferes with autoCloseTags
 };
 
-export function CoverLetterLatex({
-  onUserEditing,
-}: CoverLetterLatexProps = {}) {
+function CoverLetterLatex({ onUserEditing }: CoverLetterLatexProps = {}) {
+  // Get the selected template from localStorage
+  const [selectedCoverLetterTemplate] = useLocalStorage(
+    "selectedCoverLetterTemplate",
+    coverLetterTemplates.find((t) => t.isDefault)?.value ||
+      coverLetterTemplates[0]?.value ||
+      "",
+  );
+
+  // Get the current template
+  const currentTemplate = coverLetterTemplates.find(
+    (t) => t.value === selectedCoverLetterTemplate,
+  );
+
+  // Get default content from the selected template
+  const getDefaultContent = useCallback(() => {
+    return currentTemplate?.latex || "";
+  }, [currentTemplate]);
+
   const [currentCoverLetterLatexContent, setCurrentCoverLetterLatexContent] =
-    useLocalStorage("coverLetterLatexContent", DEFAULT_COVER_LETTER_LATEX);
+    useLocalStorage("coverLetterLatexContent", getDefaultContent());
 
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -103,9 +119,9 @@ export function CoverLetterLatex({
         // Continue with basic editor if LaTeX extension fails
       }
 
-      // Use the content from localStorage or default
+      // Use the content from localStorage or default from selected template
       const initialContent =
-        currentCoverLetterLatexContent || DEFAULT_COVER_LETTER_LATEX;
+        currentCoverLetterLatexContent || getDefaultContent();
 
       const startState = EditorState.create({
         doc: initialContent,
@@ -131,7 +147,7 @@ export function CoverLetterLatex({
         clearTimeout(editingTimeoutRef.current);
       }
     };
-  }, []); // Remove dependency on currentCoverLetterLatexContent to prevent reinitialization
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync editor content with localStorage when it changes externally
   useEffect(() => {
@@ -162,24 +178,12 @@ export function CoverLetterLatex({
         clearTimeout(editingTimeoutRef.current);
       }
     };
-  }, [onUserEditing]);
-
-  // Function to reset the editor content
-  const resetEditor = () => {
-    if (viewRef.current) {
-      const transaction = viewRef.current.state.update({
-        changes: {
-          from: 0,
-          to: viewRef.current.state.doc.length,
-          insert: DEFAULT_COVER_LETTER_LATEX,
-        },
-        selection: { anchor: 0, head: 0 },
-      });
-      viewRef.current.dispatch(transaction);
-      setCurrentCoverLetterLatexContent(DEFAULT_COVER_LETTER_LATEX);
-      lastContentRef.current = DEFAULT_COVER_LETTER_LATEX;
-    }
-  };
+  }, [
+    onUserEditing,
+    currentCoverLetterLatexContent,
+    getDefaultContent,
+    setCurrentCoverLetterLatexContent,
+  ]);
 
   return (
     <div
@@ -190,3 +194,5 @@ export function CoverLetterLatex({
     />
   );
 }
+
+export default CoverLetterLatex;

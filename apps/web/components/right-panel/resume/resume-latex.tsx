@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { EditorState } from "@codemirror/state";
 import {
   EditorView,
@@ -16,9 +16,9 @@ import {
   defaultHighlightStyle,
 } from "@codemirror/language";
 import { latex } from "codemirror-lang-latex"; // Proper import for the LaTeX extension
-import { DEFAULT_RESUME_LATEX } from "@/configs/default-resume-latex";
 import useLocalStorage from "use-local-storage";
 import { latexEditorTheme } from "@/configs/latex-editor-theme";
+import { resumeTemplates } from "@/configs/resume-templates";
 
 interface ResumeLatexProps {
   onUserEditing?: (isEditing: boolean) => void;
@@ -32,9 +32,27 @@ const latexOptions = {
   autoCloseBrackets: false, // Disable as it interferes with autoCloseTags
 };
 
-export function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
+function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
+  // Get the selected template from localStorage
+  const [selectedResumeTemplate] = useLocalStorage(
+    "selectedResumeTemplate",
+    resumeTemplates.find((t) => t.isDefault)?.value ||
+      resumeTemplates[0]?.value ||
+      "",
+  );
+
+  // Get the current template
+  const currentTemplate = resumeTemplates.find(
+    (t) => t.value === selectedResumeTemplate,
+  );
+
+  // Get default content from the selected template
+  const getDefaultContent = useCallback(() => {
+    return currentTemplate?.latex || "";
+  }, [currentTemplate]);
+
   const [currentResumeLatexContent, setCurrentResumeLatexContent] =
-    useLocalStorage("resumeLatexContent", DEFAULT_RESUME_LATEX);
+    useLocalStorage("resumeLatexContent", getDefaultContent());
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const editingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -98,8 +116,8 @@ export function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
         // Continue with basic editor if LaTeX extension fails
       }
 
-      // Use the content from localStorage or default
-      const initialContent = currentResumeLatexContent || DEFAULT_RESUME_LATEX;
+      // Use the content from localStorage or default from selected template
+      const initialContent = currentResumeLatexContent || getDefaultContent();
 
       const startState = EditorState.create({
         doc: initialContent,
@@ -124,7 +142,7 @@ export function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
         clearTimeout(editingTimeoutRef.current);
       }
     };
-  }, []); // Remove dependency on currentResumeLatexContent to prevent reinitialization
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync editor content with localStorage when it changes externally
   useEffect(() => {
@@ -151,23 +169,12 @@ export function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
         clearTimeout(editingTimeoutRef.current);
       }
     };
-  }, [onUserEditing]);
-
-  // Function to reset the editor content
-  const resetEditor = () => {
-    if (viewRef.current) {
-      const transaction = viewRef.current.state.update({
-        changes: {
-          from: 0,
-          to: viewRef.current.state.doc.length,
-          insert: DEFAULT_RESUME_LATEX,
-        },
-        selection: { anchor: 0, head: 0 },
-      });
-      viewRef.current.dispatch(transaction);
-      setCurrentResumeLatexContent(DEFAULT_RESUME_LATEX);
-    }
-  };
+  }, [
+    onUserEditing,
+    currentResumeLatexContent,
+    getDefaultContent,
+    setCurrentResumeLatexContent,
+  ]);
 
   return (
     <div
@@ -178,3 +185,5 @@ export function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
     />
   );
 }
+
+export default ResumeLatex;

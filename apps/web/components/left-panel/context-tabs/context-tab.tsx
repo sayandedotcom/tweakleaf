@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { navigation } from "@/configs/navigation";
 
 import { useRouter, useSearchParams } from "next/navigation";
-export function ContextTab() {
+function ContextTab() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get(navigation.RIGHT_PANEL.PARAM);
@@ -28,8 +28,9 @@ export function ContextTab() {
         <TabsTrigger value={navigation.RIGHT_PANEL.COVER_LETTER}>
           Cover Letter
         </TabsTrigger>
-        <TabsTrigger value={navigation.RIGHT_PANEL.EMAIL}>
+        <TabsTrigger disabled value={navigation.RIGHT_PANEL.EMAIL}>
           Email / DM
+          <CommingSoon />
         </TabsTrigger>
       </TabsList>
       <TabsContent value={navigation.RIGHT_PANEL.RESUME}>
@@ -44,3 +45,5 @@ export function ContextTab() {
     </Tabs>
   );
 }
+
+export default ContextTab;

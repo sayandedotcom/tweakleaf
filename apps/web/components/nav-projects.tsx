@@ -1,7 +1,11 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
-
+import {
+  Mail,
+  MailPlus,
+  BriefcaseBusiness,
+  type LucideIcon,
+} from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -13,17 +17,30 @@ import { Button } from "./ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { navigation } from "@/configs/navigation";
-import { CommingSoon } from "./comming-soon";
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    name: string;
-    url: string;
-    icon: LucideIcon;
-  }[];
-}) {
+const projects: {
+  name: string;
+  url: string;
+  icon: LucideIcon;
+}[] = [
+  {
+    name: "Resume",
+    url: navigation.RIGHT_PANEL.RESUME,
+    icon: BriefcaseBusiness,
+  },
+  {
+    name: "Cover Letter",
+    url: navigation.RIGHT_PANEL.COVER_LETTER,
+    icon: MailPlus,
+  },
+  {
+    name: "Email / DMs",
+    url: navigation.RIGHT_PANEL.EMAIL,
+    icon: Mail,
+  },
+];
+
+export function NavProjects() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rightPanelCategory = searchParams.get(navigation.RIGHT_PANEL.PARAM);

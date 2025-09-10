@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown, Clock, Wrench, X } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,13 +24,9 @@ import { TooltipComponent } from "./tooltip-component";
 import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
 import { cn } from "@/lib/utils";
-import { ModelConfig } from "@/configs/models";
+import { models } from "@/configs/models";
 
-export function ModelSwitcher({
-  models: modelsProp,
-}: {
-  models: ModelConfig[];
-}) {
+export function ModelSwitcher() {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -72,14 +67,14 @@ export function ModelSwitcher({
   // If no model in URL, try to get from localStorage
   const getInitialModel = () => {
     if (currentModelUrl) {
-      return modelsProp.find((model) => model.url === currentModelUrl);
+      return models.find((model) => model.url === currentModelUrl);
     }
 
     // Try to get from localStorage
     if (typeof window !== "undefined") {
       const storedModelUrl = localStorage.getItem("modelName");
       if (storedModelUrl) {
-        const storedModel = modelsProp.find(
+        const storedModel = models.find(
           (model) => model.url === storedModelUrl,
         );
         if (storedModel) {
@@ -88,7 +83,7 @@ export function ModelSwitcher({
       }
     }
 
-    return modelsProp[0];
+    return models[0];
   };
 
   const activeModel = getInitialModel() || {
@@ -101,7 +96,7 @@ export function ModelSwitcher({
     isConfigured: () => false,
   };
 
-  const handleModelChange = (model: (typeof modelsProp)[0]) => {
+  const handleModelChange = (model: (typeof models)[0]) => {
     const params = new URLSearchParams(searchParams);
     params.set(navigation.MODEL.PARAM, model.url);
 
@@ -172,7 +167,7 @@ export function ModelSwitcher({
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 Models
               </DropdownMenuLabel>
-              {modelsProp.map((model) => (
+              {models.map((model) => (
                 <DropdownMenuItem
                   key={model.name}
                   onClick={() => handleModelChange(model)}

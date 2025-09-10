@@ -1,29 +1,49 @@
 "use client";
 
-import { JobTab } from "./job-tab";
-import { ContextTab } from "./context-tabs/context-tab";
-// import { TemplatesTab } from "./template-tabs/templates-tab";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AiTab } from "./ai-tab/ai-tab";
 import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
-import { CommingSoon } from "@/components/comming-soon";
+import { Loader } from "../loader";
+import dynamic from "next/dynamic";
+import { useCallback, useMemo } from "react";
 
-export function LeftPanelComponent() {
+const JobTab = dynamic(() => import("./job-tab"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
+const ContextTab = dynamic(() => import("./context-tabs/context-tab"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
+const AiTab = dynamic(() => import("./ai-tab/ai-tab"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
+
+export function LeftPanel() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get(navigation.LEFT_PANEL.PARAM);
-  const params = new URLSearchParams(searchParams);
+
+  const params = useMemo(
+    () => new URLSearchParams(searchParams),
+    [searchParams],
+  );
+
+  const handleValueChange = useCallback(
+    (value: string) => {
+      params.set(navigation.LEFT_PANEL.PARAM, value);
+      router.push(`?${params.toString()}`);
+    },
+    [params, router],
+  );
 
   return (
     <Tabs
       defaultValue={category || navigation.LEFT_PANEL.JOB}
       value={category || navigation.LEFT_PANEL.JOB}
       className="flex flex-col h-full"
-      onValueChange={(value) => {
-        params.set(navigation.LEFT_PANEL.PARAM, value);
-        router.push(`?${params.toString()}`);
-      }}
+      onValueChange={handleValueChange}
     >
       <header className="flex gap-2 items-center w-full justify-between px-2 py-0.5 border-b">
         <TabsList className="w-full">
@@ -31,9 +51,6 @@ export function LeftPanelComponent() {
           <TabsTrigger value={navigation.LEFT_PANEL.AI}>AI</TabsTrigger>
           <TabsTrigger value={navigation.LEFT_PANEL.CONTEXTS}>
             Contexts
-          </TabsTrigger>
-          <TabsTrigger disabled value={navigation.LEFT_PANEL.TEMPLATES}>
-            Templates <CommingSoon />
           </TabsTrigger>
         </TabsList>
       </header>
@@ -46,9 +63,6 @@ export function LeftPanelComponent() {
       <TabsContent value={navigation.LEFT_PANEL.CONTEXTS}>
         <ContextTab />
       </TabsContent>
-      {/* <TabsContent value={navigation.LEFT_PANEL.TEMPLATES}>
-        <TemplatesTab />
-      </TabsContent> */}
     </Tabs>
   );
 }

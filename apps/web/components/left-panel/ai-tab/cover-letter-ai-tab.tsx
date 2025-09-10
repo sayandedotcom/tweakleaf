@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { navigation } from "@/configs/navigation";
 import { models } from "@/configs/models";
 import { useAuth } from "@clerk/nextjs";
+import { Badge } from "@/components/ui/badge";
 
 interface ChatMessageData {
   role: string;
@@ -277,39 +278,35 @@ export function CoverLetterTab() {
   return (
     <div className="grid grid-rows-[1fr_auto] h-full overflow-hidden">
       {/* Header with Model Info */}
-      <div className="px-4 py-2 border-b bg-muted/30">
-        <div className="flex items-center justify-between">
+      <div className="px-4 py-2 flex items-center justify-between mb-auto bg-muted/30 border">
+        <Badge variant={"outline"} className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Current Model:</span>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              Current Model:
-            </span>
-            <div className="flex items-center gap-2">
-              {currentModel?.logo && (
-                <div className="w-5 h-5">
-                  <currentModel.logo className="w-full h-full" />
-                </div>
-              )}
-              <span className="text-sm font-medium">{currentModel?.name}</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {currentModel?.isConfigured() ? (
-              <div className="flex items-center gap-1 text-xs text-green-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                Configured
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-xs text-red-600">
-                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                Not Configured
+            {currentModel?.logo && (
+              <div className="w-5 h-5">
+                <currentModel.logo className="w-full h-full" />
               </div>
             )}
+            <span className="text-sm font-medium">{currentModel?.name}</span>
           </div>
-        </div>
+        </Badge>
+        <Badge variant={"outline"} className="flex items-center gap-2">
+          {currentModel?.isConfigured() ? (
+            <div className="flex items-center gap-1 text-xs text-green-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Configured
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 text-xs text-red-600">
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+              Not Configured
+            </div>
+          )}
+        </Badge>
       </div>
 
       {/* Messages Container - Scrollable with explicit height */}
-      <div className="overflow-y-auto overflow-x-hidden min-h-0 relative">
+      <div className="overflow-y-auto pt-1 overflow-x-hidden min-h-0 relative">
         {!isEmpty && (
           <div className="px-4 pb-4">
             <div className="space-y-4">

@@ -2,10 +2,8 @@
 
 import {
   ChevronRight,
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
+  Settings2,
+  SquareTerminal,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,21 +26,55 @@ import { Button } from "./ui/button";
 import { navigation } from "@/configs/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { settingsTabs } from "@/configs/settings-tabs";
 
-export function NavMain({
-  items,
-}: {
+const items: {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  isActive: boolean;
   items: {
     title: string;
     url: string;
-    icon?: LucideIcon;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
   }[];
-}) {
+}[] = [
+  {
+    title: "Contexts",
+    url: navigation.LEFT_PANEL.CONTEXTS,
+    icon: SquareTerminal,
+    isActive: false,
+    items: [
+      {
+        title: "Resume Context",
+        url: navigation.RIGHT_PANEL.RESUME,
+      },
+      {
+        title: "Cover Letter Context",
+        url: navigation.RIGHT_PANEL.COVER_LETTER,
+      },
+      {
+        title: "Email / DMs Context",
+        url: navigation.RIGHT_PANEL.EMAIL,
+      },
+      {
+        title: "Cold Email Context",
+        url: navigation.RIGHT_PANEL.EMAIL,
+      },
+    ],
+  },
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: Settings2,
+    items: settingsTabs.map((tab) => ({
+      title: tab.title,
+      url: tab.href,
+    })),
+    isActive: false,
+  },
+];
+
+export function NavMain() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);

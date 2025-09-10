@@ -7,7 +7,7 @@ interface ResumePdfProps {
   pdfBlob: Blob | null;
 }
 
-export function ResumePdf({ pdfBlob }: ResumePdfProps) {
+function ResumePdf({ pdfBlob }: ResumePdfProps) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   // FIXED: Update PDF URL when pdfBlob changes - removed pdfUrl from dependency array
@@ -83,3 +83,5 @@ export function ResumePdf({ pdfBlob }: ResumePdfProps) {
     );
   }
 }
+
+export default ResumePdf;
