@@ -9,9 +9,12 @@ importers:
   .:
     dependencies:
       sst:
-        specifier: ^3.17.12
+        specifier: 3.17.12
         version: 3.17.12
     devDependencies:
+      '@types/aws-lambda':
+        specifier: 8.10.152
+        version: 8.10.152
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -1260,6 +1263,9 @@ packages:
 
   '@tsconfig/bun@1.0.7':
     resolution: {integrity: sha512-udGrGJBNQdXGVulehc1aWT73wkR9wdaGBtB6yL70RJsqwW/yJhIg6ZbRlPOfIUiFNrnBuYLBi9CSmMKfDC7dvA==}
+
+  '@types/aws-lambda@8.10.152':
+    resolution: {integrity: sha512-soT/c2gYBnT5ygwiHPmd9a1bftj462NWVk2tKCc1PYHSIacB2UwbTS2zYG4jzag1mRDuzg/OjtxQjQ2NKRB6Rw==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -4511,6 +4517,8 @@ snapshots:
       react: 19.1.0
 
   '@tsconfig/bun@1.0.7': {}
+
+  '@types/aws-lambda@8.10.152': {}
 
   '@types/debug@4.1.12':
     dependencies:
