@@ -9,24 +9,6 @@ export const useAxios = axios.create({
   timeout: 30000, // 30 seconds
 });
 
-export const useCompiler = axios.create({
-  baseURL: "http://127.0.0.1:8000",
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 30000, // 30 seconds
-});
-
-export const apiAxios = axios.create({
-  baseURL: "http://127.0.0.1:7000",
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  timeout: 30000, // 30 seconds
-});
-
 // Add response interceptor for debugging
 useAxios.interceptors.response.use(
   (response) => {
