@@ -2,7 +2,7 @@
 
 import {
   ChevronRight,
-  Settings2,
+  BookPlus,
   SquareTerminal,
   type LucideIcon,
 } from "lucide-react";
@@ -33,6 +33,7 @@ const items: {
   url: string;
   icon: LucideIcon;
   isActive: boolean;
+  baseUrl: string;
   items: {
     title: string;
     url: string;
@@ -41,8 +42,9 @@ const items: {
   {
     title: "Contexts",
     url: navigation.LEFT_PANEL.CONTEXTS,
-    icon: SquareTerminal,
+    icon: BookPlus,
     isActive: false,
+    baseUrl: "tweak",
     items: [
       {
         title: "Resume Context",
@@ -52,10 +54,10 @@ const items: {
         title: "Cover Letter Context",
         url: navigation.RIGHT_PANEL.COVER_LETTER,
       },
-      {
-        title: "Email / DMs Context",
-        url: navigation.RIGHT_PANEL.EMAIL,
-      },
+      // {
+      //   title: "Email / DMs Context",
+      //   url: navigation.RIGHT_PANEL.EMAIL,
+      // },
       {
         title: "Cold Email Context",
         url: navigation.RIGHT_PANEL.EMAIL,
@@ -63,15 +65,33 @@ const items: {
     ],
   },
   {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings2,
-    items: settingsTabs.map((tab) => ({
-      title: tab.title,
-      url: tab.href,
-    })),
+    title: "Prompts",
+    url: navigation.LEFT_PANEL.PROMPTS,
+    icon: SquareTerminal,
     isActive: false,
+    baseUrl: "tweak",
+    items: [
+      {
+        title: "Resume Prompt",
+        url: navigation.RIGHT_PANEL.RESUME,
+      },
+      {
+        title: "Cover Letter Prompt",
+        url: navigation.RIGHT_PANEL.COVER_LETTER,
+      },
+    ],
   },
+  // {
+  //   title: "Settings",
+  //   url: "/settings",
+  //   icon: Settings2,
+  //   baseUrl: "settings",
+  //   items: settingsTabs.map((tab) => ({
+  //     title: tab.title,
+  //     url: tab.href,
+  //   })),
+  //   isActive: false,
+  // },
 ];
 
 export function NavMain() {
@@ -82,7 +102,7 @@ export function NavMain() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Tweaks</SidebarGroupLabel>
+      <SidebarGroupLabel>Configure</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -116,7 +136,7 @@ export function NavMain() {
                               navigation.RIGHT_PANEL.PARAM,
                               subItem.url,
                             );
-                            router.push(`?${params.toString()}`);
+                            router.push(`/tweak?${params.toString()}`);
                           }}
                         >
                           <span>{subItem.title}</span>

@@ -19,6 +19,7 @@ import { latex } from "codemirror-lang-latex";
 import useLocalStorage from "use-local-storage";
 import { latexEditorTheme } from "@/configs/latex-editor-theme";
 import { coverLetterTemplates } from "@/configs/cover-letter-templates";
+import { screenToLayoutHeight } from "@/configs/screen-to-layout-height";
 
 interface CoverLetterLatexProps {
   onUserEditing?: (isEditing: boolean) => void;
@@ -190,7 +191,7 @@ function CoverLetterLatex({ onUserEditing }: CoverLetterLatexProps = {}) {
       id="latex-editor"
       ref={editorRef}
       className="w-full border border-gray-200 overflow-hidden"
-      style={{ height: "calc(100vh - 110px)" }}
+      style={{ height: screenToLayoutHeight }}
     />
   );
 }

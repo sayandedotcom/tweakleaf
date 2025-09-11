@@ -5,21 +5,23 @@ import { useSearchParams } from "next/navigation";
 import { type Message } from "@/components/ui/chat-message";
 import { ChatMessage } from "@/components/ui/chat-message";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+// Removed Switch and Label imports since we removed context toggle functionality
 import { AiInput } from "@/components/kokonutui/ai-input";
-import { useTweakCoverLetter } from "@/hooks/use-tweak-coverletter";
+import {
+  useTweakCoverLetter,
+  useCoverLetterMessages,
+} from "@/hooks/use-tweak-coverletter";
 import useLocalStorage from "use-local-storage";
 import { toast } from "sonner";
 import { navigation } from "@/configs/navigation";
 import { models } from "@/configs/models";
 import { useAuth } from "@clerk/nextjs";
 import { Badge } from "@/components/ui/badge";
+import { TypingIndicator } from "@/components/ui/typing-indicator";
 
-interface ChatMessageData {
-  role: string;
+interface BaseMessage {
+  type: string;
   content: string;
-  timestamp?: string;
 }
 
 export function CoverLetterTab() {
@@ -30,12 +32,15 @@ export function CoverLetterTab() {
   const [status, setStatus] = useState<"idle" | "submitted" | "streaming">(
     "idle",
   );
-  const [messageContexts, setMessageContexts] = useState<
-    Record<string, boolean>
-  >({});
+  // Removed messageContexts since we're using thread-based messages
+  const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { mutate: generateCoverLetter, isPending } = useTweakCoverLetter();
+
+  // Fetch messages for current thread
+  const { data: threadMessages, refetch: refetchMessages } =
+    useCoverLetterMessages(currentThreadId);
 
   // Get current model from URL query parameter
   const modelName = searchParams.get(navigation.MODEL.PARAM);
@@ -47,31 +52,58 @@ export function CoverLetterTab() {
     "coverLetterLatexContent",
     "",
   );
+  const [storedThreadId, setStoredThreadId] = useLocalStorage(
+    "coverLetterThreadId",
+    "",
+  );
 
   // Get the current model and its API key
   const currentModel =
     models.find((model) => model.url === modelName) || models[0];
-  const getModelApiKey = () => {
-    if (typeof window === "undefined" || !currentModel) return "";
-
-    try {
-      const stored = localStorage.getItem("tweak_jobs_model_api_keys");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const modelKey = currentModel.url.toLowerCase();
-        return parsed[modelKey] || "";
-      }
-    } catch (error) {
-      console.error("Error getting model API key:", error);
-    }
-    return "";
-  };
 
   const [apiKey, setApiKey] = useState("");
+
+  // Load stored thread ID on component mount
+  useEffect(() => {
+    if (storedThreadId && !currentThreadId) {
+      setCurrentThreadId(storedThreadId);
+    }
+  }, [storedThreadId, currentThreadId]);
+
+  // Convert thread messages to UI messages
+  useEffect(() => {
+    if (threadMessages?.messages) {
+      const uiMessages: Message[] = threadMessages.messages.map(
+        (msg: BaseMessage, index: number) => ({
+          id: `thread-${index}`,
+          role: msg.type === "human" ? "user" : "assistant",
+          content: msg.content,
+          createdAt: new Date(),
+        }),
+      );
+      setMessages(uiMessages);
+    }
+  }, [threadMessages]);
 
   // Update API key when model changes or localStorage changes
   useEffect(() => {
     if (!currentModel) return;
+
+    const getModelApiKey = () => {
+      if (typeof window === "undefined" || !currentModel) return "";
+
+      try {
+        const stored = localStorage.getItem("tweak_jobs_model_api_keys");
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const modelKey = currentModel.url.toLowerCase();
+          return parsed[modelKey] || "";
+        }
+      } catch (error) {
+        console.error("Error getting model API key:", error);
+      }
+      return "";
+    };
 
     const updateApiKey = () => {
       setApiKey(getModelApiKey());
@@ -106,7 +138,7 @@ export function CoverLetterTab() {
         handleCustomStorageChange as EventListener,
       );
     };
-  }, [modelName, currentModel?.url]);
+  }, [modelName, currentModel?.url, currentModel]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -123,20 +155,12 @@ export function CoverLetterTab() {
   const handleSubmit = () => {
     if (!input.trim()) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: input,
-      createdAt: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setMessageContexts((prev) => ({ ...prev, [userMessage.id]: false }));
+    const userMessage = input;
     setInput("");
     setStatus("submitted");
 
     // Call the AI agent with the user's message
-    callAIAgent(input);
+    callAIAgent(userMessage);
   };
 
   const callAIAgent = (userMessage: string) => {
@@ -165,13 +189,6 @@ export function CoverLetterTab() {
       return;
     }
 
-    // Convert messages to chat format for the API
-    const chatHistory: ChatMessageData[] = messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-      timestamp: msg.createdAt?.toISOString(),
-    }));
-
     // Trigger the cover letter generation API
     generateCoverLetter(
       {
@@ -184,25 +201,25 @@ export function CoverLetterTab() {
         job_description: jobDescription,
         coverletter: coverLetterLatexContent,
         user_message: userMessage,
-        chat_history: chatHistory,
+        thread_id: currentThreadId || undefined,
       },
       {
         onSuccess: (response) => {
+          console.log("✅ API Response:", response);
+
           // Update the cover letter content in local storage
           if (response.coverletter) {
             setCoverLetterLatexContent(response.coverletter);
           }
 
-          // Add AI response as a message
-          const aiMessage: Message = {
-            id: Date.now().toString(),
-            role: "assistant",
-            content:
-              response.messages?.[response.messages.length - 1]?.content ||
-              "Cover letter updated successfully!",
-            createdAt: new Date(),
-          };
-          setMessages((prev) => [...prev, aiMessage]);
+          // Update thread ID if this is a new thread
+          if (response.thread_id && !currentThreadId) {
+            setCurrentThreadId(response.thread_id);
+            setStoredThreadId(response.thread_id);
+          }
+
+          // Refetch messages to get the updated conversation
+          refetchMessages();
           setStatus("idle");
 
           toast.success("Cover Letter Updated!", {
@@ -211,17 +228,10 @@ export function CoverLetterTab() {
           });
         },
         onError: (error) => {
-          console.error("Failed to update cover letter:", error);
+          console.error("❌ Failed to update cover letter:", error);
+          console.error("❌ Error details:", error.message);
+          console.error("❌ Error status:", error?.cause);
 
-          // Add error message to chat
-          const errorMessage: Message = {
-            id: Date.now().toString(),
-            role: "assistant",
-            content:
-              "Sorry, I couldn't process your request. Please try again.",
-            createdAt: new Date(),
-          };
-          setMessages((prev) => [...prev, errorMessage]);
           setStatus("idle");
 
           toast.error("Update Failed", {
@@ -258,22 +268,19 @@ export function CoverLetterTab() {
       return;
     }
 
+    // Clear current thread to start a new conversation
+    setCurrentThreadId(null);
+    setStoredThreadId("");
+
     // Call the AI agent with an initial message
     callAIAgent("Start building my cover letter");
   };
 
-  const toggleMessageContext = (messageId: string) => {
-    setMessageContexts((prev) => ({
-      ...prev,
-      [messageId]: !prev[messageId],
-    }));
-  };
+  // Removed toggleMessageContext since we're using thread-based messages
 
   const isGenerating = status === "submitted" || status === "streaming";
 
-  const lastMessage = messages.at(-1);
   const isEmpty = messages.length === 0;
-  const isTyping = lastMessage?.role === "user";
 
   return (
     <div className="grid grid-rows-[1fr_auto] h-full overflow-hidden">
@@ -313,26 +320,15 @@ export function CoverLetterTab() {
               {messages.map((message, index) => (
                 <div key={message.id || index}>
                   <ChatMessage {...message} showTimeStamp={true} />
-                  {/* Context Toggle for User Messages */}
-                  {message.role === "user" && (
-                    <div className="flex items-center gap-2 ml-auto mt-2 p-2 bg-muted/50 rounded-lg max-w-fit">
-                      <span className="text-xs text-muted-foreground">
-                        Update context:
-                      </span>
-                      <Switch
-                        id={`context-switch-${message.id}`}
-                        checked={messageContexts[message.id]}
-                        onCheckedChange={() => toggleMessageContext(message.id)}
-                      />
-                      <Label htmlFor={`context-switch-${message.id}`}>
-                        {messageContexts[message.id]
-                          ? "Added to your context"
-                          : "Not added to your context"}
-                      </Label>
-                    </div>
-                  )}
                 </div>
               ))}
+
+              {/* Show typing indicator when AI is processing */}
+              {isGenerating && (
+                <div className="flex justify-start">
+                  <TypingIndicator />
+                </div>
+              )}
             </div>
             {/* Invisible element to scroll to */}
             <div ref={messagesEndRef} />

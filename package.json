@@ -1,5 +1,5 @@
 {
-  "name": "tweak.jobs",
+  "name": "tweakleaf",
   "private": true,
   "scripts": {
     "build": "turbo run build",

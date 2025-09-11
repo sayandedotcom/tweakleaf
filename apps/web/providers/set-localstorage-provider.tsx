@@ -67,10 +67,7 @@ export function SetLocalstorageProvider() {
       router.push(`?${params.toString()}`);
     }
     if (!rightCategory) {
-      params.set(
-        navigation.RIGHT_PANEL.PARAM,
-        navigation.RIGHT_PANEL.COVER_LETTER,
-      );
+      params.set(navigation.RIGHT_PANEL.PARAM, navigation.RIGHT_PANEL.RESUME);
       router.push(`?${params.toString()}`);
     }
     if (!format) {

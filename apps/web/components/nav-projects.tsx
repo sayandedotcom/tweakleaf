@@ -2,7 +2,7 @@
 
 import {
   Mail,
-  MailPlus,
+  FileUser,
   BriefcaseBusiness,
   type LucideIcon,
 } from "lucide-react";
@@ -14,9 +14,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "./ui/button";
-import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { navigation } from "@/configs/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const projects: {
   name: string;
@@ -31,10 +31,10 @@ const projects: {
   {
     name: "Cover Letter",
     url: navigation.RIGHT_PANEL.COVER_LETTER,
-    icon: MailPlus,
+    icon: FileUser,
   },
   {
-    name: "Email / DMs",
+    name: "Cold Mails",
     url: navigation.RIGHT_PANEL.EMAIL,
     icon: Mail,
   },
@@ -48,7 +48,7 @@ export function NavProjects() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <SidebarGroupLabel>Tweak !</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>

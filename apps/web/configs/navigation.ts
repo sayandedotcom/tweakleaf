@@ -6,6 +6,7 @@ export const navigation = {
     CONTEXTS: "context",
     TEMPLATES: "template",
     STORE: "store",
+    PROMPTS: "prompt",
   },
   RIGHT_PANEL: {
     PARAM: "right-panel",

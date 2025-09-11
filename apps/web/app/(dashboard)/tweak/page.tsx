@@ -11,7 +11,7 @@ import { SetLocalstorageProvider } from "@/providers/set-localstorage-provider";
 
 export default function TweakPage() {
   return (
-    <section className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <section className="flex flex-1 flex-col gap-4 p-2">
       <SetLocalstorageProvider />
       <ResizablePanelGroup direction="horizontal" className="rounded-lg border">
         <ResizablePanel defaultSize={50}>

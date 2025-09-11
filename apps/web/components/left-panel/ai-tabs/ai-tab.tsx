@@ -1,12 +1,12 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ResumeTab } from "@/components/left-panel/ai-tab/resume-ai-tab";
-import { CoverLetterTab } from "@/components/left-panel/ai-tab/cover-letter-ai-tab";
-import { MailTab } from "@/components/left-panel/ai-tab/mail-ai-tab";
+import { ResumeTab } from "@/components/left-panel/ai-tabs/resume-ai-tab";
+import { CoverLetterTab } from "@/components/left-panel/ai-tabs/cover-letter-ai-tab";
 import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
-import { CommingSoon } from "@/components/comming-soon";
+import { MailTab } from "@/components/left-panel/ai-tabs/mail-ai-tab";
+import { screenToLayoutHeight } from "@/configs/screen-to-layout-height";
 
 function AiTab() {
   const router = useRouter();
@@ -19,7 +19,7 @@ function AiTab() {
       defaultValue={category || navigation.RIGHT_PANEL.RESUME}
       value={category || navigation.RIGHT_PANEL.RESUME}
       className="flex flex-col px-2"
-      style={{ height: "calc(100vh - 110px)" }}
+      style={{ height: screenToLayoutHeight }}
       onValueChange={(value) => {
         params.set(navigation.RIGHT_PANEL.PARAM, value);
         router.push(`?${params.toString()}`);
@@ -30,8 +30,8 @@ function AiTab() {
         <TabsTrigger value={navigation.RIGHT_PANEL.COVER_LETTER}>
           Cover Letter
         </TabsTrigger>
-        <TabsTrigger disabled value={navigation.RIGHT_PANEL.EMAIL}>
-          Email / DM <CommingSoon />
+        <TabsTrigger value={navigation.RIGHT_PANEL.EMAIL}>
+          Cold mail
         </TabsTrigger>
       </TabsList>
       <TabsContent value={navigation.RIGHT_PANEL.RESUME}>

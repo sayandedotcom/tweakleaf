@@ -19,6 +19,7 @@ import { latex } from "codemirror-lang-latex"; // Proper import for the LaTeX ex
 import useLocalStorage from "use-local-storage";
 import { latexEditorTheme } from "@/configs/latex-editor-theme";
 import { resumeTemplates } from "@/configs/resume-templates";
+import { screenToLayoutHeight } from "@/configs/screen-to-layout-height";
 
 interface ResumeLatexProps {
   onUserEditing?: (isEditing: boolean) => void;
@@ -181,7 +182,7 @@ function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
       id="latex-editor"
       ref={editorRef}
       className="w-full border border-gray-200 overflow-hidden"
-      style={{ height: "calc(100vh - 110px)" }}
+      style={{ height: screenToLayoutHeight }}
     />
   );
 }

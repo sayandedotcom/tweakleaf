@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
 import { Loader } from "../loader";
 import dynamic from "next/dynamic";
-import { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 const JobTab = dynamic(() => import("./job-tab"), {
   ssr: false,
@@ -15,11 +15,18 @@ const ContextTab = dynamic(() => import("./context-tabs/context-tab"), {
   ssr: false,
   loading: () => <Loader />,
 });
-const AiTab = dynamic(() => import("./ai-tab/ai-tab"), {
+const AiTab = dynamic(() => import("./ai-tabs/ai-tab"), {
   ssr: false,
   loading: () => <Loader />,
 });
-
+const PromptsTab = dynamic(() => import("./prompt-tabs/prompt-tab"), {
+  ssr: false,
+  loading: () => <Loader />,
+});
+const MemoizedJobTab = React.memo(JobTab);
+const MemoizedAiTab = React.memo(AiTab);
+const MemoizedContextTab = React.memo(ContextTab);
+const MemoizedPromptsTab = React.memo(PromptsTab);
 export function LeftPanel() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -52,16 +59,22 @@ export function LeftPanel() {
           <TabsTrigger value={navigation.LEFT_PANEL.CONTEXTS}>
             Contexts
           </TabsTrigger>
+          <TabsTrigger value={navigation.LEFT_PANEL.PROMPTS}>
+            Prompts
+          </TabsTrigger>
         </TabsList>
       </header>
       <TabsContent value={navigation.LEFT_PANEL.JOB}>
-        <JobTab />
+        <MemoizedJobTab />
       </TabsContent>
       <TabsContent value={navigation.LEFT_PANEL.AI}>
-        <AiTab />
+        <MemoizedAiTab />
       </TabsContent>
       <TabsContent value={navigation.LEFT_PANEL.CONTEXTS}>
-        <ContextTab />
+        <MemoizedContextTab />
+      </TabsContent>
+      <TabsContent value={navigation.LEFT_PANEL.PROMPTS}>
+        <MemoizedPromptsTab />
       </TabsContent>
     </Tabs>
   );
