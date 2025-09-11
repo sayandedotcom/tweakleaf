@@ -1,11 +1,10 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAxios } from "./use-axios";
 import { AxiosError } from "axios";
 
-interface ChatMessage {
-  role: string;
+interface BaseMessage {
+  type: string;
   content: string;
-  timestamp?: string;
 }
 
 interface CoverLetterRequest {
@@ -17,13 +16,14 @@ interface CoverLetterRequest {
   job_description: string;
   coverletter: string;
   user_message?: string;
-  chat_history?: ChatMessage[];
+  thread_id?: string;
 }
 
 interface CoverLetterResponse {
-  messages: ChatMessage[];
+  messages: Array<{ type: string; content: string }>;
   status: number;
   coverletter: string;
+  thread_id: string;
 }
 
 export const useTweakCoverLetter = () => {
@@ -36,7 +36,7 @@ export const useTweakCoverLetter = () => {
           "Content-Type": "application/json",
         },
         // Add timeout to prevent hanging requests
-        timeout: 30000, // 30 seconds
+        // timeout: 30000, // 30 seconds
       });
 
       return response.data;
@@ -62,5 +62,26 @@ export const useTweakCoverLetter = () => {
     },
     // Add mutation key for better debugging
     mutationKey: ["cover-letter-generation"],
+  });
+};
+
+export const useCoverLetterMessages = (threadId: string | null) => {
+  return useQuery({
+    queryKey: ["cover-letter-messages", threadId],
+    queryFn: async (): Promise<{
+      messages: Array<{ type: string; content: string }>;
+      thread_id: string;
+    }> => {
+      if (!threadId) {
+        return { messages: [], thread_id: "" };
+      }
+
+      const response = await useAxios.get(
+        `/tweak/coverletter/messages?thread_id=${threadId}`,
+      );
+      return response.data;
+    },
+    enabled: !!threadId,
+    retry: false,
   });
 };
