@@ -54,6 +54,10 @@ function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
 
   const [currentResumeLatexContent, setCurrentResumeLatexContent] =
     useLocalStorage("resumeLatexContent", getDefaultContent());
+  const [scrollPosition, setScrollPosition] = useLocalStorage(
+    "resumeLatexScrollPosition",
+    0,
+  );
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const editingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -104,6 +108,15 @@ function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
           }
         }),
 
+        // Scroll position tracking
+        EditorView.scrollMargins.of(() => ({ top: 0, bottom: 0 })),
+        EditorView.updateListener.of((update) => {
+          if (viewRef.current && update.view) {
+            const scrollTop = update.view.scrollDOM.scrollTop;
+            setScrollPosition(scrollTop);
+          }
+        }),
+
         // Enhanced LaTeX theme
         EditorView.theme(latexEditorTheme),
       ];
@@ -131,6 +144,13 @@ function ResumeLatex({ onUserEditing }: ResumeLatexProps = {}) {
       });
 
       viewRef.current = view;
+
+      // Restore scroll position after editor is created
+      setTimeout(() => {
+        if (viewRef.current && scrollPosition > 0) {
+          viewRef.current.scrollDOM.scrollTop = scrollPosition;
+        }
+      }, 100);
     }
 
     // Cleanup function

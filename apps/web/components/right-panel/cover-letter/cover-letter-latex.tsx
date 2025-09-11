@@ -54,6 +54,10 @@ function CoverLetterLatex({ onUserEditing }: CoverLetterLatexProps = {}) {
 
   const [currentCoverLetterLatexContent, setCurrentCoverLetterLatexContent] =
     useLocalStorage("coverLetterLatexContent", getDefaultContent());
+  const [scrollPosition, setScrollPosition] = useLocalStorage(
+    "coverLetterLatexScrollPosition",
+    0,
+  );
 
   const editorRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -107,6 +111,15 @@ function CoverLetterLatex({ onUserEditing }: CoverLetterLatexProps = {}) {
           }
         }),
 
+        // Scroll position tracking
+        EditorView.scrollMargins.of(() => ({ top: 0, bottom: 0 })),
+        EditorView.updateListener.of((update) => {
+          if (viewRef.current && update.view) {
+            const scrollTop = update.view.scrollDOM.scrollTop;
+            setScrollPosition(scrollTop);
+          }
+        }),
+
         // Enhanced LaTeX theme
         EditorView.theme(latexEditorTheme),
       ];
@@ -136,6 +149,13 @@ function CoverLetterLatex({ onUserEditing }: CoverLetterLatexProps = {}) {
 
       viewRef.current = view;
       lastContentRef.current = initialContent;
+
+      // Restore scroll position after editor is created
+      setTimeout(() => {
+        if (viewRef.current && scrollPosition > 0) {
+          viewRef.current.scrollDOM.scrollTop = scrollPosition;
+        }
+      }, 100);
     }
 
     // Cleanup function
