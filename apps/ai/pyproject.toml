@@ -9,7 +9,5 @@ dependencies = []
 [tool.uv.workspace]
 members = [
     "tweak",
-    "auth",
-    "database",
     "compiler",
 ]
