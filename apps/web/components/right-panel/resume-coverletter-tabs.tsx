@@ -18,17 +18,17 @@ import { navigation } from "@/configs/navigation";
 import { useLatexCompilation } from "@/hooks/use-latex-compilation";
 import { toast } from "sonner";
 import useLocalStorage from "use-local-storage";
-import { Download, RefreshCw, Play, ListRestart } from "lucide-react";
+import { Download, RefreshCw, Play, ListRestart, Logs } from "lucide-react";
 import { PdfTab } from "./pdf-tab";
 import { LatexTab } from "./latex-tab";
 import { resumeTemplates } from "@/configs/resume-templates";
 import { coverLetterTemplates } from "@/configs/cover-letter-templates";
 import { CommingSoon } from "../comming-soon";
-// import { useStore } from "@/store/store";
 
 import dynamic from "next/dynamic";
 import { Loader } from "../loader";
 import { AlertDialogComponent } from "../alert-dialog-component";
+import { SaveFileButton } from "../save-file-button";
 
 const ResumePdf = dynamic(() => import("./resume/resume-pdf"), {
   ssr: false,
@@ -726,7 +726,30 @@ export function ResumeCoverLetterTabs() {
   };
 
   const handleDownload = () => {
-    if (currentPdfBlob) {
+    // Check if we're in LaTeX tab
+    if (format === navigation.FORMAT.LATEX) {
+      // Download LaTeX file
+      const currentContent =
+        rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+          ? currentResumeLatexContent
+          : currentCoverLetterLatexContent;
+
+      if (currentContent) {
+        const blob = new Blob([currentContent], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        const fileName =
+          rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+            ? "resume.tex"
+            : "cover_letter.tex";
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      }
+    } else if (currentPdfBlob) {
+      // Download PDF file (existing logic)
       const link = document.createElement("a");
       link.href = URL.createObjectURL(currentPdfBlob);
       const fileName =
@@ -753,14 +776,13 @@ export function ResumeCoverLetterTabs() {
       <header className="flex gap-2 items-center w-full justify-between px-2 py-0.5 border-b">
         <TabsList>
           <TabsTrigger value={navigation.FORMAT.PDF}>PDF</TabsTrigger>
-          <TabsTrigger value={navigation.FORMAT.LATEX}>LaTex</TabsTrigger>
-          <TabsTrigger value={navigation.FORMAT.LOGS}>
-            Logs
+          <TabsTrigger value={navigation.FORMAT.LATEX}>LaTeX</TabsTrigger>
+          <TabsTrigger value={navigation.FORMAT.LOGS} className="relative">
+            <Logs />
             {compilationError && (
-              // <span className="ml-1 w-1 h-1 bg-destructive rounded-full animate-ping"></span>
-              <span className="relative flex size-3">
+              <span className="absolute -top-1 -right-1 size-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75"></span>
-                <span className="relative inline-flex size-3 rounded-full bg-destructive"></span>
+                <span className="absolute inline-flex size-2 rounded-full bg-destructive"></span>
               </span>
             )}
           </TabsTrigger>
@@ -806,16 +828,6 @@ export function ResumeCoverLetterTabs() {
           </SelectContent>
         </Select>
         <div className="flex gap-2 items-center">
-          {/* {compilationError && (
-            <div className="text-sm text-red-600 bg-red-50 px-2 py-1 rounded border border-red-200">
-              Compilation Error - Check Logs tab for details
-              {compilationAttempts >= MAX_COMPILATION_ATTEMPTS && (
-                <span className="ml-2 text-xs bg-red-200 px-1 py-0.5 rounded">
-                  Max attempts reached
-                </span>
-              )}
-            </div>
-          )} */}
           <Button
             onClick={handleCompileOrRecompile}
             disabled={
@@ -835,33 +847,52 @@ export function ResumeCoverLetterTabs() {
             {isPending
               ? "Compiling..."
               : compilationAttempts >= MAX_COMPILATION_ATTEMPTS
-                ? "Max Attempts Reached"
+                ? "Wait"
                 : compilationError
-                  ? "Fix Errors First"
+                  ? "Error"
                   : currentPdfBlob
                     ? "Recompile"
                     : "Compile"}
           </Button>
-          <AlertDialogComponent
-            title="Reset"
-            description="Are you sure you want to reset the current document to the default template? All data will be lost."
-            onConfirm={handleReset}
-          >
-            <Button className="h-8 text-xs">
-              <ListRestart color="black" className="w-4 h-4" />
-              Reset
-            </Button>
-          </AlertDialogComponent>
           <TooltipComponent content="Download">
             <Button
               size="icon"
               variant="outline"
               onClick={handleDownload}
-              disabled={!currentPdfBlob}
+              disabled={
+                format === navigation.FORMAT.LATEX
+                  ? !(rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+                      ? currentResumeLatexContent
+                      : currentCoverLetterLatexContent)
+                  : !currentPdfBlob
+              }
             >
               <Download />
             </Button>
           </TooltipComponent>
+          <SaveFileButton
+            latexContent={
+              rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+                ? currentResumeLatexContent
+                : currentCoverLetterLatexContent
+            }
+            documentType={
+              rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+                ? "resume"
+                : "cover-letter"
+            }
+          />
+          <AlertDialogComponent
+            tooltipContent="Reset"
+            title="Reset"
+            description="Are you sure you want to reset the current document to the default template? All data will be lost."
+            onConfirm={handleReset}
+          >
+            <Button variant="outline" size="icon">
+              <ListRestart className="w-4 h-4" />
+            </Button>
+          </AlertDialogComponent>
+          {/* <RightPanelSettings /> */}
         </div>
       </header>
       <TabsContent value={navigation.FORMAT.PDF}>
@@ -894,58 +925,4 @@ export function ResumeCoverLetterTabs() {
       </TabsContent>
     </Tabs>
   );
-}
-
-{
-  /* <TooltipComponent content="Logs">
-            <Button size="icon" variant="outline">
-              <Logs />
-            </Button>
-          </TooltipComponent> */
-}
-{
-  /* <TooltipComponent content="Save File">
-            <Button size="icon" variant="outline">
-              <Save />
-            </Button>
-          </TooltipComponent> */
-}
-{
-  /* <TooltipComponent content="Up">
-            <Button size="icon" variant="outline">
-              <ArrowBigUp />
-            </Button>
-          </TooltipComponent>
-          <p className="text-sm">1</p>
-          <TooltipComponent content="Down">
-            <Button size="icon" variant="outline">
-              <ArrowBigDown />
-            </Button>
-          </TooltipComponent> */
-}
-{
-  /* <TooltipComponent content="Settings">
-            <Button size="icon" variant="outline">
-              <Settings />
-            </Button>
-          </TooltipComponent> */
-}
-{
-  /* <TooltipComponent content="Copy">
-            <Button size="icon" variant="outline">
-              <Copy />
-            </Button>
-          </TooltipComponent> */
-}
-{
-  /* <TooltipComponent content="Zoom In">
-            <Button size="icon" variant="outline">
-              <Plus />
-            </Button>
-          </TooltipComponent>
-          <TooltipComponent content="Zoom Out">
-            <Button size="icon" variant="outline">
-              <Minus />
-            </Button>
-          </TooltipComponent> */
 }
