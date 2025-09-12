@@ -75,7 +75,7 @@ const bentoItems: BentoItem[] = [
     spotlightItems: [
       "Resume Writing",
       "Cover Letter Writing",
-      "Cold Email Writing",
+      "Cold Mail Writing",
       "Humanizing texts",
       "ATS optimized",
       "LaTex Support",

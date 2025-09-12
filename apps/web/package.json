@@ -49,6 +49,7 @@
     "clsx": "^2.1.1",
     "codemirror-lang-latex": "0.1.0-alpha.2",
     "framer-motion": "^11.18.2",
+    "html-to-text": "^9.0.5",
     "lucide-react": "^0.539.0",
     "motion": "^12.23.12",
     "next": "^15.4.2",
@@ -78,6 +79,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/html-to-text": "^9.0.4",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",

@@ -59,7 +59,7 @@ const items: {
       //   url: navigation.RIGHT_PANEL.EMAIL,
       // },
       {
-        title: "Cold Email Context",
+        title: "Cold Mail Context",
         url: navigation.RIGHT_PANEL.EMAIL,
       },
     ],
@@ -78,6 +78,10 @@ const items: {
       {
         title: "Cover Letter Prompt",
         url: navigation.RIGHT_PANEL.COVER_LETTER,
+      },
+      {
+        title: "Cold Mail Prompt",
+        url: navigation.RIGHT_PANEL.EMAIL,
       },
     ],
   },

@@ -7,4 +7,6 @@ export const LOCAL_STORAGE_KEYS = {
   RESUME_LATEX_CONTENT: "resumeLatexContent",
   MODEL_NAME: "modelName",
   MODEL_API_KEYS: "modelApiKeys",
+  MAIL_EDITOR_STORAGE_KEY: "mail-editor-content",
+  MAIL_EDITOR_SCROLL_KEY: "mail-editor-scroll-position",
 };

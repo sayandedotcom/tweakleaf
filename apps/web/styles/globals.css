@@ -174,12 +174,12 @@
 
     /* Handle */
     ::-webkit-scrollbar-thumb {
-      background: var(--color-border);
+      background: var(--color-secondary);
     }
 
     /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--color-border);
+      background: var(--color-secondary);
     }
     /* * ::selection {
       color: var(--muted);

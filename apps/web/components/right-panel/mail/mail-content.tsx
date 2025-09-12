@@ -27,11 +27,9 @@ import {
   Unlink,
   Trash2,
 } from "lucide-react";
+import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 
 import "./editor.css";
-
-const MAIL_EDITOR_STORAGE_KEY = "mail-editor-content";
-const MAIL_EDITOR_SCROLL_KEY = "mail-editor-scroll-position";
 
 const extensions = [
   StarterKit,
@@ -257,14 +255,23 @@ export function MailContent() {
     onUpdate: ({ editor }) => {
       // Save content to localStorage on every update
       const content = editor.getHTML();
-      localStorage.setItem(MAIL_EDITOR_STORAGE_KEY, content);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_STORAGE_KEY, content);
+
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(
+        new CustomEvent("mail-editor-updated", {
+          detail: { content },
+        }),
+      );
     },
   });
 
   // Load content from localStorage on component mount
   useEffect(() => {
     if (editor && !isLoaded) {
-      const savedContent = localStorage.getItem(MAIL_EDITOR_STORAGE_KEY);
+      const savedContent = localStorage.getItem(
+        LOCAL_STORAGE_KEYS.MAIL_EDITOR_STORAGE_KEY,
+      );
       if (savedContent) {
         editor.commands.setContent(savedContent);
       }
@@ -278,7 +285,10 @@ export function MailContent() {
     if (editorElement) {
       const handleScroll = () => {
         const scrollTop = editorElement.scrollTop;
-        localStorage.setItem(MAIL_EDITOR_SCROLL_KEY, scrollTop.toString());
+        localStorage.setItem(
+          LOCAL_STORAGE_KEYS.MAIL_EDITOR_SCROLL_KEY,
+          scrollTop.toString(),
+        );
       };
 
       editorElement.addEventListener("scroll", handleScroll);
@@ -295,7 +305,7 @@ export function MailContent() {
       const editorElement = editorRef.current?.querySelector(".tiptap");
       if (editorElement) {
         const savedScrollPosition = localStorage.getItem(
-          MAIL_EDITOR_SCROLL_KEY,
+          LOCAL_STORAGE_KEYS.MAIL_EDITOR_SCROLL_KEY,
         );
         if (savedScrollPosition) {
           const scrollTop = parseInt(savedScrollPosition, 10);
@@ -312,8 +322,8 @@ export function MailContent() {
   const clearContent = () => {
     if (editor) {
       editor.commands.clearContent();
-      localStorage.removeItem(MAIL_EDITOR_STORAGE_KEY);
-      localStorage.removeItem(MAIL_EDITOR_SCROLL_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_STORAGE_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_SCROLL_KEY);
     }
   };
 

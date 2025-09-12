@@ -1,0 +1,248 @@
+/* Editor container */
+.mail-editor {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  height: calc(100vh - 68px);
+  overflow: hidden;
+}
+
+/* Toolbar styles */
+.control-group {
+  background: var(--color-muted);
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 16px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.button-group button {
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-foreground);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: all 0.15s ease;
+}
+
+.button-group button:hover:not(:disabled) {
+  background: var(--color-muted);
+  border-color: var(--color-accent);
+}
+
+.button-group button:disabled {
+  background: var(--color-muted);
+  color: var(--color-muted-foreground);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button-group button.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.button-group button.is-active:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.button-group .clear-button {
+  background: var(--color-destructive);
+  border-color: var(--color-destructive);
+  color: var(--color-destructive-foreground);
+}
+
+.button-group .clear-button:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+.toolbar-divider {
+  background: var(--color-border);
+  height: 20px;
+  margin: 0 4px;
+  width: 1px;
+}
+
+/* Editor content area */
+.tiptap {
+  background: white;
+  color: #111827;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 300px;
+  outline: none;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 68px - 60px);
+}
+
+.tiptap :first-child {
+  margin-top: 0;
+}
+
+.tiptap :last-child {
+  margin-bottom: 0;
+}
+
+/* List styles */
+.tiptap ul,
+.tiptap ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.tiptap ul li {
+  list-style-type: disc;
+  margin: 0.25rem 0;
+  color: #111827;
+}
+
+.tiptap ol li {
+  list-style-type: decimal;
+  margin: 0.25rem 0;
+  color: #111827;
+}
+
+.tiptap ul li p,
+.tiptap ol li p {
+  margin: 0.25rem 0;
+  color: #111827;
+}
+
+.tiptap ul li::marker,
+.tiptap ol li::marker {
+  color: #111827;
+}
+
+/* Heading styles */
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.tiptap h1 {
+  font-size: 1.875rem;
+}
+
+.tiptap h2 {
+  font-size: 1.5rem;
+}
+
+.tiptap h3 {
+  font-size: 1.25rem;
+}
+
+.tiptap h4 {
+  font-size: 1.125rem;
+}
+
+.tiptap h5,
+.tiptap h6 {
+  font-size: 1rem;
+}
+
+/* Paragraph styles */
+.tiptap p {
+  margin: 0.75rem 0;
+}
+
+/* Code styles - only for code blocks */
+
+.tiptap pre {
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  color: var(--color-card-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 1rem 0;
+  overflow-x: auto;
+  padding: 1rem;
+}
+
+.tiptap pre code {
+  background: none;
+  color: inherit;
+  font-size: inherit;
+  padding: 0;
+}
+
+/* Blockquote styles */
+.tiptap blockquote {
+  border-left: 4px solid var(--color-border);
+  color: var(--color-muted-foreground);
+  font-style: italic;
+  margin: 1rem 0;
+  padding-left: 1rem;
+}
+
+/* Horizontal rule */
+.tiptap hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 1.5rem 0;
+}
+
+/* Text formatting */
+.tiptap strong {
+  font-weight: 600;
+}
+
+.tiptap em {
+  font-style: italic;
+}
+
+/* Link styles */
+.tiptap a {
+  color: var(--color-primary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary);
+  text-underline-offset: 2px;
+}
+
+.tiptap a:hover {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+}
+
+.editor-link {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary);
+  text-underline-offset: 2px;
+}
+
+/* Focus styles */
+.tiptap:focus {
+  outline: none;
+}
+
+/* Placeholder styles */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #595a5c;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
