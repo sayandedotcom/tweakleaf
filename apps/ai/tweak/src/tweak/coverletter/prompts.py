@@ -41,7 +41,7 @@ embarked, delved, invaluable, relentless, groundbreaking, endeavour, enlightenin
 # IMPORTANT: Review your response and ensure no em dashes!
 
 **What to customize:**
-- Replace placeholder names, addresses, phone numbers, emails
+- Replace placeholder names, addresses, phone numbers, emails if provided by the user
 - Update company names and addresses
 - Modify the cover letter body text to match the job requirements while maintaining human-like flow
 - Keep all LaTeX commands, spacing, and formatting exactly the same
