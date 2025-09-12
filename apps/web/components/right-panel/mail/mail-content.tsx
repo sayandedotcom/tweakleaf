@@ -1,6 +1,5 @@
 "use client";
 
-import { MailTo, MailToBody, MailToTrigger } from "@slalombuild/react-mailto";
 import {
   Editor,
   EditorContent,
@@ -8,12 +7,52 @@ import {
   useEditorState,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
+import Link from "@tiptap/extension-link";
+import { useEffect, useState, useRef } from "react";
+import {
+  Bold,
+  Italic,
+  Type,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  Quote,
+  Minus,
+  Undo,
+  Redo,
+  Link as LinkIcon,
+  Unlink,
+  Trash2,
+} from "lucide-react";
 
 import "./editor.css";
 
-const extensions = [StarterKit];
+const MAIL_EDITOR_STORAGE_KEY = "mail-editor-content";
+const MAIL_EDITOR_SCROLL_KEY = "mail-editor-scroll-position";
 
-function MenuBar({ editor }: { editor: Editor }) {
+const extensions = [
+  StarterKit,
+  Placeholder.configure({
+    placeholder: "Start writing your email...",
+  }),
+  Link.configure({
+    openOnClick: false,
+    HTMLAttributes: {
+      class: "editor-link",
+    },
+  }),
+];
+
+function MenuBar({
+  editor,
+  onClear,
+}: {
+  editor: Editor;
+  onClear?: () => void;
+}) {
   // Read the current editor's state, and re-render the component when it changes
   const editorState = useEditorState({
     editor,
@@ -23,10 +62,6 @@ function MenuBar({ editor }: { editor: Editor }) {
         canBold: ctx.editor?.can().chain().toggleBold().run() ?? false,
         isItalic: ctx.editor?.isActive("italic") ?? false,
         canItalic: ctx.editor?.can().chain().toggleItalic().run() ?? false,
-        isStrike: ctx.editor?.isActive("strike") ?? false,
-        canStrike: ctx.editor?.can().chain().toggleStrike().run() ?? false,
-        isCode: ctx.editor?.isActive("code") ?? false,
-        canCode: ctx.editor?.can().chain().toggleCode().run() ?? false,
         canClearMarks: ctx.editor?.can().chain().unsetAllMarks().run() ?? false,
         isParagraph: ctx.editor?.isActive("paragraph") ?? false,
         isHeading1: ctx.editor?.isActive("heading", { level: 1 }) ?? false,
@@ -41,188 +76,254 @@ function MenuBar({ editor }: { editor: Editor }) {
         isBlockquote: ctx.editor?.isActive("blockquote") ?? false,
         canUndo: ctx.editor?.can().chain().undo().run() ?? false,
         canRedo: ctx.editor?.can().chain().redo().run() ?? false,
+        isLink: ctx.editor?.isActive("link") ?? false,
+        canSetLink:
+          ctx.editor?.can().chain().setLink({ href: "" }).run() ?? false,
       };
     },
   });
 
+  const setLink = () => {
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
+
+    // cancelled
+    if (url === null) {
+      return;
+    }
+
+    // empty
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+      return;
+    }
+
+    // update link
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  };
+
   return (
     <div className="control-group">
       <div className="button-group">
+        {/* Text formatting */}
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           disabled={!editorState.canBold}
           className={editorState.isBold ? "is-active" : ""}
+          title="Bold"
         >
-          Bold
+          <Bold size={14} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
           disabled={!editorState.canItalic}
           className={editorState.isItalic ? "is-active" : ""}
+          title="Italic"
         >
-          Italic
+          <Italic size={14} />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleStrike().run()}
-          disabled={!editorState.canStrike}
-          className={editorState.isStrike ? "is-active" : ""}
+          onClick={setLink}
+          disabled={!editorState.canSetLink}
+          className={editorState.isLink ? "is-active" : ""}
+          title="Add link"
         >
-          Strike
+          <LinkIcon size={14} />
         </button>
         <button
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          disabled={!editorState.canCode}
-          className={editorState.isCode ? "is-active" : ""}
+          onClick={() => editor.chain().focus().unsetLink().run()}
+          disabled={!editorState.isLink}
+          title="Remove link"
         >
-          Code
+          <Unlink size={14} />
         </button>
-        <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
-          Clear marks
-        </button>
-        <button onClick={() => editor.chain().focus().clearNodes().run()}>
-          Clear nodes
-        </button>
+
+        {/* Divider */}
+        <div className="toolbar-divider" />
+
+        {/* Headings */}
         <button
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={editorState.isParagraph ? "is-active" : ""}
+          title="Normal text"
         >
-          Paragraph
+          <Type size={14} />
         </button>
         <button
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
           className={editorState.isHeading1 ? "is-active" : ""}
+          title="Heading 1"
         >
-          H1
+          <Heading1 size={14} />
         </button>
         <button
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 2 }).run()
           }
           className={editorState.isHeading2 ? "is-active" : ""}
+          title="Heading 2"
         >
-          H2
+          <Heading2 size={14} />
         </button>
         <button
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 3 }).run()
           }
           className={editorState.isHeading3 ? "is-active" : ""}
+          title="Heading 3"
         >
-          H3
+          <Heading3 size={14} />
         </button>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 4 }).run()
-          }
-          className={editorState.isHeading4 ? "is-active" : ""}
-        >
-          H4
-        </button>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 5 }).run()
-          }
-          className={editorState.isHeading5 ? "is-active" : ""}
-        >
-          H5
-        </button>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 6 }).run()
-          }
-          className={editorState.isHeading6 ? "is-active" : ""}
-        >
-          H6
-        </button>
+
+        {/* Divider */}
+        <div className="toolbar-divider" />
+
+        {/* Lists */}
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={editorState.isBulletList ? "is-active" : ""}
+          title="Bullet list"
         >
-          Bullet list
+          <List size={14} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={editorState.isOrderedList ? "is-active" : ""}
+          title="Numbered list"
         >
-          Ordered list
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editorState.isCodeBlock ? "is-active" : ""}
-        >
-          Code block
+          <ListOrdered size={14} />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={editorState.isBlockquote ? "is-active" : ""}
+          title="Quote"
         >
-          Blockquote
+          <Quote size={14} />
         </button>
+
+        {/* Divider */}
+        <div className="toolbar-divider" />
+
+        {/* Actions */}
         <button
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          title="Horizontal line"
         >
-          Horizontal rule
-        </button>
-        <button onClick={() => editor.chain().focus().setHardBreak().run()}>
-          Hard break
+          <Minus size={14} />
         </button>
         <button
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editorState.canUndo}
+          title="Undo"
         >
-          Undo
+          <Undo size={14} />
         </button>
         <button
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editorState.canRedo}
+          title="Redo"
         >
-          Redo
+          <Redo size={14} />
         </button>
+
+        {/* Divider */}
+        <div className="toolbar-divider" />
+
+        {/* Clear content */}
+        {onClear && (
+          <button
+            onClick={onClear}
+            title="Clear all content"
+            className="clear-button"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
       </div>
     </div>
   );
 }
 
 export function MailContent() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+
   const editor = useEditor({
     immediatelyRender: false,
     extensions,
-    content: `
-<h2>
-  Hi there,
-</h2>
-<p>
-  this is a <em>basic</em> example of <strong>Tiptap</strong>. Sure, there are all kind of basic text styles you’d probably expect from a text editor. But wait until you see the lists:
-</p>
-<ul>
-  <li>
-    That’s a bullet list with one …
-  </li>
-  <li>
-    … or two list items.
-  </li>
-</ul>
-<p>
-  Isn’t that great? And all of that is editable. But wait, there’s more. Let’s try a code block:
-</p>
-<pre><code class="language-css">body {
-  display: none;
-}</code></pre>
-<p>
-  I know, I know, this is impressive. It’s only the tip of the iceberg though. Give it a try and click a little bit around. Don’t forget to check the other examples too.
-</p>
-<blockquote>
-  Wow, that’s amazing. Good work, boy! 👏
-  <br />
-  — Mom
-</blockquote>
-`,
+    content: "",
+    onUpdate: ({ editor }) => {
+      // Save content to localStorage on every update
+      const content = editor.getHTML();
+      localStorage.setItem(MAIL_EDITOR_STORAGE_KEY, content);
+    },
   });
+
+  // Load content from localStorage on component mount
+  useEffect(() => {
+    if (editor && !isLoaded) {
+      const savedContent = localStorage.getItem(MAIL_EDITOR_STORAGE_KEY);
+      if (savedContent) {
+        editor.commands.setContent(savedContent);
+      }
+      setIsLoaded(true);
+    }
+  }, [editor, isLoaded]);
+
+  // Save scroll position on scroll
+  useEffect(() => {
+    const editorElement = editorRef.current?.querySelector(".tiptap");
+    if (editorElement) {
+      const handleScroll = () => {
+        const scrollTop = editorElement.scrollTop;
+        localStorage.setItem(MAIL_EDITOR_SCROLL_KEY, scrollTop.toString());
+      };
+
+      editorElement.addEventListener("scroll", handleScroll);
+
+      return () => {
+        editorElement.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, [isLoaded]);
+
+  // Restore scroll position after content is loaded
+  useEffect(() => {
+    if (isLoaded) {
+      const editorElement = editorRef.current?.querySelector(".tiptap");
+      if (editorElement) {
+        const savedScrollPosition = localStorage.getItem(
+          MAIL_EDITOR_SCROLL_KEY,
+        );
+        if (savedScrollPosition) {
+          const scrollTop = parseInt(savedScrollPosition, 10);
+          // Use setTimeout to ensure the content is fully rendered
+          setTimeout(() => {
+            editorElement.scrollTop = scrollTop;
+          }, 100);
+        }
+      }
+    }
+  }, [isLoaded]);
+
+  // Clear content function (useful for resetting the editor)
+  const clearContent = () => {
+    if (editor) {
+      editor.commands.clearContent();
+      localStorage.removeItem(MAIL_EDITOR_STORAGE_KEY);
+      localStorage.removeItem(MAIL_EDITOR_SCROLL_KEY);
+    }
+  };
+
+  if (!editor) {
+    return null;
+  }
+
   return (
-    <div>
-      <MenuBar editor={editor!} />
+    <div className="mail-editor" ref={editorRef}>
+      <MenuBar editor={editor} onClear={clearContent} />
       <EditorContent editor={editor} />
     </div>
   );

@@ -1,79 +1,248 @@
-/* Basic editor styles */
-.tiptap {
-  /* List styles */
-  /* Heading styles */
-  /* Code and preformatted text styles */
+/* Editor container */
+.mail-editor {
+  background: white;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  height: calc(100vh - 68px);
+  overflow: hidden;
 }
+
+/* Toolbar styles */
+.control-group {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 16px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.button-group button {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  color: #374151;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 10px;
+  transition: all 0.15s ease;
+}
+
+.button-group button:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.button-group button:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button-group button.is-active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.button-group button.is-active:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.button-group .clear-button {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.button-group .clear-button:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.toolbar-divider {
+  background: #d1d5db;
+  height: 20px;
+  margin: 0 4px;
+  width: 1px;
+}
+
+/* Editor content area */
+.tiptap {
+  background: white;
+  color: #111827;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 300px;
+  outline: none;
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(100vh - 68px - 60px);
+}
+
 .tiptap :first-child {
   margin-top: 0;
 }
+
+.tiptap :last-child {
+  margin-bottom: 0;
+}
+
+/* List styles */
 .tiptap ul,
 .tiptap ol {
-  padding: 0 1rem;
-  margin: 1.25rem 1rem 1.25rem 0.4rem;
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
 }
+
+.tiptap ul li {
+  list-style-type: disc;
+  margin: 0.25rem 0;
+  color: #111827;
+}
+
+.tiptap ol li {
+  list-style-type: decimal;
+  margin: 0.25rem 0;
+  color: #111827;
+}
+
 .tiptap ul li p,
 .tiptap ol li p {
-  margin-top: 0.25em;
-  margin-bottom: 0.25em;
+  margin: 0.25rem 0;
+  color: #111827;
 }
+
+.tiptap ul li::marker,
+.tiptap ol li::marker {
+  color: #111827;
+}
+
+/* Heading styles */
 .tiptap h1,
 .tiptap h2,
 .tiptap h3,
 .tiptap h4,
 .tiptap h5,
 .tiptap h6 {
-  line-height: 1.1;
-  margin-top: 2.5rem;
-  text-wrap: pretty;
+  color: #111827;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.5rem 0 0.75rem 0;
 }
-.tiptap h1,
-.tiptap h2 {
-  margin-top: 3.5rem;
-  margin-bottom: 1.5rem;
-}
+
 .tiptap h1 {
-  font-size: 1.4rem;
+  font-size: 1.875rem;
 }
+
 .tiptap h2 {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
+
 .tiptap h3 {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
 }
-.tiptap h4,
+
+.tiptap h4 {
+  font-size: 1.125rem;
+}
+
 .tiptap h5,
 .tiptap h6 {
   font-size: 1rem;
 }
-.tiptap code {
-  background-color: var(--purple-light);
-  border-radius: 0.4rem;
-  color: var(--black);
-  font-size: 0.85rem;
-  padding: 0.25em 0.3em;
+
+/* Paragraph styles */
+.tiptap p {
+  margin: 0.75rem 0;
 }
+
+/* Code styles - only for code blocks */
+
 .tiptap pre {
-  background: var(--black);
-  border-radius: 0.5rem;
-  color: var(--white);
-  font-family: "JetBrainsMono", monospace;
-  margin: 1.5rem 0;
-  padding: 0.75rem 1rem;
+  background: #1f2937;
+  border-radius: 6px;
+  color: #f9fafb;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 1rem 0;
+  overflow-x: auto;
+  padding: 1rem;
 }
+
 .tiptap pre code {
   background: none;
   color: inherit;
-  font-size: 0.8rem;
+  font-size: inherit;
   padding: 0;
 }
+
+/* Blockquote styles */
 .tiptap blockquote {
-  border-left: 3px solid var(--gray-3);
-  margin: 1.5rem 0;
+  border-left: 4px solid #e5e7eb;
+  color: #6b7280;
+  font-style: italic;
+  margin: 1rem 0;
   padding-left: 1rem;
 }
+
+/* Horizontal rule */
 .tiptap hr {
   border: none;
-  border-top: 1px solid var(--gray-2);
-  margin: 2rem 0;
+  border-top: 1px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+/* Text formatting */
+.tiptap strong {
+  font-weight: 600;
+}
+
+.tiptap em {
+  font-style: italic;
+}
+
+/* Link styles */
+.tiptap a {
+  color: #3b82f6;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: #3b82f6;
+  text-underline-offset: 2px;
+}
+
+.tiptap a:hover {
+  color: #2563eb;
+  text-decoration-color: #2563eb;
+}
+
+.editor-link {
+  color: #3b82f6;
+  text-decoration: underline;
+  text-decoration-color: #3b82f6;
+  text-underline-offset: 2px;
+}
+
+/* Focus styles */
+.tiptap:focus {
+  outline: none;
+}
+
+/* Placeholder styles */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #9ca3af;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }
