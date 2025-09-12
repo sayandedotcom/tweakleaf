@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { TooltipComponent } from "./tooltip-component";
 
 export function AlertDialogComponent({
   children,
@@ -16,16 +17,20 @@ export function AlertDialogComponent({
   description,
   onConfirm,
   onCancel,
+  tooltipContent,
 }: {
   children: React.ReactNode;
   title: string;
   description: string;
+  tooltipContent?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
 }) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <TooltipComponent content={tooltipContent || ""}>
+        <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      </TooltipComponent>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
