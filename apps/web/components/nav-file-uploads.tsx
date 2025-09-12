@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, File, Trash2, Download } from "lucide-react";
+import { ChevronRight, File, Trash2, Download, Upload } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 
 import {
@@ -132,9 +132,9 @@ export function NavFileUploads() {
         <Collapsible defaultOpen={true} className="group/collapsible">
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
-              <SidebarMenuButton tooltip="File Management">
-                <File className="h-4 w-4" />
-                <span>File Management</span>
+              <SidebarMenuButton tooltip="File Uploads">
+                <Upload className="h-4 w-4" />
+                <span>File Uploads</span>
                 <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
               </SidebarMenuButton>
             </CollapsibleTrigger>

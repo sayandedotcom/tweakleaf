@@ -21,6 +21,7 @@ import { ModelSwitcher } from "./models-switcher";
 // import { AlertDialogComponent } from "./alert-dialog-component";
 // import { Button } from "./ui/button";
 import { NavFileUploads } from "./nav-file-uploads";
+import { NavSavedFiles } from "./nav-saved-files";
 
 export function TweakSidebar({
   ...props
@@ -63,6 +64,7 @@ export function TweakSidebar({
         <NavProjects />
         <NavMain />
         <ModelSwitcher />
+        <NavSavedFiles />
         <NavFileUploads />
       </SidebarContent>
       <SidebarFooter>
