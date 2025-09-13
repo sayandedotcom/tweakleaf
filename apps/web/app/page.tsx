@@ -20,8 +20,9 @@ export default function Home() {
         className="relative flex flex-col items-center justify-center h-[85vh] pt-20"
         style={{
           background:
-            "radial-gradient(circle at center, rgba(71, 255, 255, 0.04) 0%, rgba(17, 48, 61, 0.8) 30%, rgba(8, 25, 35, 0.9) 60%, var(--background) 100%)",
+            "radial-gradient(circle at center, rgba(17, 48, 61, 0.8) 30%, rgba(8, 25, 35, 0.9) 60%, var(--background) 100%)",
         }}
+        // rgba(71, 255, 255, 0.04) 0%,
       >
         <div className="absolute top-20 z-20 flex items-center justify-center">
           <div
