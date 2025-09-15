@@ -5,14 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "Router": {
-      "type": "sst.aws.Router"
-      "url": string
-    }
-    "Web": {
-      "type": "sst.aws.Nextjs"
-      "url": string
-    }
   }
 }
 /// <reference path="sst-env.d.ts" />

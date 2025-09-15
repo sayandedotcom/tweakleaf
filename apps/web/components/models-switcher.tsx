@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Clock, Wrench, X } from "lucide-react";
+import { Check, ChevronsUpDown, Clock, Info, Wrench, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,7 +117,12 @@ export function ModelSwitcher() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Models</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        Models
+        <TooltipComponent content="Gemini is the cheapest model and the most powerful one.">
+          <Info className="ml-1" />
+        </TooltipComponent>
+      </SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem className="flex items-center justify-between gap-0.5">
           <DropdownMenu>
