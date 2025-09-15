@@ -3,18 +3,7 @@
 from typing import Any
 
 class Resource:
-    class APIRouter:
-        type: str
-        url: str
     class App:
         name: str
         stage: str
-    class CompilerLambdaFunction:
-        name: str
-        type: str
-        url: str
-    class TweakLambdaFunction:
-        name: str
-        type: str
-        url: str
 
