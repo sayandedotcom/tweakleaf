@@ -5,9 +5,19 @@ import {
   PersonStanding,
   RemoveFormatting,
   DollarSign,
+  Clock,
+  SquareChevronRight,
+  Brain,
+  Trophy,
 } from "lucide-react";
 
 const features = [
+  {
+    title: "Time",
+    description:
+      "Just give job description and download resume / cover-letter in ~10 seconds.",
+    icon: <Clock />,
+  },
   {
     title: "LaTeX Support",
     description:
@@ -24,13 +34,31 @@ const features = [
     title: "ATS Optimization",
     description:
       "Our AI is designed to generate content that is aware of ATS, ensuring high rankings.",
-    icon: <DollarSign />,
+    icon: <Trophy />,
   },
   {
     title: "Multiple Models",
     description:
       "We provide support for multiple models for your resume and cover letters.",
     icon: <Bot />,
+  },
+  {
+    title: "Low Cost",
+    description:
+      "Our platfrom is free for you. You have to use your own API key.",
+    icon: <DollarSign />,
+  },
+  {
+    title: "Prompts",
+    description:
+      "We use prompts that are gathered from experts and different sources that are proven to be high ATS ranking.",
+    icon: <SquareChevronRight />,
+  },
+  {
+    title: "Memory",
+    description:
+      "We have long term memory to remember your context across all interactions.",
+    icon: <Brain />,
   },
 ];
 

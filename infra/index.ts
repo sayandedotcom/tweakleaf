@@ -1,3 +1,2 @@
 export * from "./router";
-export * from "./frontend";
-export * from "./api";
+export * from "./web";

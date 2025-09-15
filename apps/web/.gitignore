@@ -37,3 +37,9 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# sst
+.sst
+
+# open-next
+.open-next

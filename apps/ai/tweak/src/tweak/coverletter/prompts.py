@@ -49,10 +49,10 @@ embarked, delved, invaluable, relentless, groundbreaking, endeavour, enlightenin
 **Input provided:**
 - User info: {user_info}
 - Cover letter context: {coverletter_context}
+- Company info: {company_info}
+- Job description: {job_description}
 
 **User will provide the following inputs:**
-- Company info:
-- Job description:
 - Original LaTeX template:
 - User message:
 
@@ -63,10 +63,6 @@ embarked, delved, invaluable, relentless, groundbreaking, endeavour, enlightenin
 """
 
 human_prompt_to_tweak_coverletter = """
-Company info: {company_info}
-
-Job description: {job_description}
-
 Original LaTeX template: {coverletter}
 
 User message: {user_message}

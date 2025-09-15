@@ -1,17 +1,35 @@
-from datetime import datetime
-
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import AIMessage
 
-from tweak.coverletter.schemas import CoverLetterRequestSchema, CoverLetterStructuredOutput, CoverLetterStructuredOutputForUpdateUserContext, ChatMessage
+from tweak.coverletter.schemas import CoverLetterStructuredOutput, CoverLetterStructuredOutputForUpdateUserContext
 from tweak.coverletter.prompts import system_prompt_to_update_user_context_for_coverletter, human_prompt_to_tweak_coverletter, system_prompt_to_tweak_coverletter
 
 from tweak.models.factory import ModelFactory
 
-from tweak.utils.supabase import get_coverletter_context, update_coverletter_context
+from tweak.utils.query import get_coverletter_context, update_coverletter_context
 
 class CoverLetterNodes:
     def __init__(self): 
-        pass
+        self._llm = None
+        self._current_model = None
+        self._current_key = None
+    
+    def _get_llm(self, model: str, key: str):
+        """Get or create LLM instance, reusing if model and key are the same"""
+        if (self._llm is None or 
+            self._current_model != model or 
+            self._current_key != key):
+            
+            model_factory = ModelFactory()
+            self._llm = model_factory.create_model(provider=model, api_key=key)
+            self._current_model = model
+            self._current_key = key
+            
+            print(f"🔧 Creating new LLM with provider: {model}, key length: {len(key) if key else 0}")
+        else:
+            print(f"🔧 Reusing existing LLM for provider: {model}")
+            
+        return self._llm
     
     def analyze_update_context_for_coverletter(self, state: dict) -> dict:
         """Analyze user message and determine if it should be appended to context"""
@@ -25,39 +43,19 @@ class CoverLetterNodes:
                 "short_response": "Missing required fields"
             }
         
-        # Dynamically create LLM based on user's model and key
-        model_factory = ModelFactory()
-        
-        # Determine model provider from model name
-        model = state["model"]
-        model_provider = model.lower()
-        
-        if model_provider not in ["openai", "anthropic", "gemini", "deepseek"]:
-            # If user provides a custom model name, try to infer provider
-            if "gpt" in model.lower():
-                model_provider = "openai"
-            elif "claude" in model.lower():
-                model_provider = "anthropic"
-            elif "gemini" in model.lower():
-                model_provider = "gemini"
-            elif "deepseek" in model.lower():
-                model_provider = "deepseek"
-            else:
-                # Throw error if we can't determine the provider
-                raise ValueError(f"Unable to determine model provider for model: {model}. Please specify a supported model or use a model name that clearly indicates the provider (e.g., gpt-4, claude-3, gemini-pro, deepseek-chat)")
-        
-        llm = model_factory.create_model(
-            provider=model_provider, 
-            api_key=state["key"]
-        )
+        # Get or create LLM instance
+        llm = self._get_llm(state["model"], state["key"])
         
         # Fetch existing cover letter context from Supabase and store in state
         existing_context = get_coverletter_context(state["user_id"])
+        
+        print("EXISTING_CONTEXT:============================================================", existing_context)
         
         state["coverletter_context"] = existing_context
         
         chat_template = ChatPromptTemplate([
             ('system', system_prompt_to_update_user_context_for_coverletter),
+            ('human', "User message: {user_message}")
         ])
         
         # Create the chain with structured output
@@ -65,10 +63,13 @@ class CoverLetterNodes:
         
         user_msg = state.get("user_message", "No message provided")
         
+        print(f"🔧 Invoking chain with user_message: {user_msg}")
+        
         response = chain.invoke({
             "user_message": user_msg,
         })
         
+        print("RESPONSE:============================================================", response.response)
         
         # Update context in database if response is "append"
         if response.response == "append":
@@ -78,6 +79,8 @@ class CoverLetterNodes:
             
             # Update in database
             update_success = update_coverletter_context(state["user_id"], new_context)
+            
+            print("UPDATE_SUCCESS:============================================================", update_success)
             
             if not update_success:
                 print(f"Warning: Failed to update cover letter context for user {state['user_id']}")
@@ -90,19 +93,9 @@ class CoverLetterNodes:
     def coverletter_analysis(self, state: dict) -> dict:
         """Analyze the cover letter and return a structured output"""
         
-        # Dynamically create LLM based on user's model and key
-        model_factory = ModelFactory()
+        # Get or create LLM instance
+        llm = self._get_llm(state["model"], state["key"])
         
-        # Determine model provider from model name
-        model = state["model"]
-        model_provider = model.lower()
-        
-        llm = model_factory.create_model(
-            provider=model_provider, 
-            api_key=state["key"]
-        )
-        
-        # Fetch cover letter context from Supabase
         coverletter_context = state.get("coverletter_context")
         
         chat_template = ChatPromptTemplate([
@@ -141,26 +134,14 @@ class CoverLetterNodes:
         # Remove any leading/trailing whitespace
         cleaned_content = cleaned_content.strip()
         
-        # Create chat messages for the conversation
-        current_time = datetime.now().isoformat()
-        
-        # Add user message if provided
+        # Create chat messages for the conversation using LangChain BaseMessage
+        # Only add the assistant response since user message is already in state
         chat_messages = []
-        if user_message:
-            chat_messages.append(ChatMessage(
-                role="user",
-                content=user_message,
-                timestamp=current_time
-            ))
         
         # Add assistant response
-        chat_messages.append(ChatMessage(
-            role="assistant",
-            content=response.short_response,
-            timestamp=current_time
-        ))
+        chat_messages.append(AIMessage(content=response.short_response))
         
-        # Combine with existing chat history
+        # Combine with existing chat history (user message already included)
         all_messages = state.get("messages", []) + chat_messages
         
         return {

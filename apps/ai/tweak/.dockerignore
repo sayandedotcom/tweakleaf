@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.git/
+.gitignore
+README.md
+.env*
+.vscode/
+.idea/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+Thumbs.db

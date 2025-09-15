@@ -3,11 +3,11 @@ name = "ai"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = "==3.10.*"
 dependencies = []
 
 [tool.uv.workspace]
-members = [
-    "tweak",
-    "compiler",
-]
+members = ["tweak","compiler"]
+
+[tool.uv.sources]
+sst = { git = "https://github.com/sst/sst.git", subdirectory = "sdk/python", branch = "dev" }

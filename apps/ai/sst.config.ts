@@ -14,17 +14,31 @@ export default $config({
     };
   },
   async run() {
-    // Lambda tweak function
-    const tweakApi = new sst.aws.Function("TweakAPIFunction", {
+    // Domains
+    const DOMAINS = {
+      main: "api.tweakleaf.com",
+      tweakRouter: "/tweak/*",
+      compilerRouter: "/compiler/*",
+    };
+
+    // Lambda function for tweak
+    const tweakApi = new sst.aws.Function("TweakLambdaFunction", {
+      description: "Handler function for tweak api.",
       handler: "tweak/src/tweak/api.handler",
       runtime: "python3.10",
       url: {
         cors: false,
       },
+      timeout: "60 seconds",
+      environment: {
+        SUPABASE_URL: process.env.SUPABASE_URL ?? "",
+        SUPABASE_KEY: process.env.SUPABASE_KEY ?? "",
+      },
     });
 
-    // Lambda compiler function
-    const compilerApi = new sst.aws.Function("CompilerAPIFunction", {
+    // Lambda function for compiler
+    const compilerApi = new sst.aws.Function("CompilerLambdaFunction", {
+      description: "Handler function for compiler api.",
       python: {
         container: true,
       },
@@ -38,20 +52,17 @@ export default $config({
     // Router
     const apiRouter = new sst.aws.Router("APIRouter", {
       domain: {
-        name: "tweakapi.sayande.com",
-        dns: false,
-        cert: "arn:aws:acm:us-east-1:113025669772:certificate/c3f98b37-042b-4788-8e3f-5fabfe790997",
+        name: DOMAINS.main,
       },
       routes: {
-        "/tweak/*": tweakApi.url,
-        "/compiler/*": compilerApi.url,
+        [DOMAINS.tweakRouter]: tweakApi.url,
+        [DOMAINS.compilerRouter]: compilerApi.url,
       },
     });
 
     return {
       apiDomain: apiRouter.url,
       tweakDomain: tweakApi.url,
-      compilerDomain: compilerApi.url,
     };
   },
 });

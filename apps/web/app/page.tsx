@@ -11,6 +11,7 @@ import { RedditPosts } from "@/components/reddit-posts";
 import { WordRotate } from "@/components/magicui/word-rotate";
 import { Features } from "@/components/features";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import { ShinyButton } from "@/components/magicui/shiny-button";
 
 export default function Home() {
   return (
@@ -63,7 +64,7 @@ export default function Home() {
           continuously learn your preferences to make next document faster, more
           optimized, and more effective.
         </p>
-        <div className="flex flex-row items-center justify-center gap-4">
+        {/* <div className="flex flex-row items-center justify-center gap-4">
           <Link
             href="/tweak"
             className={cn(
@@ -73,6 +74,17 @@ export default function Home() {
           >
             Start Tweaking <ArrowRight className="w-4 h-4" />
           </Link>
+        </div> */}
+        <div className="flex flex-row items-center justify-center gap-4">
+          <ShinyButton
+            href="/tweak"
+            className={cn(
+              buttonVariants(),
+              "mt-6 bg-primary font-bold hover:bg-primary/90 text-primary-foreground cursor-pointer text-lg rounded-xl shadow-2xl hover:shadow-primary/25 transition-all duration-300 transform hover:scale-105",
+            )}
+          >
+            Start Tweaking
+          </ShinyButton>
         </div>
       </div>
       <Features />

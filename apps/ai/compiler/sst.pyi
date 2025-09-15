@@ -9,11 +9,11 @@ class Resource:
     class App:
         name: str
         stage: str
-    class CompilerAPIFunction:
+    class CompilerLambdaFunction:
         name: str
         type: str
         url: str
-    class TweakAPIFunction:
+    class TweakLambdaFunction:
         name: str
         type: str
         url: str
