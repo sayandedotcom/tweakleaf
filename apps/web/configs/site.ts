@@ -1,8 +1,8 @@
 export const site = {
-  name: "Tweak",
+  name: "Tweakleaf",
   description:
     "Tweak.Apply is a platform for job seekers to find jobs and apply to them.",
-  url: "https://tweak.Apply.com",
+  url: "https://tweakleaf.com",
   ogImage: "https://tweak.Apply.com/og-image.png",
   links: {
     twitter: "https://x.com/tweak.Apply",
