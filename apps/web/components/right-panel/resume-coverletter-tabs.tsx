@@ -155,6 +155,51 @@ export default function ResumeCoverLetterTabs() {
     initializeDefaultContent();
   }, [initializeDefaultContent]);
 
+  // Listen for saved file load events from NavSavedFiles component
+  useEffect(() => {
+    const handleLoadSavedFile = (event: CustomEvent) => {
+      const { content, documentType } = event.detail;
+
+      // Check if this event is for the current document type
+      const currentDocumentType =
+        rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+          ? "resume"
+          : "cover-letter";
+
+      if (documentType === currentDocumentType) {
+        // Use the proper state update function from useLatexContent hook
+        updateCurrentLatexContent(content);
+
+        // Clear PDF blob to force recompilation
+        clearPdfBlob();
+
+        // Clear any compilation errors
+        clearCompilationState();
+
+        // Switch to LaTeX tab to show the loaded content
+        handleFormatChange(navigation.FORMAT.LATEX);
+      }
+    };
+
+    window.addEventListener(
+      "loadSavedFile",
+      handleLoadSavedFile as EventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "loadSavedFile",
+        handleLoadSavedFile as EventListener,
+      );
+    };
+  }, [
+    rightPanelCategory,
+    updateCurrentLatexContent,
+    clearPdfBlob,
+    clearCompilationState,
+    handleFormatChange,
+  ]);
+
   // Add cleanup effect
   useEffect(() => {
     return () => {

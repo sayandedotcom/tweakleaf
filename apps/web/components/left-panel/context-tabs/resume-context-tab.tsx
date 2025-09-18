@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { PartyPopper } from "lucide-react";
+import { resumeContextPlaceholders } from "@/configs/context-placeholders";
 
 const FormSchema = z.object({
   resumeContext: z
@@ -58,8 +59,8 @@ export default function ResumeContextComponent() {
               <FormLabel>Resume Context</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us a little bit about the resume."
-                  className="resize-none h-[22rem]"
+                  placeholder={resumeContextPlaceholders}
+                  className="resize-none h-[30rem]"
                   {...field}
                 />
               </FormControl>

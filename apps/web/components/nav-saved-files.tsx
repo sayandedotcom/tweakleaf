@@ -1,6 +1,13 @@
 "use client";
 
-import { ChevronRight, File, Trash2, Download, Save } from "lucide-react";
+import {
+  ChevronRight,
+  File,
+  Trash2,
+  Download,
+  Save,
+  SquarePen,
+} from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 
 import {
@@ -154,6 +161,31 @@ export function NavSavedFiles({ onLoadFile }: NavSavedFilesProps) {
     }
   };
 
+  // Function to edit/replace current LaTeX content with saved file content
+  const handleEditFile = (file: SavedFile) => {
+    try {
+      // Dispatch a custom event to notify the ResumeCoverLetterTabs component
+      // This will trigger the proper state update through the useLatexContent hook
+      const documentType =
+        file.documentType === "cover letter" ? "cover-letter" : "resume";
+
+      window.dispatchEvent(
+        new CustomEvent("loadSavedFile", {
+          detail: {
+            content: file.content,
+            documentType: documentType,
+            fileName: file.fileName,
+          },
+        }),
+      );
+
+      toast.success(`File "${file.fileName}" loaded for editing!`);
+    } catch (error) {
+      console.error("Error editing file:", error);
+      toast.error("Failed to load file for editing");
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Saved Files</SidebarGroupLabel>
@@ -184,70 +216,102 @@ export function NavSavedFiles({ onLoadFile }: NavSavedFilesProps) {
                   savedFiles.map((file) => (
                     <SidebarMenuSubItem key={file.key}>
                       <div className="flex items-center justify-between w-full">
-                        <TooltipComponent content={`Load ${file.displayName}`}>
+                        <TooltipComponent
+                          content={`${file.displayName} - ${file.saveDate}`}
+                        >
                           <SidebarMenuSubButton
                             onClick={() => handleLoadFile(file)}
                             className="flex-1"
                           >
-                            <File className="h-4 w-4" />
-                            <div className="flex flex-col items-start">
+                            {/* <File className="h-4 w-4" /> */}
+                            <div className="flex items-start w-full">
                               <span className="text-sm font-medium">
                                 {file.fileName}
                               </span>
-                              <span className="text-xs text-muted-foreground">
-                                {file.documentType} • {file.saveDate}
-                              </span>
+                              {/* <span className="text-xs text-muted-foreground">
+                                  {file.documentType === "cover letter"
+                                    ? "CL"
+                                    : "CV"}
+                                </span> */}
                             </div>
                           </SidebarMenuSubButton>
                         </TooltipComponent>
-                        <div className="flex items-center gap-1 ml-2">
-                          <TooltipComponent content="Download">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleDownloadFile(file)}
+                          className="h-6 w-6 p-0 cursor-pointer"
+                        >
+                          <Download className="h-3 w-3" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
                             <Button
                               size="sm"
                               variant="ghost"
-                              onClick={() => handleDownloadFile(file)}
-                              className="h-6 w-6 p-0"
+                              className="h-6 w-6 p-0 cursor-pointer"
                             >
-                              <Download className="h-3 w-3" />
+                              <SquarePen className="h-3 w-3" />
                             </Button>
-                          </TooltipComponent>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Load File for Editing
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to load &quot;
+                                {file.fileName}&quot; for editing? This will
+                                replace your current content.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => handleEditFile(file)}
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
                               >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete File</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete &quot;
-                                  {file.fileName}&quot;? This action cannot be
-                                  undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => {
-                                    console.log(
-                                      "Delete button clicked for:",
-                                      file.fileName,
-                                    );
-                                    handleDeleteFile(file.key, file.fileName);
-                                  }}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
+                                Load for Editing
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0 text-destructive hover:text-destructive cursor-pointer"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete File</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete &quot;
+                                {file.fileName}&quot;? This action cannot be
+                                undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => {
+                                  console.log(
+                                    "Delete button clicked for:",
+                                    file.fileName,
+                                  );
+                                  handleDeleteFile(file.key, file.fileName);
+                                }}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 cursor-pointer"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </SidebarMenuSubItem>
                   ))

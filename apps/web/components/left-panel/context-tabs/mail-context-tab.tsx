@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { PartyPopper } from "lucide-react";
+import { coldmailContextPlaceholders } from "@/configs/context-placeholders";
 
 const FormSchema = z.object({
   mailContext: z
@@ -58,8 +59,8 @@ export default function MailContextComponent() {
               <FormLabel>Mail Context</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us a little bit about the mail."
-                  className="resize-none h-[22rem]"
+                  placeholder={coldmailContextPlaceholders}
+                  className="resize-none h-[30rem]"
                   {...field}
                 />
               </FormControl>

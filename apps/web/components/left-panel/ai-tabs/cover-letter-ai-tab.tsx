@@ -590,6 +590,13 @@ export default function CoverLetterTab() {
     <div className="grid grid-rows-[1fr_auto] h-full overflow-hidden">
       {/* Messages Container - Scrollable with explicit height */}
       <div className="overflow-y-auto pt-1 overflow-x-hidden min-h-0 relative flex flex-col-reverse">
+        {isEmpty && !companyBio && !jobDescription && (
+          <div className="px-4 pb-4 h-full w-full flex flex-col gap-4 items-center text-center justify-center">
+            <h2 className="text-lg font-semibold">
+              Enter a job description to get started
+            </h2>
+          </div>
+        )}
         {!isEmpty && (
           <div className="px-4 pb-4">
             <div className="space-y-4 ">
