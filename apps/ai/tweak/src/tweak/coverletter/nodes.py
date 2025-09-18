@@ -1,5 +1,5 @@
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import AIMessage
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage
 
 from tweak.coverletter.schemas import CoverLetterStructuredOutput, CoverLetterStructuredOutputForUpdateUserContext
 from tweak.coverletter.prompts import system_prompt_to_update_user_context_for_coverletter, human_prompt_to_tweak_coverletter, system_prompt_to_tweak_coverletter
@@ -7,6 +7,7 @@ from tweak.coverletter.prompts import system_prompt_to_update_user_context_for_c
 from tweak.models.factory import ModelFactory
 
 from tweak.utils.query import get_coverletter_context, update_coverletter_context
+
 
 class CoverLetterNodes:
     def __init__(self): 
@@ -33,15 +34,6 @@ class CoverLetterNodes:
     
     def analyze_update_context_for_coverletter(self, state: dict) -> dict:
         """Analyze user message and determine if it should be appended to context"""
-        # Validate required fields
-        if not state.get("model") or not state.get("key") or not state.get("user_id"):
-            return {
-                "messages": [],
-                "coverletter": state.get("coverletter", ""),
-                "status": 400,
-                "error": "Model, API key, and user_id are required",
-                "short_response": "Missing required fields"
-            }
         
         # Get or create LLM instance
         llm = self._get_llm(state["model"], state["key"])
@@ -100,6 +92,7 @@ class CoverLetterNodes:
         
         chat_template = ChatPromptTemplate([
             ('system', system_prompt_to_tweak_coverletter),
+            MessagesPlaceholder("history"),
             ('human', human_prompt_to_tweak_coverletter)
         ])
         
@@ -119,7 +112,7 @@ class CoverLetterNodes:
             "coverletter": state.get("coverletter", ""),
             "coverletter_context": str(coverletter_context) if coverletter_context else "No previous context",
             "user_message": user_message if user_message else "No specific message",
-            "chat_history": str(chat_history) if chat_history else "No chat history",
+            "history": chat_history if chat_history else [],
         })
         
         # Clean the response content - remove markdown code blocks if present
@@ -134,47 +127,37 @@ class CoverLetterNodes:
         # Remove any leading/trailing whitespace
         cleaned_content = cleaned_content.strip()
         
-        # Create chat messages for the conversation using LangChain BaseMessage
-        # Only add the assistant response since user message is already in state
-        chat_messages = []
+        # Get existing messages from state
+        existing_messages = state.get("messages", [])
+        
+        # Add current user message
+        current_user_message = HumanMessage(content=user_message if user_message else "No specific message")
         
         # Add assistant response
-        chat_messages.append(AIMessage(content=response.short_response))
+        assistant_message = AIMessage(content=response.short_response)
         
-        # Combine with existing chat history (user message already included)
-        all_messages = state.get("messages", []) + chat_messages
+        # Combine all messages in LangChain format
+        all_messages = existing_messages + [current_user_message, assistant_message]
         
-        return {
-            "messages": all_messages,
-            "coverletter": cleaned_content,
-            "status": 200,
-            "short_response": response.short_response,
-        }
-    
-    def compile_coverletter(self, state: dict) -> dict:
-        """Process the cover letter (removed async compilation for now)"""
+        # Process the cover letter (integrated compilation logic)
         try:
-            # Get the cover letter content from state
-            coverletter_content = state["coverletter"]
-            messages = state.get("messages", [])
-            short_response = state.get("short_response", "Cover letter updated successfully")
-            
-            # Return the processed cover letter (without PDF compilation for now)
+            # Return the processed cover letter with all necessary data
             return {
-                "coverletter": coverletter_content,
-                "messages": messages,
+                "messages": all_messages,
+                "coverletter": cleaned_content,
                 "status": 200,
-                "short_response": short_response,
+                "short_response": response.short_response,
                 "message": "Cover letter processed successfully"
             }
             
         except Exception as e:
-            print(f"Error in compile_coverletter: {e}")
+            print(f"Error in coverletter_analysis: {e}")
             # Return error state if processing fails
             return {
-                "coverletter": state.get("coverletter", ""),
-                "messages": state.get("messages", []),
+                "messages": all_messages,
+                "coverletter": cleaned_content,
                 "status": 500,
                 "error": f"Failed to process cover letter: {str(e)}",
-                "message": "Cover letter processing failed"
+                "message": "Cover letter processing failed",
+                "short_response": "An error occurred while processing the cover letter"
             }

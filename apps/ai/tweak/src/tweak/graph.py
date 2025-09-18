@@ -17,13 +17,10 @@ class Workflow:
         # all nodes for cover letter
         workflow.add_node("analyze_update_context_for_coverletter", cover_letter_nodes.analyze_update_context_for_coverletter)
         workflow.add_node("coverletter_analysis", cover_letter_nodes.coverletter_analysis)
-        workflow.add_node("compile_coverletter", cover_letter_nodes.compile_coverletter)
-        
         
         # all edges - simplified flow without conditional routing
         workflow.add_edge("analyze_update_context_for_coverletter", "coverletter_analysis")
-        workflow.add_edge("coverletter_analysis", "compile_coverletter")
-        workflow.add_edge("compile_coverletter", END)
+        workflow.add_edge("coverletter_analysis", END)
         
         # Set entry point
         workflow.add_edge(START, "analyze_update_context_for_coverletter")

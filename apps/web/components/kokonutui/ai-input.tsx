@@ -187,8 +187,8 @@ export function AiInput({
       <div className="bg-muted p-1.5 pt-4 border border-border">
         <div className="flex items-center gap-2 mb-2.5 mx-2">
           <h3 className=" text-xs tracking-tighter w-full">
-            If you want AI to remember everytime of your preferences, add them
-            in context tab !
+            If you want AI to remember everytime of your specific preferences,
+            add them in context tab !
           </h3>
           {/* <TooltipComponent content="Add context">
             <BrainCog onClick={handleAddContext} className="w-5 h-5 text-foreground bg-background p-0.5 cursor-pointer" />
