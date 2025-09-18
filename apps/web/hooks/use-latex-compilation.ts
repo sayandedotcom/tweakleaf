@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useAxios } from "./use-axios";
+import { useAxios, useCompiler } from "./use-axios";
 import { AxiosError } from "axios";
 
 interface LatexCompilationRequest {
@@ -21,7 +21,7 @@ export const useLatexCompilation = () => {
       }
 
       try {
-        const response = await useAxios.post("/compiler/compile", formData, {
+        const response = await useCompiler.post("/compiler/compile", formData, {
           responseType: "blob",
           headers: {
             // Don't set Content-Type manually for FormData

@@ -1,25 +1,54 @@
 "use client";
 
-import { CoverLetterContextComponent } from "@/components/left-panel/context-tabs/cover-letter-context-tab";
-import { ResumeContextComponent } from "@/components/left-panel/context-tabs/resume-context-tab";
-import { MailContextComponent } from "@/components/left-panel/context-tabs/mail-context-tab";
+import { Loader } from "@/components/loader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { navigation } from "@/configs/navigation";
+import dynamic from "next/dynamic";
 
-import { useRouter, useSearchParams } from "next/navigation";
+const CoverLetterContextComponent = dynamic(
+  () => import("@/components/left-panel/context-tabs/cover-letter-context-tab"),
+  {
+    loading: () => <Loader />,
+  },
+);
+
+const ResumeContextComponent = dynamic(
+  () => import("@/components/left-panel/context-tabs/resume-context-tab"),
+  {
+    loading: () => <Loader />,
+  },
+);
+
+const MailContextComponent = dynamic(
+  () => import("@/components/left-panel/context-tabs/mail-context-tab"),
+  {
+    loading: () => <Loader />,
+  },
+);
+
+import { useQueryParam } from "@/hooks/use-query-param";
+
 function ContextTab() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const category = searchParams.get(navigation.RIGHT_PANEL.PARAM);
-  const params = new URLSearchParams(searchParams);
+  // const router = useRouter();
+  // const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
+  // const category = searchParams.get(navigation.RIGHT_PANEL.PARAM);
+  // const params = new URLSearchParams(searchParams);
+
+  const { value: category, setValue: handleCategoryChange } = useQueryParam({
+    paramName: navigation.RIGHT_PANEL.PARAM,
+    defaultValue: navigation.RIGHT_PANEL.RESUME,
+  });
+
   return (
     <Tabs
       defaultValue={category || navigation.RIGHT_PANEL.RESUME}
       value={category || navigation.RIGHT_PANEL.RESUME}
       className="h-full px-2"
       onValueChange={(value) => {
-        params.set(navigation.RIGHT_PANEL.PARAM, value);
-        router.push(`?${params.toString()}`);
+        handleCategoryChange(value);
+        // params.set(navigation.RIGHT_PANEL.PARAM, value);
+        // router.push(`?${params.toString()}`);
       }}
     >
       <TabsList className="w-full flex gap-2 justify-between px-2 py-0.5 border-b">
@@ -31,11 +60,6 @@ function ContextTab() {
           Cold mail
         </TabsTrigger>
       </TabsList>
-      <div className="text-sm text-muted-foreground border bg-accent p-0.5 text-center">
-        Contexts are instructions that help what information AI needs to
-        remember while generating the resume or cover letter. ( Eg:- Always add
-        that I have 5 years of experience in the resume.)
-      </div>
       <TabsContent value={navigation.RIGHT_PANEL.RESUME}>
         <ResumeContextComponent />
       </TabsContent>

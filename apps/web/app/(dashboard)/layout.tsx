@@ -1,8 +1,8 @@
-"use client";
-
+import { Loader } from "@/components/loader";
 import { TweakSidebar } from "@/components/tweak-sidebar";
 // import { TweakHeader } from "@/components/tweak-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Suspense } from "react";
 
 export default function DashboardLayout({
   children,
@@ -11,7 +11,9 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
-      <TweakSidebar />
+      <Suspense fallback={<Loader />}>
+        <TweakSidebar />
+      </Suspense>
       <SidebarInset>
         {/* <TweakHeader /> */}
         {children}

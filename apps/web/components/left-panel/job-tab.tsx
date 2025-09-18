@@ -64,15 +64,20 @@ function JobTab() {
     setCompanyBio(data.companyBio);
     setJobDescription(data.jobDescription);
 
+    // Reset cover letter thread ID when job information is updated
+    setStoredThreadId("");
+
     toast("Job information updated successfully!", {
-      description: "Your company bio and job description have been saved.",
+      description:
+        "Your company bio and job description have been saved. Cover letter conversation has been reset.",
     });
   }
 
   return (
     <div className="p-5 flex flex-col gap-5">
       <AlertDialogComponent
-        title="New Application"
+        tooltipContent="Start a new application"
+        title="Start a new application"
         description="Are you sure you want to create a new application? Old data will be lost."
         onConfirm={() => {
           setCompanyBio("");
@@ -82,7 +87,7 @@ function JobTab() {
         }}
       >
         <Button disabled={!companyBio || !jobDescription} className="w-60">
-          <Plus color="black" /> New Application
+          <Plus color="black" /> Start a new application
         </Button>
       </AlertDialogComponent>
       <Form {...form}>

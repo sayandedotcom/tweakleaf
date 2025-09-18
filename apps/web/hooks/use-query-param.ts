@@ -1,309 +1,149 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+"use client";
+
 import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useMemo } from "react";
 
-// Type definitions for better type safety
-type ParamValue = string | number | boolean | object | null | undefined;
-type Serializer<T> = (value: T) => string;
-type Deserializer<T> = (value: string) => T;
-
-interface UseParamStateOptions<T> {
-  /** Custom serializer for the parameter value */
-  serializer?: Serializer<T>;
-  /** Custom deserializer for the parameter value */
-  deserializer?: Deserializer<T>;
-  /** Whether to debounce URL updates (useful for frequent changes) */
-  debounceMs?: number;
-  /** Whether to replace the current history entry instead of pushing a new one */
-  replace?: boolean;
-  /** Whether to sync with localStorage as a fallback */
-  syncWithLocalStorage?: boolean;
-  /** localStorage key for fallback (defaults to param key) */
-  localStorageKey?: string;
+interface UseQueryParamOptions {
+  defaultValue?: string;
+  paramName: string;
 }
 
-interface UseParamStateReturn<T> {
-  /** Current parameter value */
-  value: T;
-  /** Function to update the parameter value */
-  setValue: (newValue: T | ((prev: T) => T)) => void;
-  /** Function to reset parameter to default value */
-  reset: () => void;
-  /** Whether the parameter exists in the URL */
-  hasValue: boolean;
-  /** Function to remove the parameter from URL */
-  remove: () => void;
-}
-
-// Default serializers/deserializers
-const defaultSerializer = <T>(value: T): string => {
-  if (value === null || value === undefined) return "";
-  if (typeof value === "string") return value;
-  return JSON.stringify(value);
-};
-
-const defaultDeserializer = <T>(value: string, defaultValue: T): T => {
-  if (!value) return defaultValue;
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return value as T;
-  }
-};
-
-// Debounce utility
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
+interface UseQueryParamReturn {
+  value: string | null;
+  setValue: (value: string) => void;
+  removeParam: () => void;
+  hasParam: boolean;
+  params: URLSearchParams;
 }
 
 /**
- * Optimized hook for managing URL search parameters with state synchronization
- *
- * @param key - The URL parameter key
- * @param defaultValue - Default value when parameter is not present
- * @param options - Configuration options
- * @returns Object with value, setValue, reset, hasValue, and remove functions
- *
- * @example
- * // Basic usage
- * const [value, setValue] = useParamState('tab', 'home');
- *
- * // With options
- * const { value, setValue, reset, hasValue } = useParamState('settings', {}, {
- *   debounceMs: 300,
- *   replace: true,
- *   syncWithLocalStorage: true
- * });
- *
- * // Batch updates
- * const { setValue } = useParamState('filters', {});
- * setValue(prev => ({ ...prev, category: 'tech' }));
+ * Custom hook for managing query parameters with optimization
+ * @param options - Configuration object with paramName and optional defaultValue
+ * @returns Object with value, setValue, removeParam, hasParam, and params
  */
-function useParamState<T extends ParamValue>(
-  key: string,
-  defaultValue: T,
-  options: UseParamStateOptions<T> = {},
-): UseParamStateReturn<T> {
-  const {
-    serializer = defaultSerializer,
-    deserializer = defaultDeserializer,
-    debounceMs = 0,
-    replace = false,
-    syncWithLocalStorage = false,
-    localStorageKey = key,
-  } = options;
-
+export function useQueryParam({
+  paramName,
+  defaultValue,
+}: UseQueryParamOptions): UseQueryParamReturn {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Get initial value from URL or localStorage
-  const getInitialValue = useCallback((): T => {
-    const paramValue = searchParams.get(key);
+  // Memoize the URLSearchParams to prevent unnecessary re-renders
+  const params = useMemo(
+    () => new URLSearchParams(searchParams),
+    [searchParams],
+  );
 
-    if (paramValue !== null) {
-      return deserializer(paramValue, defaultValue);
-    }
+  // Get the current value with fallback to defaultValue
+  const value = useMemo(() => {
+    const paramValue = searchParams.get(paramName);
+    return paramValue ?? defaultValue ?? null;
+  }, [searchParams, paramName, defaultValue]);
 
-    // Fallback to localStorage if enabled
-    if (syncWithLocalStorage && typeof window !== "undefined") {
-      try {
-        const stored = localStorage.getItem(localStorageKey);
-        if (stored !== null) {
-          return deserializer(stored, defaultValue);
-        }
-      } catch (error) {
-        console.warn(
-          `Failed to read from localStorage for key "${localStorageKey}":`,
-          error,
-        );
-      }
-    }
+  // Check if the parameter exists
+  const hasParam = useMemo(() => {
+    return searchParams.has(paramName);
+  }, [searchParams, paramName]);
 
-    return defaultValue;
-  }, [
-    key,
-    defaultValue,
-    deserializer,
-    syncWithLocalStorage,
-    localStorageKey,
-    searchParams,
-  ]);
-
-  const [state, setState] = useState<T>(getInitialValue);
-
-  // Update state when URL changes
-  useEffect(() => {
-    const newValue = getInitialValue();
-    setState(newValue);
-  }, [getInitialValue]);
-
-  // Debounced value for URL updates
-  const debouncedState = useDebounce(state, debounceMs);
-
-  // Update URL when debounced state changes
-  useEffect(() => {
-    if (debouncedState === defaultValue) {
-      // Remove parameter if it's the default value
+  // Optimized setValue function with useCallback
+  const setValue = useCallback(
+    (newValue: string) => {
       const newParams = new URLSearchParams(searchParams);
-      if (newParams.has(key)) {
-        newParams.delete(key);
-        const newUrl = newParams.toString()
-          ? `${window.location.pathname}?${newParams.toString()}`
-          : window.location.pathname;
+      newParams.set(paramName, newValue);
+      router.push(`?${newParams.toString()}`);
+    },
+    [searchParams, paramName, router],
+  );
 
-        if (replace) {
-          router.replace(newUrl);
-        } else {
-          router.push(newUrl);
-        }
-      }
-    } else {
-      // Update parameter with new value
-      const serializedValue = serializer(debouncedState);
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set(key, serializedValue);
-
-      const newUrl = `${window.location.pathname}?${newParams.toString()}`;
-
-      if (replace) {
-        router.replace(newUrl);
-      } else {
-        router.push(newUrl);
-      }
-    }
-  }, [
-    debouncedState,
-    key,
-    defaultValue,
-    serializer,
-    searchParams,
-    router,
-    replace,
-  ]);
-
-  // Sync with localStorage if enabled
-  useEffect(() => {
-    if (syncWithLocalStorage && typeof window !== "undefined") {
-      try {
-        const serializedValue = serializer(state);
-        localStorage.setItem(localStorageKey, serializedValue);
-      } catch (error) {
-        console.warn(
-          `Failed to write to localStorage for key "${localStorageKey}":`,
-          error,
-        );
-      }
-    }
-  }, [state, syncWithLocalStorage, localStorageKey, serializer]);
-
-  const setValue = useCallback((newValue: T | ((prev: T) => T)) => {
-    setState((prev) => {
-      const updatedValue =
-        typeof newValue === "function"
-          ? (newValue as (prev: T) => T)(prev)
-          : newValue;
-      return updatedValue;
-    });
-  }, []);
-
-  const reset = useCallback(() => {
-    setState(defaultValue);
-  }, [defaultValue]);
-
-  const remove = useCallback(() => {
+  // Function to remove the parameter
+  const removeParam = useCallback(() => {
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete(key);
-    const newUrl = newParams.toString()
-      ? `${window.location.pathname}?${newParams.toString()}`
-      : window.location.pathname;
-
-    if (replace) {
-      router.replace(newUrl);
-    } else {
-      router.push(newUrl);
-    }
-  }, [key, searchParams, router, replace]);
-
-  const hasValue = useMemo(() => {
-    return searchParams.has(key);
-  }, [searchParams, key]);
+    newParams.delete(paramName);
+    const newSearch = newParams.toString();
+    router.push(newSearch ? `?${newSearch}` : window.location.pathname);
+  }, [searchParams, paramName, router]);
 
   return {
-    value: state,
+    value,
     setValue,
-    reset,
-    hasValue,
-    remove,
+    removeParam,
+    hasParam,
+    params,
   };
 }
 
-// Convenience hooks for common use cases
-export function useStringParam(
-  key: string,
-  defaultValue: string = "",
-  options?: Omit<UseParamStateOptions<string>, "serializer" | "deserializer">,
-) {
-  return useParamState(key, defaultValue, {
-    ...options,
-    serializer: (value) => value,
-    deserializer: (value) => value,
-  });
-}
+/**
+ * Hook for managing multiple query parameters at once
+ * @param paramNames - Array of parameter names to track
+ * @returns Object with values, setValue, and removeParam functions
+ */
+export function useMultipleQueryParams(paramNames: string[]) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-export function useNumberParam(
-  key: string,
-  defaultValue: number = 0,
-  options?: Omit<UseParamStateOptions<number>, "serializer" | "deserializer">,
-) {
-  return useParamState(key, defaultValue, {
-    ...options,
-    serializer: (value) => value.toString(),
-    deserializer: (value) => {
-      const parsed = parseFloat(value);
-      return isNaN(parsed) ? defaultValue : parsed;
+  const params = useMemo(
+    () => new URLSearchParams(searchParams),
+    [searchParams],
+  );
+
+  const values = useMemo(() => {
+    return paramNames.reduce(
+      (acc, paramName) => {
+        acc[paramName] = searchParams.get(paramName);
+        return acc;
+      },
+      {} as Record<string, string | null>,
+    );
+  }, [searchParams, paramNames]);
+
+  const setValue = useCallback(
+    (paramName: string, value: string) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set(paramName, value);
+      router.push(`?${newParams.toString()}`);
     },
-  });
-}
+    [searchParams, router],
+  );
 
-export function useBooleanParam(
-  key: string,
-  defaultValue: boolean = false,
-  options?: Omit<UseParamStateOptions<boolean>, "serializer" | "deserializer">,
-) {
-  return useParamState(key, defaultValue, {
-    ...options,
-    serializer: (value) => value.toString(),
-    deserializer: (value) => value === "true",
-  });
-}
-
-export function useObjectParam<T extends Record<string, unknown>>(
-  key: string,
-  defaultValue: T,
-  options?: Omit<UseParamStateOptions<T>, "serializer" | "deserializer">,
-) {
-  return useParamState(key, defaultValue, {
-    ...options,
-    serializer: (value) => JSON.stringify(value),
-    deserializer: (value) => {
-      try {
-        return JSON.parse(value);
-      } catch {
-        return defaultValue;
-      }
+  const setMultipleValues = useCallback(
+    (updates: Record<string, string>) => {
+      const newParams = new URLSearchParams(searchParams);
+      Object.entries(updates).forEach(([key, value]) => {
+        newParams.set(key, value);
+      });
+      router.push(`?${newParams.toString()}`);
     },
-  });
-}
+    [searchParams, router],
+  );
 
-export default useParamState;
+  const removeParam = useCallback(
+    (paramName: string) => {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete(paramName);
+      const newSearch = newParams.toString();
+      router.push(newSearch ? `?${newSearch}` : window.location.pathname);
+    },
+    [searchParams, router],
+  );
+
+  const removeMultipleParams = useCallback(
+    (paramNamesToRemove: string[]) => {
+      const newParams = new URLSearchParams(searchParams);
+      paramNamesToRemove.forEach((paramName) => {
+        newParams.delete(paramName);
+      });
+      const newSearch = newParams.toString();
+      router.push(newSearch ? `?${newSearch}` : window.location.pathname);
+    },
+    [searchParams, router],
+  );
+
+  return {
+    values,
+    setValue,
+    setMultipleValues,
+    removeParam,
+    removeMultipleParams,
+    params,
+  };
+}

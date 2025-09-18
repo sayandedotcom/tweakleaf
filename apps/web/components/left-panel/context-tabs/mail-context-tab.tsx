@@ -29,7 +29,7 @@ const FormSchema = z.object({
     }),
 });
 
-export function MailContextComponent() {
+export default function MailContextComponent() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });

@@ -1,10 +1,8 @@
-import { HeroVideoDialogTopInBottomOutComponent } from "@/components/hero-video-dialog-top-in-bottom-out";
 import { BentoGrid } from "@/components/kokonutui/bento-grid";
 import TweetGridComponent from "@/components/tweet-grid-component";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRight, PartyPopper } from "lucide-react";
-import Link from "next/link";
+import { PartyPopper } from "lucide-react";
 import { CompareUs } from "@/components/compare-us";
 import { FounderTip } from "@/components/founder-tip";
 import { RedditPosts } from "@/components/reddit-posts";
@@ -12,11 +10,11 @@ import { WordRotate } from "@/components/magicui/word-rotate";
 import { Features } from "@/components/features";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import { ShinyButton } from "@/components/magicui/shiny-button";
+import { ContainerScrollComponent } from "@/components/container-scroll-component";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <div
         className="relative flex flex-col items-center justify-center h-[85vh] pt-20"
         style={{
@@ -39,14 +37,13 @@ export default function Home() {
         </div>
         <div className="relative mb-10">
           <span className="text-[4rem] flex flex-row gap-4 items-center justify-center font-extrabold text-primary drop-shadow-[0_0_8px_rgba(0,255,255,0.9)] animate-neon">
-            Tweak
-            <span className="px-2">
-              <WordRotate words={["Resumes", "Cover Letters", "Cold Mails"]} />
+            Tweak LaTeX
+            <span className="px-2.5 w-[34rem]">
+              <WordRotate words={["Resumes/CVs", "Cover Letter"]} />
             </span>
-            with AI
           </span>
           <div className="text-[4rem] flex flex-row gap-4 items-center justify-center font-extrabold text-primary drop-shadow-[0_0_8px_rgba(0,255,255,0.9)]">
-            For Free !
+            with AI agents
           </div>
           <div className="absolute inset-0 -z-10 bg-primary opacity-50 blur-[50px] animate-neon-glow" />
         </div>
@@ -88,36 +85,11 @@ export default function Home() {
         </div>
       </div>
       <Features />
+      <ContainerScrollComponent />
       <div className="relative overflow-hidden">
         <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-10 pt-7">
           <div className="text-center max-w-5xl mx-auto">
-            {/* <h2 className="mb-4 text-3xl">tl;dr</h2>
-            <p className="text-xl text-muted-foreground mb-8 mx-auto leading-relaxed">
-              Apply to hundreds of jobs in just 10 minutes for only $0.50 with
-              AI that creates tailored cover letters and CVs written in a
-              humanized way to avoid ATS detection and achieve better rankings.
-              All documents are generated in LaTeX for superior ATS
-              compatibility, while our proven prompts ensure strong keyword
-              usage for maximum impact. We reduce hallucinations and cut costs
-              with advanced context engineering, and our AI agents continuously
-              learn your preferences to make every document faster, more
-              optimized, and more effective.
-            </p> */}
             <CompareUs />
-            {/* Video Demo Section */}
-            <div className="my-10" id="demo">
-              <h2 className="text-muted-foreground mb-4 text-3xl">
-                See how it works in 2 minutes
-              </h2>
-              <p className="text-base text-muted-foreground/80 mb-6 max-w-2xl mx-auto">
-                Watch our quick demo to see how easy to apply to 100s of jobs in
-                just an hours with tailored resumes and cover letters.
-              </p>
-              <div className="max-w-4xl mx-auto">
-                <HeroVideoDialogTopInBottomOutComponent />
-              </div>
-            </div>
-
             {/* Stats */}
             {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto my-32">
               <div className="text-center">
@@ -184,43 +156,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
-
-{
-  /* <div
-        style={{ maxWidth: "800px", margin: "0 auto", padding: "0 1rem" }}
-        id="pricing"
-      >
-        <PricingTable />
-      </div> */
-}
-
-{
-  /* <div style={{ width: "100%", height: "600px", position: "relative" }}>
-  <Orb
-    hoverIntensity={0.5}
-    rotateOnHover={true}
-    hue={0}
-    forceHoverState={false}
-  />
-  <div className="text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-    <div className="flex flex-col items-center justify-center">
-      <h1 className="text-3xl text-foreground leading-tight text-center font-extrabold">
-        Tweak CV & Cover Letters
-        <span className="block">with AI agents</span>
-      </h1>
-      <div className="flex flex-row gap-4">
-        <Link
-          href="/tweak"
-          className={cn(
-            buttonVariants(),
-            "mt-6 text-primary-foreground cursor-pointer text-lg",
-          )}
-        >
-          Start Tweaking <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-    </div>
-  </div>
-</div>; */
 }

@@ -1,49 +1,54 @@
 "use client";
 
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
 import { Loader } from "../loader";
+import { useQueryParam } from "@/hooks/use-query-param";
 import dynamic from "next/dynamic";
-import React, { useCallback, useMemo } from "react";
 
 const JobTab = dynamic(() => import("./job-tab"), {
-  ssr: false,
   loading: () => <Loader />,
 });
+
 const ContextTab = dynamic(() => import("./context-tabs/context-tab"), {
-  ssr: false,
   loading: () => <Loader />,
 });
+
 const AiTab = dynamic(() => import("./ai-tabs/ai-tab"), {
-  ssr: false,
   loading: () => <Loader />,
 });
+
 const PromptsTab = dynamic(() => import("./prompt-tabs/prompt-tab"), {
-  ssr: false,
   loading: () => <Loader />,
 });
+
 const MemoizedJobTab = React.memo(JobTab);
 const MemoizedAiTab = React.memo(AiTab);
 const MemoizedContextTab = React.memo(ContextTab);
 const MemoizedPromptsTab = React.memo(PromptsTab);
 export function LeftPanel() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const category = searchParams.get(navigation.LEFT_PANEL.PARAM);
+  // const router = useRouter();
+  // const searchParams = useSearchParams();
+  // const category = searchParams.get(navigation.LEFT_PANEL.PARAM);
 
-  const params = useMemo(
-    () => new URLSearchParams(searchParams),
-    [searchParams],
-  );
+  // const params = useMemo(
+  //   () => new URLSearchParams(searchParams),
+  //   [searchParams],
+  // );
 
-  const handleValueChange = useCallback(
-    (value: string) => {
-      params.set(navigation.LEFT_PANEL.PARAM, value);
-      router.push(`?${params.toString()}`);
-    },
-    [params, router],
-  );
+  // const handleValueChange = useCallback(
+  //   (value: string) => {
+  //     params.set(navigation.LEFT_PANEL.PARAM, value);
+  //     router.push(`?${params.toString()}`);
+  //   },
+  //   [params, router],
+  // );
+
+  const { value: category, setValue: handleValueChange } = useQueryParam({
+    paramName: navigation.LEFT_PANEL.PARAM,
+    defaultValue: navigation.LEFT_PANEL.JOB,
+  });
 
   return (
     <Tabs

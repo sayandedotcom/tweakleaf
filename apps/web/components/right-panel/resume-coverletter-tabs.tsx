@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useCallback, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -17,157 +16,92 @@ import { TooltipComponent } from "@/components/tooltip-component";
 import { navigation } from "@/configs/navigation";
 import { useLatexCompilation } from "@/hooks/use-latex-compilation";
 import { toast } from "sonner";
-import useLocalStorage from "use-local-storage";
 import { Download, RefreshCw, Play, ListRestart, Logs } from "lucide-react";
 import { PdfTab } from "./pdf-tab";
 import { LatexTab } from "./latex-tab";
+import { CommingSoon } from "@/components/comming-soon";
+import dynamic from "next/dynamic";
+import { Loader } from "@/components/loader";
+import { AlertDialogComponent } from "@/components/alert-dialog-component";
+import { SaveFileButton } from "@/components/save-file-button";
+import { useQueryParam } from "@/hooks/use-query-param";
+import { usePdfManagement } from "@/hooks/use-pdf-management";
+import { useCompilationState } from "@/hooks/use-compilation-state";
+import { useTemplateManagement } from "@/hooks/use-template-management";
+import { useLatexContent } from "@/hooks/use-latex-content";
+import { useFileOperations } from "@/hooks/use-file-operations";
 import { resumeTemplates } from "@/configs/resume-templates";
 import { coverLetterTemplates } from "@/configs/cover-letter-templates";
-import { CommingSoon } from "../comming-soon";
-
-import dynamic from "next/dynamic";
-import { Loader } from "../loader";
-import { AlertDialogComponent } from "../alert-dialog-component";
-import { SaveFileButton } from "../save-file-button";
 
 const ResumePdf = dynamic(() => import("./resume/resume-pdf"), {
-  ssr: false,
   loading: () => <Loader />,
 });
 
 const CoverLetterPdf = dynamic(
   () => import("./cover-letter/cover-letter-pdf"),
   {
-    ssr: false,
     loading: () => <Loader />,
   },
 );
 
 const ResumeLatex = dynamic(() => import("./resume/resume-latex"), {
-  ssr: false,
   loading: () => <Loader />,
 });
 
 const CoverLetterLatex = dynamic(
   () => import("./cover-letter/cover-letter-latex"),
   {
-    ssr: false,
     loading: () => <Loader />,
   },
 );
 
 const LogsTab = dynamic(() => import("./logs/logs"), {
-  ssr: false,
   loading: () => <Loader />,
 });
 
-export function ResumeCoverLetterTabs() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const format = searchParams.get(navigation.FORMAT.PARAM);
-  const rightPanelCategory = searchParams.get(navigation.RIGHT_PANEL.PARAM);
-  const params = useMemo(
-    () => new URLSearchParams(searchParams),
-    [searchParams],
-  );
+export default function ResumeCoverLetterTabs() {
+  // Query parameters
+  const { value: format, setValue: handleFormatChange } = useQueryParam({
+    paramName: navigation.FORMAT.PARAM,
+    defaultValue: navigation.FORMAT.PDF,
+  });
 
-  // Get template values from store (not used in reset function)
-  // const { resumeTemplate, coverLetterTemplate } = useStore();
+  const { value: rightPanelCategory } = useQueryParam({
+    paramName: navigation.RIGHT_PANEL.PARAM,
+    defaultValue: navigation.RIGHT_PANEL.RESUME,
+  });
 
-  // State to manage PDF blob between LaTeX and PDF components - using localStorage for persistence
-  const [resumePdfBlob, setResumePdfBlob] = useState<Blob | null>(null);
-  const [coverLetterPdfBlob, setCoverLetterPdfBlob] = useState<Blob | null>(
-    null,
-  );
+  // Custom hooks for state management
+  const { currentPdfBlob, setPdfBlob, clearPdfBlob } = usePdfManagement({
+    rightPanelCategory,
+  });
 
-  // Store PDF data as base64 in localStorage for persistence across tab switches
-  const [resumePdfData, setResumePdfData] = useLocalStorage<string | null>(
-    "resumePdfData",
-    null,
-  );
-  const [coverLetterPdfData, setCoverLetterPdfData] = useLocalStorage<
-    string | null
-  >("coverLetterPdfData", null);
+  const {
+    compilationError,
+    lastCompilationTime,
+    compilationAttempts,
+    setCompilationError,
+    setHasAttemptedCompilation,
+    setLastCompilationTime,
+    setIsUserEditing,
+    setCompilationAttempts,
+    setLastCompiledResumeHash,
+    setLastCompiledCoverLetterHash,
+    clearCompilationState,
+    resetCompilationAttempts,
+    generateContentHash,
+    shouldAutoCompile,
+  } = useCompilationState({ rightPanelCategory });
 
-  // Add error state management
-  const [compilationError, setCompilationError] = useState<string | null>(null);
-  const [hasAttemptedCompilation, setHasAttemptedCompilation] = useState(false);
-  const [lastCompilationTime, setLastCompilationTime] = useState<number>(0);
-  const [isUserEditing, setIsUserEditing] = useState(false);
-  const [compilationAttempts, setCompilationAttempts] = useState(0);
-  const MAX_COMPILATION_ATTEMPTS = 3;
-
-  // Track content hashes to prevent unnecessary recompilations
-  const [lastCompiledResumeHash, setLastCompiledResumeHash] = useLocalStorage<
-    string | null
-  >("lastCompiledResumeHash", null);
-  const [lastCompiledCoverLetterHash, setLastCompiledCoverLetterHash] =
-    useLocalStorage<string | null>("lastCompiledCoverLetterHash", null);
-
-  // Helper function to generate a simple hash of content
-  const generateContentHash = (content: string): string => {
-    return btoa(encodeURIComponent(content)).slice(0, 16);
-  };
-
-  // Get the current PDF blob based on document type
-  const currentPdfBlob =
-    rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-      ? resumePdfBlob
-      : coverLetterPdfBlob;
-
-  console.log("currentPdfBlob", JSON.stringify(currentPdfBlob));
-  console.log("resumePdfBlob", JSON.stringify(resumePdfBlob));
-  console.log("coverLetterPdfBlob", JSON.stringify(coverLetterPdfBlob));
-
-  // Get the current LaTeX content from localStorage
-  const [currentCoverLetterLatexContent, setCurrentCoverLetterLatexContent] =
-    useLocalStorage("coverLetterLatexContent", "");
-
-  const [currentResumeLatexContent, setCurrentResumeLatexContent] =
-    useLocalStorage("resumeLatexContent", "");
-
-  // Template selection state
-  const [selectedResumeTemplate, setSelectedResumeTemplate] = useLocalStorage(
-    "selectedResumeTemplate",
-    resumeTemplates.find((t) => t.isDefault)?.value ||
-      resumeTemplates[0]?.value ||
-      "",
-  );
-
-  const [selectedCoverLetterTemplate, setSelectedCoverLetterTemplate] =
-    useLocalStorage(
-      "selectedCoverLetterTemplate",
-      coverLetterTemplates.find((t) => t.isDefault)?.value ||
-        coverLetterTemplates[0]?.value ||
-        "",
-    );
-
-  // LaTeX compilation hook
-  const { mutate: compileLatex, isPending, reset } = useLatexCompilation();
-
-  // Get current template based on document type
-  const currentTemplate =
-    rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-      ? resumeTemplates.find((t) => t.value === selectedResumeTemplate)
-      : coverLetterTemplates.find(
-          (t) => t.value === selectedCoverLetterTemplate,
-        );
-
-  // Template selection handler
-  const handleTemplateChange = (templateValue: string) => {
-    const template =
-      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-        ? resumeTemplates.find((t) => t.value === templateValue)
-        : coverLetterTemplates.find((t) => t.value === templateValue);
-
-    if (template) {
-      // Update template selection
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setSelectedResumeTemplate(templateValue);
-      } else {
-        setSelectedCoverLetterTemplate(templateValue);
-      }
-
+  // Template management
+  const {
+    selectedResumeTemplate,
+    selectedCoverLetterTemplate,
+    currentTemplate,
+    handleTemplateChange: handleTemplateChangeBase,
+  } = useTemplateManagement({
+    rightPanelCategory,
+    onTemplateChange: (template) => {
       // Update LaTeX content with new template
       if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
         setCurrentResumeLatexContent(template.latex);
@@ -176,107 +110,54 @@ export function ResumeCoverLetterTabs() {
       }
 
       // Clear PDF blob to force recompilation
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setResumePdfBlob(null);
-        setResumePdfData(null);
-      } else {
-        setCoverLetterPdfBlob(null);
-        setCoverLetterPdfData(null);
-      }
+      clearPdfBlob();
 
       // Clear any compilation errors
-      setCompilationError(null);
-      setHasAttemptedCompilation(false);
-      setCompilationAttempts(0);
-      // Reset content hash for new template
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setLastCompiledResumeHash(null);
-      } else {
-        setLastCompiledCoverLetterHash(null);
-      }
+      clearCompilationState();
 
       toast.success(`Switched to ${template.name} template`);
-    }
-  };
+    },
+  });
+
+  // LaTeX content management
+  const {
+    currentLatexContent,
+    setCurrentResumeLatexContent,
+    setCurrentCoverLetterLatexContent,
+    updateCurrentLatexContent,
+    initializeDefaultContent,
+  } = useLatexContent({
+    rightPanelCategory,
+    currentTemplate,
+  });
+
+  // File operations
+  const { handleDownload, getSignatureImage } = useFileOperations({
+    rightPanelCategory,
+    currentPdfBlob,
+    currentLatexContent,
+    format,
+  });
+
+  // LaTeX compilation hook
+  const { mutate: compileLatex, isPending, reset } = useLatexCompilation();
+
+  // Template selection handler
+  const handleTemplateChange = useCallback(
+    (templateValue: string) => {
+      handleTemplateChangeBase(templateValue);
+    },
+    [handleTemplateChangeBase],
+  );
 
   // Initialize default template data on first load
   useEffect(() => {
-    const currentContent =
-      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-        ? currentResumeLatexContent
-        : currentCoverLetterLatexContent;
-
-    // Only initialize if no content exists and we have a current template
-    if (!currentContent && currentTemplate) {
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setCurrentResumeLatexContent(currentTemplate.latex);
-      } else {
-        setCurrentCoverLetterLatexContent(currentTemplate.latex);
-      }
-    }
-  }, [
-    rightPanelCategory,
-    currentTemplate,
-    currentResumeLatexContent,
-    currentCoverLetterLatexContent,
-    setCurrentResumeLatexContent,
-    setCurrentCoverLetterLatexContent,
-  ]);
-
-  // Restore PDF blobs from localStorage on component mount
-  useEffect(() => {
-    const restorePdfBlobs = async () => {
-      // Restore resume PDF if data exists and blob doesn't
-      if (resumePdfData && !resumePdfBlob) {
-        try {
-          // Convert base64 to blob
-          const byteCharacters = atob(resumePdfData);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: "application/pdf" });
-          setResumePdfBlob(blob);
-        } catch (error) {
-          console.error("Failed to restore resume PDF:", error);
-          setResumePdfData(null); // Clear invalid data
-        }
-      }
-
-      // Restore cover letter PDF if data exists and blob doesn't
-      if (coverLetterPdfData && !coverLetterPdfBlob) {
-        try {
-          // Convert base64 to blob
-          const byteCharacters = atob(coverLetterPdfData);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: "application/pdf" });
-          setCoverLetterPdfBlob(blob);
-        } catch (error) {
-          console.error("Failed to restore cover letter PDF:", error);
-          setCoverLetterPdfData(null); // Clear invalid data
-        }
-      }
-    };
-
-    restorePdfBlobs();
-  }, [
-    resumePdfData,
-    coverLetterPdfData,
-    resumePdfBlob,
-    coverLetterPdfBlob,
-    setResumePdfData,
-    setCoverLetterPdfData,
-  ]);
+    initializeDefaultContent();
+  }, [initializeDefaultContent]);
 
   // Add cleanup effect
   useEffect(() => {
     return () => {
-      // Reset the mutation state when component unmounts
       reset();
     };
   }, [reset]);
@@ -284,9 +165,7 @@ export function ResumeCoverLetterTabs() {
   const handlePdfGenerated = useCallback(
     async (newPdfBlob: Blob) => {
       // Clear any previous errors when compilation succeeds
-      setCompilationError(null);
-      setHasAttemptedCompilation(false);
-      setCompilationAttempts(0); // Reset attempts on successful compilation
+      resetCompilationAttempts();
 
       // Convert blob to base64 for persistence
       const arrayBuffer = await newPdfBlob.arrayBuffer();
@@ -294,33 +173,29 @@ export function ResumeCoverLetterTabs() {
         String.fromCharCode(...new Uint8Array(arrayBuffer)),
       );
 
+      // Store PDF blob and data
+      setPdfBlob(newPdfBlob);
+
+      // Store base64 data in localStorage
       if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setResumePdfBlob(newPdfBlob);
-        setResumePdfData(base64String);
+        localStorage.setItem("resumePdfData", base64String);
       } else {
-        setCoverLetterPdfBlob(newPdfBlob);
-        setCoverLetterPdfData(base64String);
+        localStorage.setItem("coverLetterPdfData", base64String);
       }
+
       // Switch to PDF tab to show the result
-      params.set(navigation.FORMAT.PARAM, navigation.FORMAT.PDF);
-      router.push(`?${params.toString()}`);
+      handleFormatChange(navigation.FORMAT.PDF);
     },
     [
       rightPanelCategory,
-      params,
-      router,
-      setResumePdfData,
-      setCoverLetterPdfData,
+      handleFormatChange,
+      setPdfBlob,
+      resetCompilationAttempts,
     ],
   );
 
   const handleCompile = useCallback(async () => {
-    const currentContent =
-      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-        ? currentResumeLatexContent
-        : currentCoverLetterLatexContent;
-
-    if (!currentContent || !currentContent.trim()) {
+    if (!currentLatexContent || !currentLatexContent.trim()) {
       toast.error("Please enter LaTeX content");
       return;
     }
@@ -333,7 +208,7 @@ export function ResumeCoverLetterTabs() {
     }
 
     // Check if we've exceeded maximum compilation attempts
-    if (compilationAttempts >= MAX_COMPILATION_ATTEMPTS) {
+    if (compilationAttempts >= 3) {
       toast.error(
         "Maximum compilation attempts reached. Please check your LaTeX syntax and try again.",
       );
@@ -344,46 +219,17 @@ export function ResumeCoverLetterTabs() {
     setHasAttemptedCompilation(true);
     setCompilationError(null);
     setLastCompilationTime(now);
-    setCompilationAttempts((prev) => prev + 1);
+    setCompilationAttempts(compilationAttempts + 1);
 
     // Use compiler from the selected template
     const compiler = currentTemplate?.compiler || "pdflatex";
 
-    // Get signature image from localStorage if available
-    const uploadedFiles = JSON.parse(
-      localStorage.getItem("uploadedFiles") || "[]",
-    );
-    const signatureFile = uploadedFiles.find(
-      (file: { name: string; type: string }) =>
-        file.name.toLowerCase().includes("signature") &&
-        file.type.startsWith("image/"),
-    );
-
-    if (signatureFile) {
-      console.log("Found signature file:", signatureFile.name);
-    } else {
-      console.log("No signature file found, proceeding without signature");
-    }
-
-    // Convert base64 to File object if signature found
-    let signatureImage: File | undefined;
-    if (signatureFile) {
-      try {
-        const response = await fetch(signatureFile.data);
-        const blob = await response.blob();
-        signatureImage = new File([blob], signatureFile.name, {
-          type: signatureFile.type,
-        });
-        console.log("Signature image loaded:", signatureFile.name);
-      } catch (error) {
-        console.error("Error converting signature file:", error);
-        toast.warning("Failed to load signature image, proceeding without it");
-      }
-    }
+    // Get signature image
+    const signatureImage = await getSignatureImage();
 
     compileLatex(
       {
-        latex_content: currentContent,
+        latex_content: currentLatexContent,
         compiler,
         signature_image: signatureImage,
       },
@@ -391,7 +237,7 @@ export function ResumeCoverLetterTabs() {
         onSuccess: (pdfBlob) => {
           toast.success("LaTeX compiled successfully!");
           // Track the content hash for successful compilation
-          const contentHash = generateContentHash(currentContent);
+          const contentHash = generateContentHash(currentLatexContent);
           if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
             setLastCompiledResumeHash(contentHash);
           } else {
@@ -422,44 +268,37 @@ export function ResumeCoverLetterTabs() {
           console.error("Compilation error:", error);
 
           // Switch to logs tab to show the error
-          params.set(navigation.FORMAT.PARAM, navigation.FORMAT.LOGS);
-          router.push(`?${params.toString()}`);
+          handleFormatChange(navigation.FORMAT.LOGS);
         },
       },
     );
   }, [
-    rightPanelCategory,
-    currentResumeLatexContent,
-    currentCoverLetterLatexContent,
+    currentLatexContent,
     lastCompilationTime,
     compilationAttempts,
-    MAX_COMPILATION_ATTEMPTS,
     compileLatex,
     handlePdfGenerated,
-    params,
-    router,
+    handleFormatChange,
     currentTemplate?.compiler,
     setLastCompiledResumeHash,
     setLastCompiledCoverLetterHash,
+    generateContentHash,
+    getSignatureImage,
+    setHasAttemptedCompilation,
+    setCompilationError,
+    setLastCompilationTime,
+    setCompilationAttempts,
+    rightPanelCategory,
   ]);
 
   // Unified compile/recompile function
-  const handleCompileOrRecompile = () => {
+  const handleCompileOrRecompile = useCallback(() => {
     // Clear any previous errors when manually compiling
-    setCompilationError(null);
-    setHasAttemptedCompilation(false);
-    setCompilationAttempts(0); // Reset attempts on manual recompile
-    // Reset content hash to force compilation
-    if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-      setLastCompiledResumeHash(null);
-    } else {
-      setLastCompiledCoverLetterHash(null);
-    }
+    clearCompilationState();
 
     if (currentPdfBlob) {
       // If we have a PDF, this is a recompile - switch to LaTeX tab first
-      params.set(navigation.FORMAT.PARAM, navigation.FORMAT.LATEX);
-      router.push(`?${params.toString()}`);
+      handleFormatChange(navigation.FORMAT.LATEX);
       // Small delay to ensure tab switch completes before compilation
       setTimeout(async () => {
         await handleCompile();
@@ -468,51 +307,16 @@ export function ResumeCoverLetterTabs() {
       // If no PDF, this is initial compilation
       handleCompile();
     }
-  };
+  }, [
+    currentPdfBlob,
+    clearCompilationState,
+    handleFormatChange,
+    handleCompile,
+  ]);
 
   // Auto-compile on initial render if content exists and no errors
   useEffect(() => {
-    const currentContent =
-      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-        ? currentResumeLatexContent
-        : currentCoverLetterLatexContent;
-
-    // Generate hash for current content
-    const currentContentHash = currentContent
-      ? generateContentHash(currentContent)
-      : null;
-
-    // Get the appropriate hash for comparison
-    const lastHash =
-      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-        ? lastCompiledResumeHash
-        : lastCompiledCoverLetterHash;
-
-    // Only auto-compile if:
-    // 1. We have content
-    // 2. No PDF blob exists OR content has changed since last compilation
-    // 3. Not currently compiling
-    // 4. No compilation errors have occurred
-    // 5. We haven't already attempted compilation for this content
-    // 6. Sufficient time has passed since last compilation attempt
-    // 7. User is not actively editing
-    // 8. Maximum compilation attempts not reached
-    // 9. Content has actually changed since last successful compilation
-    const now = Date.now();
-    const contentHasChanged = currentContentHash !== lastHash;
-    const canCompile =
-      currentContent &&
-      currentContent.trim() &&
-      (!currentPdfBlob || contentHasChanged) &&
-      !isPending &&
-      !compilationError &&
-      !hasAttemptedCompilation &&
-      now - lastCompilationTime >= 2000 &&
-      !isUserEditing &&
-      compilationAttempts < MAX_COMPILATION_ATTEMPTS &&
-      contentHasChanged;
-
-    if (canCompile) {
+    if (shouldAutoCompile(currentLatexContent, isPending)) {
       // Small delay to ensure component is fully mounted
       const timer = setTimeout(async () => {
         await handleCompile();
@@ -520,258 +324,127 @@ export function ResumeCoverLetterTabs() {
 
       return () => clearTimeout(timer);
     }
-  }, [
-    rightPanelCategory,
-    currentResumeLatexContent,
-    currentCoverLetterLatexContent,
-    currentPdfBlob,
-    isPending,
-    compilationError,
-    hasAttemptedCompilation,
-    lastCompilationTime,
-    isUserEditing,
-    compilationAttempts,
-    MAX_COMPILATION_ATTEMPTS,
-    lastCompiledResumeHash,
-    lastCompiledCoverLetterHash,
-    handleCompile,
-  ]);
+  }, [currentLatexContent, isPending, shouldAutoCompile, handleCompile]);
 
   // Reset error state when content changes
   useEffect(() => {
-    const currentContent =
-      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-        ? currentResumeLatexContent
-        : currentCoverLetterLatexContent;
-
     // Reset error state when content changes (user is editing)
-    if (currentContent && currentContent.trim()) {
-      setCompilationError(null);
-      setHasAttemptedCompilation(false);
-      setCompilationAttempts(0); // Reset attempts on content change
+    if (currentLatexContent && currentLatexContent.trim()) {
+      resetCompilationAttempts();
     }
-  }, [
-    rightPanelCategory,
-    currentResumeLatexContent,
-    currentCoverLetterLatexContent,
-  ]);
+  }, [currentLatexContent, resetCompilationAttempts]);
 
   // Auto-compile when cover letter content changes (AI generation)
   useEffect(() => {
     // Only auto-compile for cover letters, not resumes
-    if (rightPanelCategory === navigation.RIGHT_PANEL.COVER_LETTER) {
-      // Generate hash for current content
-      const currentContentHash = currentCoverLetterLatexContent
-        ? generateContentHash(currentCoverLetterLatexContent)
-        : null;
+    if (
+      rightPanelCategory === navigation.RIGHT_PANEL.COVER_LETTER &&
+      shouldAutoCompile(currentLatexContent, isPending)
+    ) {
+      // Small delay to ensure content is fully updated
+      const timer = setTimeout(async () => {
+        await handleCompile();
+      }, 2000); // 2 second delay to ensure content is stable
 
-      // Check if we have new content and it has changed since last compilation
-      if (
-        currentCoverLetterLatexContent &&
-        currentCoverLetterLatexContent.trim() &&
-        currentContentHash !== lastCompiledCoverLetterHash &&
-        (!coverLetterPdfBlob ||
-          currentContentHash !== lastCompiledCoverLetterHash) &&
-        !isPending &&
-        !compilationError
-      ) {
-        // Small delay to ensure content is fully updated
-        const timer = setTimeout(() => {
-          // Use compiler from the selected template
-          const compiler = currentTemplate?.compiler || "xelatex";
-
-          compileLatex(
-            {
-              latex_content: currentCoverLetterLatexContent,
-              compiler,
-            },
-            {
-              onSuccess: (pdfBlob) => {
-                toast.success("Cover letter auto-compiled successfully!");
-                // Track the content hash for successful compilation
-                setLastCompiledCoverLetterHash(
-                  generateContentHash(currentCoverLetterLatexContent),
-                );
-                handlePdfGenerated(pdfBlob);
-              },
-              onError: (error: unknown) => {
-                let errorMessage = "Auto-compilation failed";
-                if (error && typeof error === "object" && "response" in error) {
-                  const errorWithResponse = error as {
-                    response?: { data?: { detail?: string } };
-                  };
-                  if (errorWithResponse.response?.data?.detail) {
-                    errorMessage = errorWithResponse.response.data.detail;
-                  }
-                } else if (
-                  error &&
-                  typeof error === "object" &&
-                  "message" in error
-                ) {
-                  const errorWithMessage = error as { message: string };
-                  errorMessage = errorWithMessage.message;
-                }
-                toast.error(errorMessage);
-              },
-            },
-          );
-        }, 2000); // 2 second delay to ensure content is stable
-
-        return () => clearTimeout(timer);
-      }
+      return () => clearTimeout(timer);
     }
   }, [
-    currentCoverLetterLatexContent,
     rightPanelCategory,
-    coverLetterPdfBlob,
+    currentLatexContent,
     isPending,
-    compilationError,
-    lastCompiledCoverLetterHash,
-    compileLatex,
-    handlePdfGenerated,
-    currentTemplate?.compiler,
-    setLastCompiledCoverLetterHash,
+    shouldAutoCompile,
+    handleCompile,
   ]);
 
   // Function to clear errors and allow retry
-  const clearErrorsAndRetry = () => {
-    setCompilationError(null);
-    setHasAttemptedCompilation(false);
-    setCompilationAttempts(0); // Reset attempts on manual retry
-    setLastCompilationTime(Date.now()); // Set current time to prevent immediate re-compilation
-    // Reset content hash to allow recompilation
-    if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-      setLastCompiledResumeHash(null);
-    } else {
-      setLastCompiledCoverLetterHash(null);
-    }
-  };
+  const clearErrorsAndRetry = useCallback(() => {
+    clearCompilationState();
+  }, [clearCompilationState]);
 
   // Function to track user editing state
-  const handleUserEditing = (isEditing: boolean) => {
-    try {
-      setIsUserEditing(isEditing);
-      if (isEditing) {
-        // Clear errors when user starts editing (they're fixing the issue)
-        setCompilationError(null);
-        setHasAttemptedCompilation(false);
-        setCompilationAttempts(0); // Reset attempts on user editing
+  const handleUserEditing = useCallback(
+    (isEditing: boolean) => {
+      try {
+        setIsUserEditing(isEditing);
+        if (isEditing) {
+          // Clear errors when user starts editing (they're fixing the issue)
+          resetCompilationAttempts();
+        }
+      } catch (error) {
+        console.error("Error handling user editing state:", error);
       }
-    } catch (error) {
-      console.error("Error handling user editing state:", error);
-    }
-  };
+    },
+    [setIsUserEditing, resetCompilationAttempts],
+  );
 
   // Function to reset the current document to the default template from store
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     try {
-      // Get the template value from localStorage based on document type
-      const templateValue =
-        rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-          ? selectedResumeTemplate
-          : selectedCoverLetterTemplate;
-
-      // Find the template from the appropriate template array
-      const defaultTemplate =
-        rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-          ? resumeTemplates.find((t) => t.value === templateValue)
-          : coverLetterTemplates.find((t) => t.value === templateValue);
-
-      if (!defaultTemplate) {
+      if (!currentTemplate) {
         toast.error("Default template not found");
         return;
       }
 
       // Reset LaTeX content to the default template's original content
-      console.log("Resetting with template:", defaultTemplate.name);
-      console.log("Template value from store:", templateValue);
-      console.log("LaTeX content length:", defaultTemplate.latex.length);
-
-      // Use the setter functions to update localStorage and trigger re-render
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setCurrentResumeLatexContent(defaultTemplate.latex);
-      } else {
-        setCurrentCoverLetterLatexContent(defaultTemplate.latex);
-      }
+      updateCurrentLatexContent(currentTemplate.latex);
 
       // Clear PDF blobs to force recompilation
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setResumePdfBlob(null);
-        setResumePdfData(null);
-      } else {
-        setCoverLetterPdfBlob(null);
-        setCoverLetterPdfData(null);
-      }
+      clearPdfBlob();
 
       // Clear compilation state
-      setCompilationError(null);
-      setHasAttemptedCompilation(false);
-      setCompilationAttempts(0);
-      // Reset content hash for new template
-      if (rightPanelCategory === navigation.RIGHT_PANEL.RESUME) {
-        setLastCompiledResumeHash(null);
-      } else {
-        setLastCompiledCoverLetterHash(null);
-      }
+      clearCompilationState();
 
       // Switch to LaTeX tab to show the reset content
-      params.set(navigation.FORMAT.PARAM, navigation.FORMAT.LATEX);
-      router.push(`?${params.toString()}`);
+      handleFormatChange(navigation.FORMAT.LATEX);
 
-      toast.success(`Reset to default ${defaultTemplate.name} template`);
+      toast.success(`Reset to default ${currentTemplate.name} template`);
     } catch (error) {
       console.error("Error resetting document:", error);
       toast.error("Failed to reset document");
     }
-  };
+  }, [
+    currentTemplate,
+    updateCurrentLatexContent,
+    clearPdfBlob,
+    clearCompilationState,
+    handleFormatChange,
+  ]);
 
-  const handleDownload = () => {
-    // Check if we're in LaTeX tab
-    if (format === navigation.FORMAT.LATEX) {
-      // Download LaTeX file
-      const currentContent =
-        rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-          ? currentResumeLatexContent
-          : currentCoverLetterLatexContent;
+  // Memoized values for better performance
+  const currentTemplateValue = useMemo(
+    () =>
+      rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+        ? selectedResumeTemplate
+        : selectedCoverLetterTemplate,
+    [rightPanelCategory, selectedResumeTemplate, selectedCoverLetterTemplate],
+  );
 
-      if (currentContent) {
-        const blob = new Blob([currentContent], { type: "text/plain" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        const fileName =
-          rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-            ? "resume.tex"
-            : "cover_letter.tex";
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(link.href);
-      }
-    } else if (currentPdfBlob) {
-      // Download PDF file (existing logic)
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(currentPdfBlob);
-      const fileName =
-        rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-          ? "resume.pdf"
-          : "cover_letter.pdf";
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(link.href);
-    }
-  };
+  const isCompileDisabled = useMemo(
+    () => isPending || compilationError !== null || compilationAttempts >= 3,
+    [isPending, compilationError, compilationAttempts],
+  );
+
+  const isDownloadDisabled = useMemo(
+    () =>
+      format === navigation.FORMAT.LATEX
+        ? !currentLatexContent
+        : !currentPdfBlob,
+    [format, currentLatexContent, currentPdfBlob],
+  );
+
+  const compileButtonText = useMemo(() => {
+    if (isPending) return "Compiling...";
+    if (compilationAttempts >= 3) return "Wait";
+    if (compilationError) return "Error";
+    if (currentPdfBlob) return "Recompile";
+    return "Compile";
+  }, [isPending, compilationAttempts, compilationError, currentPdfBlob]);
 
   return (
     <Tabs
       defaultValue={format || navigation.FORMAT.PDF}
       className="flex flex-col h-full"
-      onValueChange={(value) => {
-        params.set(navigation.FORMAT.PARAM, value);
-        router.push(`?${params.toString()}`);
-      }}
+      onValueChange={handleFormatChange}
     >
       <header className="flex gap-2 items-center w-full justify-between px-2 py-0.5 border-b">
         <TabsList>
@@ -788,11 +461,7 @@ export function ResumeCoverLetterTabs() {
           </TabsTrigger>
         </TabsList>
         <Select
-          value={
-            rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-              ? selectedResumeTemplate
-              : selectedCoverLetterTemplate
-          }
+          value={currentTemplateValue}
           onValueChange={handleTemplateChange}
         >
           <SelectTrigger>
@@ -801,7 +470,7 @@ export function ResumeCoverLetterTabs() {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Templates</SelectLabel>
-              {navigation.RIGHT_PANEL.RESUME === rightPanelCategory
+              {rightPanelCategory === navigation.RIGHT_PANEL.RESUME
                 ? resumeTemplates.map((template) => (
                     <SelectItem
                       key={template.id}
@@ -811,9 +480,7 @@ export function ResumeCoverLetterTabs() {
                       {template.name} {template.isDisabled && <CommingSoon />}
                     </SelectItem>
                   ))
-                : null}
-              {navigation.RIGHT_PANEL.COVER_LETTER === rightPanelCategory
-                ? coverLetterTemplates.map((template) => (
+                : coverLetterTemplates.map((template) => (
                     <SelectItem
                       key={template.id}
                       value={template.value}
@@ -822,19 +489,14 @@ export function ResumeCoverLetterTabs() {
                       {template.name}
                       {template.isDisabled && <CommingSoon />}
                     </SelectItem>
-                  ))
-                : null}
+                  ))}
             </SelectGroup>
           </SelectContent>
         </Select>
         <div className="flex gap-2 items-center">
           <Button
             onClick={handleCompileOrRecompile}
-            disabled={
-              isPending ||
-              compilationError !== null ||
-              compilationAttempts >= MAX_COMPILATION_ATTEMPTS
-            }
+            disabled={isCompileDisabled}
             className="flex items-center gap-2"
           >
             {isPending ? (
@@ -844,38 +506,20 @@ export function ResumeCoverLetterTabs() {
             ) : (
               <Play className="w-4 h-4" />
             )}
-            {isPending
-              ? "Compiling..."
-              : compilationAttempts >= MAX_COMPILATION_ATTEMPTS
-                ? "Wait"
-                : compilationError
-                  ? "Error"
-                  : currentPdfBlob
-                    ? "Recompile"
-                    : "Compile"}
+            {compileButtonText}
           </Button>
           <TooltipComponent content="Download">
             <Button
               size="icon"
               variant="outline"
               onClick={handleDownload}
-              disabled={
-                format === navigation.FORMAT.LATEX
-                  ? !(rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-                      ? currentResumeLatexContent
-                      : currentCoverLetterLatexContent)
-                  : !currentPdfBlob
-              }
+              disabled={isDownloadDisabled}
             >
               <Download />
             </Button>
           </TooltipComponent>
           <SaveFileButton
-            latexContent={
-              rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-                ? currentResumeLatexContent
-                : currentCoverLetterLatexContent
-            }
+            latexContent={currentLatexContent}
             documentType={
               rightPanelCategory === navigation.RIGHT_PANEL.RESUME
                 ? "resume"
@@ -892,7 +536,6 @@ export function ResumeCoverLetterTabs() {
               <ListRestart className="w-4 h-4" />
             </Button>
           </AlertDialogComponent>
-          {/* <RightPanelSettings /> */}
         </div>
       </header>
       <TabsContent value={navigation.FORMAT.PDF}>
@@ -920,7 +563,7 @@ export function ResumeCoverLetterTabs() {
           onRetry={handleCompile}
           onClearErrors={clearErrorsAndRetry}
           compilationAttempts={compilationAttempts}
-          maxCompilationAttempts={MAX_COMPILATION_ATTEMPTS}
+          maxCompilationAttempts={3}
         />
       </TabsContent>
     </Tabs>

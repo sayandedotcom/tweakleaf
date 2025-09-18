@@ -1,85 +1,65 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
 
 export function SetLocalstorageProvider() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const leftCategory = searchParams.get(navigation.LEFT_PANEL.PARAM);
-  const rightCategory = searchParams.get(navigation.RIGHT_PANEL.PARAM);
-  const format = searchParams.get(navigation.FORMAT.PARAM);
-  const model = searchParams.get(navigation.MODEL.PARAM);
 
-  // Use state to track localStorage changes
-  const [modelName, setModelName] = useState<string>("");
+  // Cache the initial localStorage value
+  const [modelName] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("modelName") || "";
+    }
+    return "";
+  });
 
-  const params = useMemo(
-    () => new URLSearchParams(searchParams),
-    [searchParams],
-  );
+  // Memoize the navigation logic to prevent unnecessary re-runs
+  const handleNavigation = useCallback(() => {
+    const leftCategory = searchParams.get(navigation.LEFT_PANEL.PARAM);
+    const rightCategory = searchParams.get(navigation.RIGHT_PANEL.PARAM);
+    const format = searchParams.get(navigation.FORMAT.PARAM);
+    const model = searchParams.get(navigation.MODEL.PARAM);
 
-  // Listen for localStorage changes
-  useEffect(() => {
-    const getStoredModelName = () => {
-      if (typeof window !== "undefined") {
-        return localStorage.getItem("modelName") || "";
-      }
-      return "";
-    };
+    // Check if any params are missing
+    const needsUpdate = !leftCategory || !rightCategory || !format || !model;
 
-    // Set initial value
-    setModelName(getStoredModelName());
+    if (!needsUpdate) return;
 
-    // Listen for storage events (when localStorage changes in other tabs/windows)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "modelName") {
-        setModelName(e.newValue || "");
-      }
-    };
+    // Build all missing params in one go
+    const params = new URLSearchParams(searchParams);
+    let hasChanges = false;
 
-    // Listen for custom events (when localStorage changes in same tab)
-    const handleCustomStorageChange = (e: CustomEvent) => {
-      if (e.detail?.key === "modelName") {
-        setModelName(e.detail.value || "");
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener(
-      "localStorageChange",
-      handleCustomStorageChange as EventListener,
-    );
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener(
-        "localStorageChange",
-        handleCustomStorageChange as EventListener,
-      );
-    };
-  }, []);
-
-  useEffect(() => {
     if (!leftCategory) {
       params.set(navigation.LEFT_PANEL.PARAM, navigation.LEFT_PANEL.JOB);
-      router.push(`?${params.toString()}`);
+      hasChanges = true;
     }
     if (!rightCategory) {
       params.set(navigation.RIGHT_PANEL.PARAM, navigation.RIGHT_PANEL.RESUME);
-      router.push(`?${params.toString()}`);
+      hasChanges = true;
     }
     if (!format) {
       params.set(navigation.FORMAT.PARAM, navigation.FORMAT.PDF);
-      router.push(`?${params.toString()}`);
+      hasChanges = true;
     }
     if (!model) {
-      // Use the modelName from localStorage if available, otherwise default to OpenAI
       const modelToUse = modelName || navigation.MODEL.OPENAI;
       params.set(navigation.MODEL.PARAM, modelToUse);
+      hasChanges = true;
+    }
+
+    // Single navigation call with all updates
+    if (hasChanges) {
       router.push(`?${params.toString()}`);
     }
-  }, [leftCategory, rightCategory, format, model, modelName, params, router]);
+  }, [searchParams, router, modelName]);
+
+  // Single effect that runs the navigation logic
+  useEffect(() => {
+    handleNavigation();
+  }, [handleNavigation]);
+
   return null;
 }

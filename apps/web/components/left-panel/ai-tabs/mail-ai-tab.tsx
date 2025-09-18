@@ -11,7 +11,7 @@ import { MessageList } from "@/components/ui/message-list";
 import { PromptSuggestions } from "@/components/ui/prompt-suggestions";
 import { MessageInput } from "@/components/ui/message-input";
 
-export function MailTab() {
+export default function MailTab() {
   const messages: Message[] = [];
   const input = "";
   const handleInputChange = () => {};

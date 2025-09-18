@@ -52,9 +52,8 @@ export function NavProjects() {
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton className="cursor-pointer" asChild>
               <Button
-                // disabled={item.url !== navigation.RIGHT_PANEL.COVER_LETTER}
                 variant="ghost"
                 onClick={() => {
                   params.set(navigation.RIGHT_PANEL.PARAM, item.url);
@@ -67,9 +66,6 @@ export function NavProjects() {
               >
                 <item.icon />
                 <span>{item.name}</span>
-                {/* {item.url !== navigation.RIGHT_PANEL.COVER_LETTER && (
-                  <CommingSoon />
-                )} */}
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>

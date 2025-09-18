@@ -29,7 +29,7 @@ const FormSchema = z.object({
     }),
 });
 
-export function ResumeContextComponent() {
+export default function ResumeContextComponent() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { PartyPopper } from "lucide-react";
+import { coverletterContextPlaceholders } from "@/configs/context-placeholders";
 
 const FormSchema = z.object({
   coverLetterContext: z
@@ -29,7 +30,7 @@ const FormSchema = z.object({
     }),
 });
 
-export function CoverLetterContextComponent() {
+export default function CoverLetterContextComponent() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
@@ -58,8 +59,8 @@ export function CoverLetterContextComponent() {
               <FormLabel>Cover Letter Context</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Tell us a little bit about the cover letter."
-                  className="resize-none h-[22rem]"
+                  placeholder={coverletterContextPlaceholders}
+                  className="resize-none h-[30rem]"
                   {...field}
                 />
               </FormControl>

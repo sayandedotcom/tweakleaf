@@ -1,11 +1,9 @@
 export const site = {
   name: "Tweakleaf",
-  description:
-    "Tweak.Apply is a platform for job seekers to find jobs and apply to them.",
+  description: "Tweak or tailor your latex resume and cover-letter with ai.",
   url: "https://tweakleaf.com",
   ogImage: "https://tweak.Apply.com/og-image.png",
   links: {
-    twitter: "https://x.com/tweak.Apply",
     github: "https://github.com/tweak.Apply",
     linkedin: "https://www.linkedin.com/company/tweak.Apply",
     instagram: "https://www.instagram.com/tweak.Apply",

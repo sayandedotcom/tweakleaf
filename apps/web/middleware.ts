@@ -9,7 +9,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (userId && req.nextUrl.pathname === "/") {
     const userUrl = new URL("/tweak", req.url);
-    // return NextResponse.redirect(userUrl);
+    return NextResponse.redirect(userUrl);
   }
 
   if (isProtectedRoute(req)) {
