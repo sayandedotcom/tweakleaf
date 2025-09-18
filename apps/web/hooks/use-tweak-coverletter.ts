@@ -3,7 +3,7 @@ import { useAxios } from "./use-axios";
 import { AxiosError } from "axios";
 
 interface BaseMessage {
-  type: string;
+  role: string;
   content: string;
 }
 
@@ -17,10 +17,11 @@ interface CoverLetterRequest {
   coverletter: string;
   user_message?: string;
   thread_id?: string;
+  chat_history?: Array<{ role: string; content: string }>;
 }
 
 interface CoverLetterResponse {
-  messages: Array<{ type: string; content: string }>;
+  messages: Array<{ role: string; content: string }>;
   status: number;
   coverletter: string;
   thread_id: string;
@@ -69,7 +70,7 @@ export const useCoverLetterMessages = (threadId: string | null) => {
   return useQuery({
     queryKey: ["cover-letter-messages", threadId],
     queryFn: async (): Promise<{
-      messages: Array<{ type: string; content: string }>;
+      messages: Array<{ role: string; content: string }>;
       thread_id: string;
     }> => {
       if (!threadId) {
