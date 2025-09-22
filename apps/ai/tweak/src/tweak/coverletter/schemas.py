@@ -14,7 +14,6 @@ class CoverLetterRequestSchema(BaseModel):
     coverletter: str
     user_message: Optional[str] = Field(default="", description="User's chat message")
     thread_id: Optional[str] = Field(default=None, description="Thread ID for conversation continuity")
-    chat_history: Optional[List[dict]] = Field(default=[], description="Previous chat messages for context")
     humanized_pro_for_coverletter: bool
     
 class CoverLetterResponseSchema(BaseModel):

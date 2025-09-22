@@ -22,10 +22,8 @@ import {
   EyeOff,
   Trash2,
 } from "lucide-react";
-import { navigation } from "@/configs/navigation";
-import { llmModelsSvg } from "@/configs/llm-models-svg";
 import router from "next/router";
-import { models, ModelConfig } from "@/configs/models";
+import { models } from "@/configs/models";
 
 interface ModelKey {
   [key: string]: string;
@@ -68,11 +66,6 @@ export default function ModelsSettingsPage() {
     } catch (error) {
       console.error("Error saving API keys to localStorage:", error);
     }
-  };
-
-  const hasApiKey = (modelKey: string) => {
-    const key = modelKeys[modelKey.toLowerCase()];
-    return key && key.trim().length > 0;
   };
 
   const isModelConfigured = (modelUrl: string) => {

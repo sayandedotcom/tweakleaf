@@ -1,4 +1,6 @@
-from typing import TypedDict, List, Optional
+from typing import TypedDict, List, Optional, Annotated
+from langchain_core.messages import BaseMessage
+from langgraph.graph.message import add_messages
 
 class State(TypedDict):
     model: str
@@ -11,9 +13,7 @@ class State(TypedDict):
     new_coverletter_context: Optional[str]
     llm_type: Optional[str]
     model_used: Optional[str]
-    messages: List
+    messages: Annotated[List[BaseMessage], add_messages]
     humanized_pro_for_coverletter: bool
     status: int
     user_message: Optional[str]
-    chat_history: Optional[List]
-    short_response: Optional[str]

@@ -111,17 +111,17 @@ class CoverLetterNodes:
         return should_append
     
     def llm_router(self, state: dict) -> dict:
-        """Route to weak or strong LLM based on user message length and chat history"""
+        """Route to weak or strong LLM based on user message length and existing messages"""
         user_message = state.get("user_message", "")
         message_length = len(user_message.strip())
         provider = state.get("model", "gemini")
-        chat_history = state.get("chat_history", [])
+        messages = state.get("messages", [])
         
         print(f"🔧 LLM Router - Message length: {message_length} characters")
-        print(f"🔧 LLM Router - Chat history length: {len(chat_history)} messages")
+        print(f"🔧 LLM Router - Existing messages length: {len(messages)} messages")
         
-        # First message (no chat history) should always use strong model
-        if not chat_history or len(chat_history) == 0:
+        # First message (no existing messages) should always use strong model
+        if not messages or len(messages) == 0:
             state["llm_type"] = "strong"
             strong_model = ModelFactory.get_strong_model(provider)
             print(f"🔧 First message - Routing to STRONG LLM ({strong_model})")
@@ -154,7 +154,6 @@ class CoverLetterNodes:
         # Get or create LLM instance with the specified provider and model
         llm = self._get_llm_with_model(provider, state["key"], model_name)
         
-        
         chat_template = ChatPromptTemplate([
             ('system', system_prompt_to_tweak_coverletter),
             MessagesPlaceholder("history"),
@@ -164,8 +163,8 @@ class CoverLetterNodes:
         # Create the chain with structured output
         chain = chat_template | llm.with_structured_output(CoverLetterStructuredOutput)
         
-        # Prepare chat history for the prompt
-        chat_history = state.get("chat_history", [])
+        # Prepare data for the prompt - get messages from state for history
+        messages = state.get("messages", [])
         user_message = state.get("user_message", "")
                 
         response = chain.invoke({
@@ -176,7 +175,7 @@ class CoverLetterNodes:
             "coverletter": state.get("coverletter", ""),
             "coverletter_context": str(state.get("coverletter_context", "")) if state.get("coverletter_context", "") else "No previous context",
             "user_message": user_message if user_message else "No specific message",
-            "history": chat_history if chat_history else [],
+            "history": messages,  # Provide conversation history to MessagesPlaceholder
         })
         
         # Clean the response content - remove markdown code blocks if present
@@ -200,8 +199,9 @@ class CoverLetterNodes:
         # Add assistant response
         assistant_message = AIMessage(content=response.short_response)
         
-        # Combine all messages in LangChain format
-        all_messages = existing_messages + [current_user_message, assistant_message]
+        # Use add_messages to properly append new messages to existing ones
+        from langgraph.graph.message import add_messages
+        all_messages = add_messages(existing_messages, [current_user_message, assistant_message])
         
         # Process the cover letter (integrated compilation logic)
         try:
@@ -210,7 +210,6 @@ class CoverLetterNodes:
                 "messages": all_messages,
                 "coverletter": cleaned_content,
                 "status": 200,
-                "short_response": response.short_response,
                 "message": f"Cover letter processed successfully with {model_name}",
                 "new_coverletter_context": state.get("new_coverletter_context", ""),
                 "llm_type": state.get("llm_type", "unknown"),
@@ -225,7 +224,6 @@ class CoverLetterNodes:
                 "status": 400,
                 "error": f"Invalid input: {str(e)}",
                 "message": f"Cover letter processing failed due to invalid input with {model_name}",
-                "short_response": "Invalid input provided",
                 "new_coverletter_context": state.get("new_coverletter_context", ""),
                 "llm_type": state.get("llm_type", "unknown"),
                 "model_used": model_name
@@ -238,7 +236,6 @@ class CoverLetterNodes:
                 "status": 500,
                 "error": f"Failed to process cover letter: {str(e)}",
                 "message": f"Cover letter processing failed with {model_name}",
-                "short_response": "An error occurred while processing the cover letter",
                 "new_coverletter_context": state.get("new_coverletter_context", ""),
                 "llm_type": state.get("llm_type", "unknown"),
                 "model_used": model_name
@@ -280,26 +277,15 @@ class CoverLetterNodes:
         # Remove any leading/trailing whitespace
         cleaned_content = cleaned_content.strip()
         
-        # Get existing messages from state
+        # Get existing messages from state - no new messages added for humanization
         existing_messages = state.get("messages", [])
-        
-        # Add current user message
-        user_message = state.get("user_message", "")
-        current_user_message = HumanMessage(content=user_message if user_message else "No specific message")
-        
-        # Add assistant response
-        assistant_message = AIMessage(content="Cover letter humanized successfully")
-        
-        # Combine all messages in LangChain format
-        all_messages = existing_messages + [current_user_message, assistant_message]
         
         try:
             # Return the humanized cover letter
             return {
-                "messages": all_messages,
+                "messages": existing_messages,
                 "coverletter": cleaned_content,
                 "status": 200,
-                "short_response": "Cover letter humanized successfully",
                 "message": f"Cover letter humanized with {weak_model}",
                 "new_coverletter_context": state.get("new_coverletter_context", ""),
                 "llm_type": "humanized",
@@ -309,12 +295,11 @@ class CoverLetterNodes:
         except Exception as e:
             print(f"Error in humanize_coverletter: {e}")
             return {
-                "messages": all_messages,
+                "messages": existing_messages,
                 "coverletter": cleaned_content,
                 "status": 500,
                 "error": f"Failed to humanize cover letter: {str(e)}",
                 "message": f"Cover letter humanization failed with {weak_model}",
-                "short_response": "An error occurred while humanizing the cover letter",
                 "new_coverletter_context": state.get("new_coverletter_context", ""),
                 "llm_type": "humanized",
                 "model_used": weak_model

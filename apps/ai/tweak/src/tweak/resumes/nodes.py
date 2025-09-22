@@ -7,8 +7,6 @@ from tweak.coverletter.prompts import system_prompt_to_update_user_context_for_c
 
 from tweak.models.factory import ModelFactory
 
-from tweak.utils.query import get_coverletter_context, update_coverletter_context
-
 class CoverLetterNodes:
     def __init__(self): 
         pass

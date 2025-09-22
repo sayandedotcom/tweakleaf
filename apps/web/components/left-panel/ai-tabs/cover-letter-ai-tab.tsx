@@ -615,11 +615,11 @@ export default function CoverLetterTab() {
           </div>
         )}
         {!isEmpty && (
-          <div className="px-4 pb-4">
-            <div className="space-y-4 ">
+          <div className="px-4 pb-8">
+            <div className="space-y-8 ">
               {messages.map((message, index) => (
                 <div key={message.id || index}>
-                  <ChatMessage {...message} showTimeStamp={true} />
+                  <ChatMessage {...message} showTimeStamp={false} />
                 </div>
               ))}
 
