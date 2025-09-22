@@ -19,7 +19,7 @@ export function ContainerScrollComponent() {
         }
       >
         <Image
-          src={`/screenshot-png.png`}
+          src={`/dashboard.png`}
           alt="hero"
           height={720}
           width={1000}

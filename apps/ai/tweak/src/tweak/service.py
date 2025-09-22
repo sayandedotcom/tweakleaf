@@ -73,13 +73,12 @@ class Service:
                 "model": tweaking_data.model,
                 "key": tweaking_data.key,
                 "user_id": tweaking_data.user_id,
-                "user_info": tweaking_data.user_info,
                 "company_info": tweaking_data.company_info,
                 "job_description": tweaking_data.job_description,
                 "coverletter": tweaking_data.coverletter,
                 "user_message": tweaking_data.user_message,
                 "chat_history": chat_history,  # Pass the converted chat history
-                "coverletter_context": "",  # Will be populated by analyze_update_context_for_coverletter
+                "coverletter_context": tweaking_data.coverletter_context,  # Will be populated by smart context filtering
                 "messages": chat_history,  # Use chat_history as the initial messages
                 "status": 200,
                 "short_response": "",
@@ -142,7 +141,10 @@ class Service:
                 messages=serializable_messages,
                 status=status,
                 coverletter=coverletter_content,
-                thread_id=thread_id
+                thread_id=thread_id,
+                new_coverletter_context=result.get("new_coverletter_context", ""),
+                llm_type=result.get("llm_type", "unknown"),
+                model_used=result.get("model_used", "unknown")
             )
         except Exception as e:
             print(f"Error in workflow execution: {e}")
@@ -152,7 +154,10 @@ class Service:
                 messages=[],
                 status=500,
                 coverletter="",
-                thread_id=""
+                thread_id="",
+                new_coverletter_context="",
+                llm_type="unknown",
+                model_used="unknown"
             )
 
     def get_coverletter_messages(self, thread_id: str):

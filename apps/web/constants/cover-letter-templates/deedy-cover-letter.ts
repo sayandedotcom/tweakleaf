@@ -1,7 +1,4 @@
-export const DEEDY_COVER_LETTER = String.raw`%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Deedy - Cover Letter Template
-% LaTeX Template
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export const DEEDY_COVER_LETTER = String.raw`% Deedy - Cover Letter Template
 
 \documentclass[]{cover}
 \usepackage{fancyhdr}
@@ -14,20 +11,14 @@ export const DEEDY_COVER_LETTER = String.raw`%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \renewcommand{\headrulewidth}{0pt}
 \begin{document}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
 %     TITLE NAME
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \namesection{John}{Doe}{ \urlstyle{same}\href{https://johndoe.xyz}{johndoe.xyz} | \href{mailto:me@johndoe.xyz}{me@johndoe.xyz} | 0
 7771238921 | \urlstyle{same}\href{https://github.com}{Github} | \urlstyle{same}\href{https://linkedin.com}{Linkedin}
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
 %     MAIN COVER LETTER CONTENT
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \hfill
 
 \begin{minipage}[t]{0.5\textwidth} 
@@ -49,8 +40,6 @@ Leetcode
 
 \lettercontent{Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus laoreet tellus tincidunt, sagittis erat nec, sodales enim. Fusce eget iaculis dui. Morbi ante mi, fermentum et vehicula sit amet, sagittis id odio. Proin eget velit dignissim, imperdiet risus vitae, vulputate urna. In commodo ex vitae nisi placerat, ac lobortis velit efficitur. Ut quam mi, commodo quis justo id, faucibus feugiat nisl.
 }
-
-
    
 % The next section of your cover letter should describe what you have to offer the company. Make strong connections between your abilities and the requirements listed in the job posting. Mention specifically how your skills and experience match the job. Expand on the information in your resume.
 % Try to support each statement you make with a piece of evidence. Use several shorter paragraphs or bullets rather than one large block of text, which can be difficult to read and absorb quickly.

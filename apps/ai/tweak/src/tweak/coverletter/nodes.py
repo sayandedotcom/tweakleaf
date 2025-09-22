@@ -1,94 +1,159 @@
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
 
-from tweak.coverletter.schemas import CoverLetterStructuredOutput, CoverLetterStructuredOutputForUpdateUserContext
-from tweak.coverletter.prompts import system_prompt_to_update_user_context_for_coverletter, human_prompt_to_tweak_coverletter, system_prompt_to_tweak_coverletter
+from tweak.coverletter.schemas import CoverLetterStructuredOutput, CoverLetterHumanizeStructuredOutput
+from tweak.coverletter.prompts import human_prompt_to_tweak_coverletter, system_prompt_to_tweak_coverletter, system_prompt_to_humanize_pro_for_coverletter
 
 from tweak.models.factory import ModelFactory
 
-from tweak.utils.query import get_coverletter_context, update_coverletter_context
-
-
 class CoverLetterNodes:
     def __init__(self): 
-        self._llm = None
-        self._current_model = None
-        self._current_key = None
+        self._llm_cache = {}
     
     def _get_llm(self, model: str, key: str):
-        """Get or create LLM instance, reusing if model and key are the same"""
-        if (self._llm is None or 
-            self._current_model != model or 
-            self._current_key != key):
-            
+        """Get or create LLM instance with improved caching"""
+        cache_key = f"{model}_{hash(key)}"
+        
+        if cache_key not in self._llm_cache:
+            # Create new LLM instance
             model_factory = ModelFactory()
-            self._llm = model_factory.create_model(provider=model, api_key=key)
-            self._current_model = model
-            self._current_key = key
-            
+            self._llm_cache[cache_key] = model_factory.create_model(provider=model, api_key=key)
             print(f"🔧 Creating new LLM with provider: {model}, key length: {len(key) if key else 0}")
         else:
-            print(f"🔧 Reusing existing LLM for provider: {model}")
+            print(f"🔧 Reusing cached LLM for provider: {model}")
             
-        return self._llm
+        return self._llm_cache[cache_key]
+    
+    def _get_llm_with_model(self, provider: str, key: str, model_name: str):
+        """Get or create LLM instance with specific model name"""
+        cache_key = f"{provider}_{model_name}_{hash(key)}"
+        
+        if cache_key not in self._llm_cache:
+            # Create new LLM instance with specific model
+            model_factory = ModelFactory()
+            self._llm_cache[cache_key] = model_factory.create_model(provider=provider, api_key=key, model=model_name)
+            print(f"🔧 Creating new LLM with provider: {provider}, model: {model_name}, key length: {len(key) if key else 0}")
+        else:
+            print(f"🔧 Reusing cached LLM for provider: {provider}, model: {model_name}")
+            
+        return self._llm_cache[cache_key]
     
     def analyze_update_context_for_coverletter(self, state: dict) -> dict:
-        """Analyze user message and determine if it should be appended to context"""
+        """Smart rule-based context filtering without LLM calls or database operations"""
         
-        # Get or create LLM instance
-        llm = self._get_llm(state["model"], state["key"])
+        user_message = state.get("user_message", "").strip()
+        existing_context = state.get("coverletter_context", "")
         
-        # Fetch existing cover letter context from Supabase and store in state
-        existing_context = get_coverletter_context(state["user_id"])
+        print(f"🔧 Smart context filtering for message: '{user_message}'")
+        print(f"🔧 Existing context length: {len(existing_context)}")
         
-        print("EXISTING_CONTEXT:============================================================", existing_context)
+        # Rule-based filtering to determine if message should be appended
+        should_append = self._should_append_to_context(user_message)
         
-        state["coverletter_context"] = existing_context
-        
-        chat_template = ChatPromptTemplate([
-            ('system', system_prompt_to_update_user_context_for_coverletter),
-            ('human', "User message: {user_message}")
-        ])
-        
-        # Create the chain with structured output
-        chain = chat_template | llm.with_structured_output(CoverLetterStructuredOutputForUpdateUserContext)
-        
-        user_msg = state.get("user_message", "No message provided")
-        
-        print(f"🔧 Invoking chain with user_message: {user_msg}")
-        
-        response = chain.invoke({
-            "user_message": user_msg,
-        })
-        
-        print("RESPONSE:============================================================", response.response)
-        
-        # Update context in database if response is "append"
-        if response.response == "append":
-            # Concatenate new message with existing context (with dots)
-            current_context = existing_context if existing_context else ""
-            new_context = current_context + ". " + state["user_message"] if current_context else state["user_message"]
-            
-            # Update in database
-            update_success = update_coverletter_context(state["user_id"], new_context)
-            
-            print("UPDATE_SUCCESS:============================================================", update_success)
-            
-            if not update_success:
-                print(f"Warning: Failed to update cover letter context for user {state['user_id']}")
-            
-            # Update the context in state with the concatenated context
-            state["coverletter_context"] = new_context
+        if should_append:
+            # Store user message separately instead of concatenating
+            state["new_coverletter_context"] = user_message
+            print(f"🔧 User message stored as new context: '{user_message}'")
+        else:
+            # Clear new context if message is filtered out
+            state["new_coverletter_context"] = ""
+            print("🔧 Message filtered out, no new context added")
         
         return state
     
-    def coverletter_analysis(self, state: dict) -> dict:
-        """Analyze the cover letter and return a structured output"""
+    def _should_append_to_context(self, user_message: str) -> bool:
+        """Rule-based logic to determine if message should be appended to context"""
+        if not user_message or len(user_message.strip()) < 3:
+            return False
         
-        # Get or create LLM instance
-        llm = self._get_llm(state["model"], state["key"])
+        user_message_lower = user_message.lower().strip()
         
-        coverletter_context = state.get("coverletter_context")
+        # Simple acknowledgments to ignore
+        ignore_patterns = [
+            'ok', 'thanks', 'yes', 'no', 'good', 'hello', 'hi', 'hey',
+            'sure', 'alright', 'fine', 'great', 'awesome', 'perfect',
+            'done', 'got it', 'understood', 'cool', 'nice', 'excellent'
+        ]
+        
+        if user_message_lower in ignore_patterns:
+            return False
+        
+        # Keywords that indicate valuable context
+        valuable_keywords = [
+            'prefer', 'style', 'tone', 'add', 'remove', 'change', 'modify',
+            'emphasize', 'focus', 'highlight', 'mention', 'include', 'exclude',
+            'professional', 'casual', 'formal', 'technical', 'creative',
+            'experience', 'skill', 'achievement', 'background', 'qualification',
+            'company', 'industry', 'role', 'position', 'job', 'career',
+            'leadership', 'team', 'project', 'management', 'development',
+            'shorter', 'longer', 'brief', 'detailed', 'specific', 'general'
+        ]
+        
+        # Check if message contains valuable keywords
+        has_valuable_keywords = any(keyword in user_message_lower for keyword in valuable_keywords)
+        
+        # Check if message is substantial (not just single words)
+        is_substantial = len(user_message.split()) >= 2
+        
+        # Check if message contains specific instructions or preferences
+        has_instructions = any(word in user_message_lower for word in [
+            'make', 'do', 'should', 'want', 'need', 'like', 'dislike',
+            'instead', 'rather', 'better', 'worse', 'more', 'less'
+        ])
+        
+        # Append if it has valuable keywords, is substantial, or contains instructions
+        should_append = has_valuable_keywords or (is_substantial and has_instructions)
+        
+        print(f"🔧 Context decision - Valuable keywords: {has_valuable_keywords}, "
+              f"Substantial: {is_substantial}, Instructions: {has_instructions}, "
+              f"Append: {should_append}")
+        
+        return should_append
+    
+    def llm_router(self, state: dict) -> dict:
+        """Route to weak or strong LLM based on user message length and chat history"""
+        user_message = state.get("user_message", "")
+        message_length = len(user_message.strip())
+        provider = state.get("model", "gemini")
+        chat_history = state.get("chat_history", [])
+        
+        print(f"🔧 LLM Router - Message length: {message_length} characters")
+        print(f"🔧 LLM Router - Chat history length: {len(chat_history)} messages")
+        
+        # First message (no chat history) should always use strong model
+        if not chat_history or len(chat_history) == 0:
+            state["llm_type"] = "strong"
+            strong_model = ModelFactory.get_strong_model(provider)
+            print(f"🔧 First message - Routing to STRONG LLM ({strong_model})")
+        elif message_length > 100:
+            state["llm_type"] = "strong"
+            strong_model = ModelFactory.get_strong_model(provider)
+            print(f"🔧 Long message - Routing to STRONG LLM ({strong_model})")
+        else:
+            state["llm_type"] = "weak"
+            weak_model = ModelFactory.get_weak_model(provider)
+            print(f"🔧 Short message - Routing to WEAK LLM ({weak_model})")
+        
+        return state
+    
+    def coverletter_analysis_weak(self, state: dict) -> dict:
+        """Cover letter analysis using weak LLM"""
+        provider = state.get("model", "gemini")  # Get provider from client
+        weak_model = ModelFactory.get_weak_model(provider)
+        return self._coverletter_analysis_with_model(state, provider, weak_model)
+    
+    def coverletter_analysis_strong(self, state: dict) -> dict:
+        """Cover letter analysis using strong LLM"""
+        provider = state.get("model", "gemini")  # Get provider from client
+        strong_model = ModelFactory.get_strong_model(provider)
+        return self._coverletter_analysis_with_model(state, provider, strong_model)
+    
+    def _coverletter_analysis_with_model(self, state: dict, provider: str, model_name: str) -> dict:
+        """Analyze the cover letter and return a structured output with specific model"""
+        
+        # Get or create LLM instance with the specified provider and model
+        llm = self._get_llm_with_model(provider, state["key"], model_name)
+        
         
         chat_template = ChatPromptTemplate([
             ('system', system_prompt_to_tweak_coverletter),
@@ -102,15 +167,14 @@ class CoverLetterNodes:
         # Prepare chat history for the prompt
         chat_history = state.get("chat_history", [])
         user_message = state.get("user_message", "")
-        
+                
         response = chain.invoke({
-            "model": state["model"],
+            "model": provider,
             "key": state["key"],
-            "user_info": state.get("user_info", "Not provided"),
             "company_info": state.get("company_info", "Not provided"),
             "job_description": state.get("job_description", "Not provided"),
             "coverletter": state.get("coverletter", ""),
-            "coverletter_context": str(coverletter_context) if coverletter_context else "No previous context",
+            "coverletter_context": str(state.get("coverletter_context", "")) if state.get("coverletter_context", "") else "No previous context",
             "user_message": user_message if user_message else "No specific message",
             "history": chat_history if chat_history else [],
         })
@@ -147,17 +211,111 @@ class CoverLetterNodes:
                 "coverletter": cleaned_content,
                 "status": 200,
                 "short_response": response.short_response,
-                "message": "Cover letter processed successfully"
+                "message": f"Cover letter processed successfully with {model_name}",
+                "new_coverletter_context": state.get("new_coverletter_context", ""),
+                "llm_type": state.get("llm_type", "unknown"),
+                "model_used": model_name
             }
             
+        except ValueError as e:
+            print(f"Value error in coverletter_analysis: {e}")
+            return {
+                "messages": all_messages,
+                "coverletter": cleaned_content,
+                "status": 400,
+                "error": f"Invalid input: {str(e)}",
+                "message": f"Cover letter processing failed due to invalid input with {model_name}",
+                "short_response": "Invalid input provided",
+                "new_coverletter_context": state.get("new_coverletter_context", ""),
+                "llm_type": state.get("llm_type", "unknown"),
+                "model_used": model_name
+            }
         except Exception as e:
-            print(f"Error in coverletter_analysis: {e}")
-            # Return error state if processing fails
+            print(f"Unexpected error in coverletter_analysis: {e}")
             return {
                 "messages": all_messages,
                 "coverletter": cleaned_content,
                 "status": 500,
                 "error": f"Failed to process cover letter: {str(e)}",
-                "message": "Cover letter processing failed",
-                "short_response": "An error occurred while processing the cover letter"
+                "message": f"Cover letter processing failed with {model_name}",
+                "short_response": "An error occurred while processing the cover letter",
+                "new_coverletter_context": state.get("new_coverletter_context", ""),
+                "llm_type": state.get("llm_type", "unknown"),
+                "model_used": model_name
+            }
+    
+    def humanize_coverletter(self, state: dict) -> dict:
+        """Humanize the cover letter using weak model for naturalness"""
+        provider = state.get("model", "gemini")
+        weak_model = ModelFactory.get_weak_model(provider)
+        
+        # Get or create LLM instance with weak model
+        llm = self._get_llm_with_model(provider, state["key"], weak_model)
+        
+        chat_template = ChatPromptTemplate([
+            ('system', system_prompt_to_humanize_pro_for_coverletter),
+            ('human', "Cover letter to humanize: {coverletter}")
+        ])
+        
+        # Create the chain with structured output
+        chain = chat_template | llm.with_structured_output(CoverLetterHumanizeStructuredOutput)
+        
+        coverletter = state.get("coverletter", "")
+        
+        print(f"🔧 Humanizing cover letter with {weak_model}")
+        
+        response = chain.invoke({
+            "coverletter": coverletter
+        })
+        
+        # Clean the response content - remove markdown code blocks if present
+        cleaned_content = response.coverletter
+        if cleaned_content.startswith("```latex"):
+            cleaned_content = cleaned_content[8:]  # Remove ```latex
+        if cleaned_content.startswith("```"):
+            cleaned_content = cleaned_content[3:]  # Remove ```
+        if cleaned_content.endswith("```"):
+            cleaned_content = cleaned_content[:-3]  # Remove ending ```
+        
+        # Remove any leading/trailing whitespace
+        cleaned_content = cleaned_content.strip()
+        
+        # Get existing messages from state
+        existing_messages = state.get("messages", [])
+        
+        # Add current user message
+        user_message = state.get("user_message", "")
+        current_user_message = HumanMessage(content=user_message if user_message else "No specific message")
+        
+        # Add assistant response
+        assistant_message = AIMessage(content="Cover letter humanized successfully")
+        
+        # Combine all messages in LangChain format
+        all_messages = existing_messages + [current_user_message, assistant_message]
+        
+        try:
+            # Return the humanized cover letter
+            return {
+                "messages": all_messages,
+                "coverletter": cleaned_content,
+                "status": 200,
+                "short_response": "Cover letter humanized successfully",
+                "message": f"Cover letter humanized with {weak_model}",
+                "new_coverletter_context": state.get("new_coverletter_context", ""),
+                "llm_type": "humanized",
+                "model_used": weak_model
+            }
+            
+        except Exception as e:
+            print(f"Error in humanize_coverletter: {e}")
+            return {
+                "messages": all_messages,
+                "coverletter": cleaned_content,
+                "status": 500,
+                "error": f"Failed to humanize cover letter: {str(e)}",
+                "message": f"Cover letter humanization failed with {weak_model}",
+                "short_response": "An error occurred while humanizing the cover letter",
+                "new_coverletter_context": state.get("new_coverletter_context", ""),
+                "llm_type": "humanized",
+                "model_used": weak_model
             }

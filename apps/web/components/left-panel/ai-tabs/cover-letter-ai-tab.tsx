@@ -49,16 +49,29 @@ export default function CoverLetterTab() {
 
   // Local storage hooks with constants
   const [companyBio] = useLocalStorage(LOCAL_STORAGE_KEYS.COMPANY_BIO, "");
+
   const [jobDescription] = useLocalStorage(
     LOCAL_STORAGE_KEYS.JOB_DESCRIPTION,
     "",
   );
+
   const [coverLetterLatexContent, setCoverLetterLatexContent] = useLocalStorage(
     LOCAL_STORAGE_KEYS.COVER_LETTER_LATEX_CONTENT,
     "",
   );
+
   const [storedThreadId, setStoredThreadId] = useLocalStorage(
     LOCAL_STORAGE_KEYS.COVER_LETTER_THREAD_ID,
+    "",
+  );
+
+  const [humanizePro] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.HUMANIZE_PRO_FOR_COVER_LETTER,
+    false,
+  );
+
+  const [coverLetterContext] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.COVER_LETTER_CONTEXT,
     "",
   );
 
@@ -315,14 +328,14 @@ export default function CoverLetterTab() {
           model: finalModelName,
           key: currentApiKey,
           user_id: userId!,
-          user_info:
-            "My name is sayan de . Experienced professional with strong skills in the field",
+          coverletter_context: coverLetterContext,
           company_info: companyBio,
           job_description: jobDescription,
           coverletter: coverLetterLatexContent,
           user_message: userMessage,
           thread_id: validThreadId, // Use valid thread ID or undefined for new thread
           chat_history: finalChatHistory,
+          humanized_pro_for_coverletter: humanizePro,
         },
         {
           onSuccess: (response) => {
@@ -368,6 +381,7 @@ export default function CoverLetterTab() {
       coverLetterLatexContent,
       apiKey,
       currentModel,
+      coverLetterContext,
       messages,
       modelName,
       currentThreadId,
@@ -377,6 +391,7 @@ export default function CoverLetterTab() {
       setCurrentThreadId,
       setStoredThreadId,
       refetchMessages,
+      humanizePro,
     ],
   );
 
@@ -449,14 +464,14 @@ export default function CoverLetterTab() {
           model: modelName!,
           key: apiKey,
           user_id: userId!,
-          user_info:
-            "My name is sayan de . Experienced professional with strong skills in the field",
+          coverletter_context: coverLetterContext,
           company_info: companyBio,
           job_description: jobDescription,
           coverletter: coverLetterLatexContent,
           user_message: userMessage,
           thread_id: undefined, // Explicitly pass undefined for new thread
           chat_history: finalChatHistory,
+          humanized_pro_for_coverletter: humanizePro,
         },
         {
           onSuccess: (response) => {
@@ -502,6 +517,7 @@ export default function CoverLetterTab() {
       coverLetterLatexContent,
       apiKey,
       currentModel,
+      coverLetterContext,
       modelName,
       userId,
       generateCoverLetter,
@@ -511,6 +527,7 @@ export default function CoverLetterTab() {
       refetchMessages,
       currentThreadId,
       messages,
+      humanizePro,
     ],
   );
 
@@ -634,19 +651,6 @@ export default function CoverLetterTab() {
               : "Ask me to make changes to your cover letter..."
           }
         />
-
-        {/* Overlay Start Button when no messages */}
-        {/* {isEmpty && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-            <Button
-              className="w-1/2 mx-auto"
-              onClick={handleStartCoverLetter}
-              disabled={isPending}
-            >
-              {isPending ? "Generating..." : "Start building my cover letter!"}
-            </Button>
-          </div>
-        )} */}
       </div>
     </div>
   );

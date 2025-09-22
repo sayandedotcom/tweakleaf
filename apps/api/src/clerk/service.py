@@ -5,6 +5,12 @@ from typing import Dict, Any, Optional
 from fastapi import HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jwt.algorithms import RSAAlgorithm
+from supabase import create_client, Client
+
+# Initialize Supabase client
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
 
 security = HTTPBearer()
 
@@ -219,8 +225,15 @@ class ClerkService:
         """
         # This is where you would integrate with Supabase
         # For now, just return the context data
+        response = supabase.table("users").update({
+            "coverletter_context": context_data
+        }).eq("user_id", user_id).execute()
+        
+        print("response ⛔⛔⛔⛔", response)
+        
         return {
             "user_id": user_id,
             "context": context_data,
-            "message": "Context updated successfully"
+            "message": "Context updated successfully",
+            "data": response.data[0].get("coverletter_context", None)
         }

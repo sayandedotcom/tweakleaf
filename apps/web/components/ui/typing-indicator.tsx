@@ -1,6 +1,36 @@
-import { site } from "@/configs/site";
+"use client";
+
+import { useState, useEffect } from "react";
+
+const typingTexts = [
+  "Gathering information.....",
+  "Analyzing data.....",
+  "Generating content.....",
+  "Humanizing content.....",
+];
 
 export function TypingIndicator() {
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  useEffect(() => {
+    // Don't cycle if we're at the last text
+    if (currentTextIndex >= typingTexts.length - 1) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setCurrentTextIndex((prevIndex) => {
+        // Stop at the last text
+        if (prevIndex >= typingTexts.length - 1) {
+          return prevIndex;
+        }
+        return prevIndex + 1;
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [currentTextIndex]);
+
   return (
     <div className="justify-left flex space-x-1">
       <div className="rounded-lg bg-muted p-3">
@@ -11,7 +41,7 @@ export function TypingIndicator() {
             <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
           </div>
           <span className="text-sm text-muted-foreground">
-            AI is thinking...
+            {typingTexts[currentTextIndex]}
           </span>
         </div>
       </div>

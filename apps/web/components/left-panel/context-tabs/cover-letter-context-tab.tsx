@@ -4,7 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import useLocalStorage from "use-local-storage";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,30 +19,33 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { PartyPopper } from "lucide-react";
 import { coverletterContextPlaceholders } from "@/configs/context-placeholders";
+import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 
 const FormSchema = z.object({
-  coverLetterContext: z
-    .string()
-    .min(10, {
-      message: "Cover letter context must be at least 10 characters.",
-    })
-    .max(160, {
-      message: "Cover letter context must not be longer than 30 characters.",
-    }),
+  coverLetterContext: z.string(),
 });
 
 export default function CoverLetterContextComponent() {
+  const [coverLetterContext, setCoverLetterContext] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.COVER_LETTER_CONTEXT,
+    "",
+  );
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      coverLetterContext: "",
+    },
   });
 
+  // Update form values when localStorage values change
+  useEffect(() => {
+    form.setValue("coverLetterContext", coverLetterContext);
+  }, [coverLetterContext, form]);
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    setCoverLetterContext(data.coverLetterContext);
+    toast("Cover letter context saved!", {
+      description: "Your cover letter context has been saved successfully.",
     });
   }
 
@@ -65,9 +69,9 @@ export default function CoverLetterContextComponent() {
                 />
               </FormControl>
               <FormDescription>
-                We have out own way to generate cover letter but if you provide
-                your own detailed cover letter context. This will help us
-                generate the best cover letter according to your needs.
+                Provide your professional information like email, social links,
+                phone number, your preferences about how the cover letter should
+                be written eg:- your way of writing introduction.
               </FormDescription>
               <FormMessage />
             </FormItem>

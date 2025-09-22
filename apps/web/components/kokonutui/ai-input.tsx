@@ -1,6 +1,17 @@
 "use client";
 
-import { ArrowRight, Bot, Check, ChevronDown, Sparkles, X } from "lucide-react";
+import {
+  ArrowRight,
+  BookPlus,
+  Bot,
+  BriefcaseBusiness,
+  Check,
+  ChevronDown,
+  Info,
+  Sparkles,
+  TriangleAlert,
+  X,
+} from "lucide-react";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +33,7 @@ import { Badge } from "../ui/badge";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 import useLocalStorage from "use-local-storage";
 import { useQueryParam } from "@/hooks/use-query-param";
+import { HumanizedProButtonCoverLetter } from "../humanized-pro-button-coverletter";
 
 interface AiInputProps {
   value?: string;
@@ -53,6 +65,11 @@ export function AiInput({
     maxHeight: 300,
   });
 
+  const [coverLetterContext] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.COVER_LETTER_CONTEXT,
+    "",
+  );
+
   // Use optimized query param hook
   const { value: currentModelUrl } = useQueryParam({
     paramName: navigation.MODEL.PARAM,
@@ -60,6 +77,16 @@ export function AiInput({
       typeof window !== "undefined"
         ? localStorage.getItem(LOCAL_STORAGE_KEYS.MODEL_NAME) || undefined
         : undefined,
+  });
+
+  const { setValue: setChangeJobDescription } = useQueryParam({
+    paramName: navigation.LEFT_PANEL.PARAM,
+    defaultValue: navigation.LEFT_PANEL.JOB,
+  });
+
+  const { setValue: setChangeContext } = useQueryParam({
+    paramName: navigation.LEFT_PANEL.PARAM,
+    defaultValue: navigation.LEFT_PANEL.CONTEXTS,
   });
 
   // Listen for localStorage changes to refresh configuration status
@@ -187,12 +214,28 @@ export function AiInput({
       <div className="bg-muted p-1.5 pt-4 border border-border">
         <div className="flex items-center gap-2 mb-2.5 mx-2">
           <h3 className=" text-xs tracking-tighter w-full">
-            If you want AI to remember everytime of your specific preferences,
+            If you want AI to remember everytime of your info or preferences,
             add them in context tab !
           </h3>
-          {/* <TooltipComponent content="Add context">
-            <BrainCog onClick={handleAddContext} className="w-5 h-5 text-foreground bg-background p-0.5 cursor-pointer" />
-          </TooltipComponent> */}
+          <div className="relative">
+            {!coverLetterContext && (
+              <TooltipComponent content="Your context is Empty click to add context">
+                <TriangleAlert
+                  onClick={() =>
+                    setChangeContext(navigation.LEFT_PANEL.CONTEXTS)
+                  }
+                  fill="#FFFF00"
+                  className="w-5 h-5 text-black absolute -top-1 -right-1 z-10 cursor-pointer"
+                />
+              </TooltipComponent>
+            )}
+            <TooltipComponent content="Add context">
+              <BookPlus
+                onClick={() => setChangeContext(navigation.LEFT_PANEL.CONTEXTS)}
+                className="w-5 h-5 text-foreground bg-background p-0.5 cursor-pointer"
+              />
+            </TooltipComponent>
+          </div>
         </div>
         <div className="relative">
           <div className="relative flex flex-col">
@@ -233,7 +276,7 @@ export function AiInput({
             </div>
             <div className="h-14 text-foreground flex items-center">
               <div className="absolute left-3 right-3 bottom-3 flex items-center justify-between w-[calc(100%-20px)]">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 border border-background rounded-md p-1 mr-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -305,7 +348,7 @@ export function AiInput({
                                 {model.isConfigured() ? (
                                   <Check className="w-3 h-3 text-green-500" />
                                 ) : (
-                                  <X className="w-3 text-red-500" />
+                                  <X className="w-3 text-destructive" />
                                 )}
                               </div>
                             </TooltipComponent>
@@ -324,12 +367,27 @@ export function AiInput({
                         Configured
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-red-600">
+                      <div className="flex items-center gap-1 text-xs text-destructive">
                         <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                         Not Configured
                       </div>
                     )}
                   </Badge>
+                </div>
+                <div className="flex items-center gap-2 mr-auto">
+                  <TooltipComponent content="Change Job">
+                    <Button
+                      onClick={() =>
+                        setChangeJobDescription(navigation.LEFT_PANEL.JOB)
+                      }
+                      size="icon"
+                      variant="secondary"
+                      className="mr-auto cursor-pointer"
+                    >
+                      <BriefcaseBusiness />
+                    </Button>
+                  </TooltipComponent>
+                  <HumanizedProButtonCoverLetter />
                 </div>
                 <Button
                   aria-label="Send message"

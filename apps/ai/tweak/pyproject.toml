@@ -8,10 +8,8 @@ authors = [
 ]
 requires-python = "==3.10.*"
 dependencies = [
-    "fastapi[standard]>=0.116.1",
+    "fastapi>=0.116.1",
     "langchain>=0.3.27",
-    "langchain-anthropic>=0.3.19",
-    "langchain-deepseek>=0.1.4",
     "langchain-google-genai>=2.1.10",
     "langchain-openai>=0.3.32",
     "langgraph>=0.6.6",
@@ -19,7 +17,6 @@ dependencies = [
     "pydantic>=2.11.7",
     "typing-extensions>=4.15.0",
     "python-dotenv>=1.1.1",
-    "supabase>=2.18.1",
 ]
 
 [project.scripts]
@@ -28,6 +25,3 @@ tweak = "tweak:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.uv.sources]
-sst = { git = "https://github.com/sst/sst.git", subdirectory = "sdk/python", branch = "dev" }

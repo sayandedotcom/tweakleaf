@@ -31,24 +31,6 @@ const checkModelConfiguration = (modelUrl: string): boolean => {
 
 export const models: ModelConfig[] = [
   {
-    name: "OpenAI",
-    logo: llmModelsSvg.openai,
-    url: navigation.MODEL.OPENAI,
-    model: "gpt-4o",
-    configured: false, // This will be dynamically updated
-    apiKeyUrl: "https://platform.openai.com/api-keys",
-    isConfigured: () => checkModelConfiguration(navigation.MODEL.OPENAI),
-  },
-  {
-    name: "Anthropic",
-    logo: llmModelsSvg.anthropic,
-    url: navigation.MODEL.ANTHROPIC,
-    model: "claude-3-5-sonnet-20240620",
-    configured: false, // This will be dynamically updated
-    apiKeyUrl: "https://console.anthropic.com",
-    isConfigured: () => checkModelConfiguration(navigation.MODEL.ANTHROPIC),
-  },
-  {
     name: "Gemini",
     logo: llmModelsSvg.gemini,
     url: navigation.MODEL.GEMINI,
@@ -57,6 +39,24 @@ export const models: ModelConfig[] = [
     apiKeyUrl: "https://aistudio.google.com/app/apikey",
     isConfigured: () => checkModelConfiguration(navigation.MODEL.GEMINI),
   },
+  {
+    name: "OpenAI",
+    logo: llmModelsSvg.openai,
+    url: navigation.MODEL.OPENAI,
+    model: "gpt-4o",
+    configured: false, // This will be dynamically updated
+    apiKeyUrl: "https://platform.openai.com/api-keys",
+    isConfigured: () => checkModelConfiguration(navigation.MODEL.OPENAI),
+  },
+  // {
+  //   name: "Anthropic",
+  //   logo: llmModelsSvg.anthropic,
+  //   url: navigation.MODEL.ANTHROPIC,
+  //   model: "claude-3-5-sonnet-20240620",
+  //   configured: false, // This will be dynamically updated
+  //   apiKeyUrl: "https://console.anthropic.com",
+  //   isConfigured: () => checkModelConfiguration(navigation.MODEL.ANTHROPIC),
+  // },
   // {
   //   name: "Grok",
   //   logo: llmModelsSvg.grok,
@@ -66,23 +66,23 @@ export const models: ModelConfig[] = [
   //   apiKeyUrl: "https://console.x.ai",
   //   isConfigured: () => checkModelConfiguration(navigation.MODEL.GROK),
   // },
-  {
-    name: "DeepSeek",
-    logo: llmModelsSvg.deepseek,
-    url: navigation.MODEL.DEEPSEEK,
-    model: "deepseek-chat",
-    configured: false, // This will be dynamically updated
-    apiKeyUrl: "https://platform.deepseek.com",
-    isConfigured: () => checkModelConfiguration(navigation.MODEL.DEEPSEEK),
-  },
-  {
-    name: "Hugging Face",
-    logo: llmModelsSvg.huggingface,
-    url: navigation.MODEL.HUGGINGFACE,
-    model: "huggingface-chat",
-    configured: false, // This will be dynamically updated
-    apiKeyUrl:
-      "https://huggingface.co/docs/huggingface_hub/v0.13.2/en/guides/inference",
-    isConfigured: () => checkModelConfiguration(navigation.MODEL.HUGGINGFACE),
-  },
+  // {
+  //   name: "DeepSeek",
+  //   logo: llmModelsSvg.deepseek,
+  //   url: navigation.MODEL.DEEPSEEK,
+  //   model: "deepseek-chat",
+  //   configured: false, // This will be dynamically updated
+  //   apiKeyUrl: "https://platform.deepseek.com",
+  //   isConfigured: () => checkModelConfiguration(navigation.MODEL.DEEPSEEK),
+  // },
+  // {
+  //   name: "Hugging Face",
+  //   logo: llmModelsSvg.huggingface,
+  //   url: navigation.MODEL.HUGGINGFACE,
+  //   model: "huggingface-chat",
+  //   configured: false, // This will be dynamically updated
+  //   apiKeyUrl:
+  //     "https://huggingface.co/docs/huggingface_hub/v0.13.2/en/guides/inference",
+  //   isConfigured: () => checkModelConfiguration(navigation.MODEL.HUGGINGFACE),
+  // },
 ];

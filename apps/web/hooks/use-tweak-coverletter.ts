@@ -2,22 +2,18 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAxios } from "./use-axios";
 import { AxiosError } from "axios";
 
-interface BaseMessage {
-  role: string;
-  content: string;
-}
-
 interface CoverLetterRequest {
   model: string;
   key: string;
   user_id: string;
-  user_info: string;
+  coverletter_context: string;
   company_info: string;
   job_description: string;
   coverletter: string;
   user_message?: string;
   thread_id?: string;
   chat_history?: Array<{ role: string; content: string }>;
+  humanized_pro_for_coverletter: boolean;
 }
 
 interface CoverLetterResponse {
