@@ -16,7 +16,7 @@ export default function DashboardLayout({
       </Suspense>
       <SidebarInset>
         {/* <TweakHeader /> */}
-        {children}
+        <Suspense fallback={<Loader />}>{children}</Suspense>
       </SidebarInset>
     </SidebarProvider>
   );

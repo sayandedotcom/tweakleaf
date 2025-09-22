@@ -21,7 +21,9 @@ export function TweakSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <LogoSidebar />
+        <Suspense fallback={<Loader />}>
+          <LogoSidebar />
+        </Suspense>
       </SidebarHeader>
       <SidebarContent>
         <Suspense fallback={<Loader />}>
