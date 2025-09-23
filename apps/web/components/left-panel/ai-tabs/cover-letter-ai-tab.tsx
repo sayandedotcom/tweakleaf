@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { type Message } from "@/components/ui/chat-message";
 import { ChatMessage } from "@/components/ui/chat-message";
-import { AiInput } from "@/components/kokonutui/ai-input";
+import { AiInput } from "@/components/kokonutui/coverletter-ai-input";
 import {
   useTweakCoverLetter,
   useCoverLetterMessages,

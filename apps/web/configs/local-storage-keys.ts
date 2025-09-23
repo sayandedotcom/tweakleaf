@@ -10,6 +10,7 @@ export const LOCAL_STORAGE_KEYS = {
   MAIL_EDITOR_STORAGE_KEY: "mail-editor-content",
   MAIL_EDITOR_SCROLL_KEY: "mail-editor-scroll-position",
   COVER_LETTER_CONTEXT: "coverLetterContext",
+  RESUME_CONTEXT: "resumeContext",
   HUMANIZE_PRO_FOR_COVER_LETTER: "humanizeProForCoverLetter",
   HUMANIZE_PRO_FOR_RESUME: "humanizeProForResume",
 };

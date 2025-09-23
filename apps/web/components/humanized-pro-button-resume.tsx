@@ -23,9 +23,9 @@ import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 import useLocalStorage from "use-local-storage";
 import { useState } from "react";
 
-export function HumanizedProButtonCoverLetter() {
+export function HumanizedProButtonResume() {
   const [humanizePro, setHumanizePro] = useLocalStorage(
-    LOCAL_STORAGE_KEYS.HUMANIZE_PRO_FOR_COVER_LETTER,
+    LOCAL_STORAGE_KEYS.HUMANIZE_PRO_FOR_RESUME,
     false,
   );
 
@@ -56,13 +56,13 @@ export function HumanizedProButtonCoverLetter() {
               Humanize Pro <Sparkles className="w-4 h-4" />
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Currently our humanization for Cover Letter is efficient but quite
+              Currently our humanization for Resume is efficient but quite
               unpredictable (some times it gives a good percentage of AI
               generated content).
               <br />
               <br /> If you enable Humanize Pro, it will ensure high quality
               humanized context but will use more tokens / your money to
-              generate a Cover Letter.
+              generate a Resume.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -82,13 +82,12 @@ export function HumanizedProButtonCoverLetter() {
             <p className="text-center"> Humanize Pro </p>
             <br />
             <p>
-              Currently our humanized Cover Letter is efficient but quite
+              Currently our humanized Resume is efficient but quite
               unpredictable (some times it gives a good percentage of AI
               generated content).
               <br />
               <br /> If you enable Humanize Pro, it will ensure high quality
-              humanized context but will use more tokens to generate a Cover
-              Letter.
+              humanized context but will use more tokens to generate a Resume.
             </p>
           </>
         </TooltipContent>

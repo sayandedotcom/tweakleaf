@@ -4,7 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
+import useLocalStorage from "use-local-storage";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,30 +19,33 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { PartyPopper } from "lucide-react";
 import { resumeContextPlaceholders } from "@/configs/context-placeholders";
+import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 
 const FormSchema = z.object({
-  resumeContext: z
-    .string()
-    .min(10, {
-      message: "Resume context must be at least 10 characters.",
-    })
-    .max(160, {
-      message: "Resume context must not be longer than 30 characters.",
-    }),
+  resumeContext: z.string(),
 });
 
 export default function ResumeContextComponent() {
+  const [resumeContext, setResumeContext] = useLocalStorage(
+    LOCAL_STORAGE_KEYS.RESUME_CONTEXT,
+    "",
+  );
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      resumeContext: "",
+    },
   });
 
+  // Update form values when localStorage values change
+  useEffect(() => {
+    form.setValue("resumeContext", resumeContext);
+  }, [resumeContext, form]);
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+    setResumeContext(data.resumeContext);
+    toast("Resume context saved!", {
+      description: "Your resume context has been saved successfully.",
     });
   }
 
@@ -65,9 +69,9 @@ export default function ResumeContextComponent() {
                 />
               </FormControl>
               <FormDescription>
-                We have out own way to generate resume but if you provide your
-                own detailed resume context. This will help us generate the best
-                resume according to your needs.
+                Provide your professional information like email, social links,
+                phone number, your preferences about how the resume should be
+                written eg:- your way of writing experience descriptions.
               </FormDescription>
               <FormMessage />
             </FormItem>
