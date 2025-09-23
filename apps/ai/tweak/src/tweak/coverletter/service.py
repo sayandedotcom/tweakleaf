@@ -1,15 +1,15 @@
-from tweak.graph import Workflow
+from tweak.coverletter.graph import CoverLetterWorkflow
 from tweak.coverletter.schemas import CoverLetterRequestSchema, CoverLetterResponseSchema, CoverLetterResponseSchemaSerializable
 from tweak.utils.threads import get_or_create_thread_id, get_thread_config
 
-class Service:
+class CoverLetterService:
     def __init__(self):
-        """Initializes the service."""
+        """Initializes the cover letter service."""
         try:
-            workflow = Workflow()
+            workflow = CoverLetterWorkflow()
             self.app = workflow.app
         except Exception as e:
-            print(f"Error initializing workflow: {e}")
+            print(f"Error initializing cover letter workflow: {e}")
             self.app = None
     
     def start_tweaking_coverletter(self, tweaking_data: CoverLetterRequestSchema) -> CoverLetterResponseSchema:

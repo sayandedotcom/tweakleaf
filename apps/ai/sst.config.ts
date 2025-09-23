@@ -75,57 +75,57 @@ export default $config({
           return { stage: "main" };
         }
       },
-      runner(input) {
-        // Optimized settings for main/production
-        if (input.stage === "main") {
-          return {
-            engine: "codebuild",
-            timeout: "45 minutes", // Python builds can be slower with dependencies
-            cache: {
-              paths: [
-                // UV specific caches
-                ".venv", // Virtual environment
-                "uv.lock", // UV lock file
-                ".uv-cache", // UV global cache
+      // runner(input) {
+      //   // Optimized settings for main/production
+      //   if (input.stage === "main") {
+      //     return {
+      //       engine: "codebuild",
+      //       timeout: "45 minutes", // Python builds can be slower with dependencies
+      //       cache: {
+      //         paths: [
+      //           // UV specific caches
+      //           ".venv", // Virtual environment
+      //           "uv.lock", // UV lock file
+      //           ".uv-cache", // UV global cache
 
-                // Python caches
-                "__pycache__", // Python bytecode cache
-                ".pytest_cache", // Pytest cache
-                ".mypy_cache", // MyPy type checker cache
+      //           // Python caches
+      //           "__pycache__", // Python bytecode cache
+      //           ".pytest_cache", // Pytest cache
+      //           ".mypy_cache", // MyPy type checker cache
 
-                // Workspace structure (UV)
-                "apps/ai/.venv", // App-specific virtual env
-                "apps/*/pyproject.toml", // Project configs
+      //           // Workspace structure (UV)
+      //           "apps/ai/.venv", // App-specific virtual env
+      //           "apps/*/pyproject.toml", // Project configs
 
-                // Dependencies and build artifacts
-                "dist", // Built packages
-                "build", // Build directory
-                "*.egg-info", // Package info
+      //           // Dependencies and build artifacts
+      //           "dist", // Built packages
+      //           "build", // Build directory
+      //           "*.egg-info", // Package info
 
-                // AI/ML specific caches (if applicable)
-                ".cache/huggingface", // Hugging Face model cache
-                ".cache/torch", // PyTorch cache
-                "models", // Local model storage
-              ],
-            },
-          };
-        }
+      //           // AI/ML specific caches (if applicable)
+      //           ".cache/huggingface", // Hugging Face model cache
+      //           ".cache/torch", // PyTorch cache
+      //           "models", // Local model storage
+      //         ],
+      //       },
+      //     };
+      //   }
 
-        // Default settings for development stages
-        return {
-          engine: "codebuild",
-          timeout: "25 minutes",
-          cache: {
-            paths: [
-              ".venv",
-              "uv.lock",
-              ".uv-cache",
-              "__pycache__",
-              "apps/ai/.venv",
-            ],
-          },
-        };
-      },
+      //   // Default settings for development stages
+      //   return {
+      //     engine: "codebuild",
+      //     timeout: "25 minutes",
+      //     cache: {
+      //       paths: [
+      //         ".venv",
+      //         "uv.lock",
+      //         ".uv-cache",
+      //         "__pycache__",
+      //         "apps/ai/.venv",
+      //       ],
+      //     },
+      //   };
+      // },
     },
   },
 });

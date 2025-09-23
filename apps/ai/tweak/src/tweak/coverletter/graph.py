@@ -2,9 +2,9 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
 
 from tweak.coverletter.nodes import CoverLetterNodes
-from tweak.schemas import State
+from tweak.coverletter.schemas import State
 
-class Workflow:
+class CoverLetterWorkflow:
     def __init__(self):
         self.checkpointer = InMemorySaver()
         
