@@ -29,6 +29,12 @@ export const FounderTip = () => {
           fast and efficient. Give job description and download resume /
           cover-letter in ~10 seconds.
         </p>
+        <p className="mb-6 text-center">
+          You can thank me in public by DMing me on twitter / x at{" "}
+          <a href="https://x.com/sayandedotcom" className="text-primary">
+            @sayandedotcom
+          </a>
+        </p>
       </div>
     </section>
   );

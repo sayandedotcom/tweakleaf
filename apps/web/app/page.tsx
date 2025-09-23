@@ -2,7 +2,7 @@ import { BentoGrid } from "@/components/kokonutui/bento-grid";
 import TweetGridComponent from "@/components/tweet-grid-component";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { PartyPopper } from "lucide-react";
+import { ArrowRight, PartyPopper } from "lucide-react";
 import { CompareUs } from "@/components/compare-us";
 import { FounderTip } from "@/components/founder-tip";
 import { RedditPosts } from "@/components/reddit-posts";
@@ -11,6 +11,8 @@ import { Features } from "@/components/features";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import { ShinyButton } from "@/components/magicui/shiny-button";
 import { ContainerScrollComponent } from "@/components/container-scroll-component";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -35,6 +37,15 @@ export default function Home() {
             </AnimatedShinyText>
           </div>
         </div>
+        <Badge variant="outline" className="animate-appear text-sm">
+          <span className="text-muted-foreground">
+            Want to use Tweakleaf for free?
+          </span>
+          <Link href="/blogs/free" className="flex items-center gap-1">
+            Read more
+            <ArrowRight className="size-3" />
+          </Link>
+        </Badge>
         <div className="relative mb-10">
           <span className="text-[4rem] flex flex-row gap-4 items-center justify-center font-extrabold text-primary drop-shadow-[0_0_8px_rgba(0,255,255,0.9)] animate-neon">
             Tweak LaTeX
@@ -48,12 +59,12 @@ export default function Home() {
           <div className="absolute inset-0 -z-10 bg-primary opacity-50 blur-[50px] animate-neon-glow" />
         </div>
         <p className="text-text text-center mt-4 max-w-7xl mx-auto">
-          Apply to <u>100+ jobs</u> in just <u>10 minutes</u> less than{" "}
-          <u>$0.50</u> with AI that&apos;s creates or tweaks cover letters and
-          resumes in a <u>humanized</u> way to avoid <u>ATS detection</u> and
-          achieve better rankings. All documents are generated in <u>LaTeX</u>{" "}
-          for superior ATS compatibility, while our <u>proven prompts</u> ensure
-          strong keyword usage for maximum impact.
+          Apply to <u>100+ jobs</u> in just <u>10 minutes</u> fore{" "}
+          <u>free ( if you are using Gemini )</u> with AI that&apos;s creates or
+          tweaks cover letters and resumes in a <u>humanized</u> way to avoid{" "}
+          <u>ATS detection</u> and achieve better rankings. All documents are
+          generated in <u>LaTeX</u> for superior ATS compatibility, while our{" "}
+          <u>proven prompts</u> ensure strong keyword usage for maximum impact.
           <br />
           <br />
           We reduce <u>hallucinations</u> and cut costs with advanced context
