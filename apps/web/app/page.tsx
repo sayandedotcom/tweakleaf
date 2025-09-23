@@ -59,18 +59,24 @@ export default function Home() {
           <div className="absolute inset-0 -z-10 bg-primary opacity-50 blur-[50px] animate-neon-glow" />
         </div>
         <p className="text-text text-center mt-4 max-w-7xl mx-auto">
-          Apply to <u>100+ jobs</u> in just <u>10 minutes</u> fore{" "}
-          <u>free ( if you are using Gemini )</u> with AI that&apos;s creates or
-          tweaks cover letters and resumes in a <u>humanized</u> way to avoid{" "}
-          <u>ATS detection</u> and achieve better rankings. All documents are
-          generated in <u>LaTeX</u> for superior ATS compatibility, while our{" "}
-          <u>proven prompts</u> ensure strong keyword usage for maximum impact.
+          Apply to <u>100+ jobs</u> in just <u>10 minutes</u> for{" "}
+          <u>
+            free ( <a href="/blogs/free">click here</a> )
+          </u>{" "}
+          with AI that&apos;s creates or tweaks cover letters and resumes in
+          optimized with accurate keywords and <u>humanized</u> the content to
+          avoid <u>ATS&apos;s AI detection</u> and improve your document
+          rankings. All documents are generated in <u>LaTeX</u> for superior ATS
+          compatibility, while our <u>proven prompts</u> ensure strong keyword
+          usage for maximum impact.
           <br />
           <br />
-          We reduce <u>hallucinations</u> and cut costs with advanced context
-          engineering, and our AI agent mantains long term memory and
-          continuously learn your preferences to make next document faster, more
-          optimized, and more effective.
+          We use multiple strong and weak LLM models to create or tweak your
+          documents to make every document unique and reduce{" "}
+          <u>hallucinations</u> and cut costs with advanced context engineering,
+          and our AI agent mantains long term memory and continuously learn your
+          preferences to make next document faster, more optimized, and more
+          effective.
         </p>
         {/* <div className="flex flex-row items-center justify-center gap-4">
           <Link

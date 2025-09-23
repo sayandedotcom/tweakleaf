@@ -2,7 +2,7 @@ MODEL_CONFIGS = {
     'openai': {
         'provider': 'openai',
         'model': "gpt-4o",
-        'weak_model': 'gpt-3.5-turbo',
+        'weak_model': 'gpt-4o-mini',
         'strong_model': 'gpt-4o',
         'default_params': {
             'temperature': 0,
@@ -13,11 +13,12 @@ MODEL_CONFIGS = {
     },
     'gemini': {
         'provider': 'google', 
-        'model': "",
-        # 'weak_model': 'gemini-2.0-flash-lite',
+        'model': '',
+        'weak_model': 'gemini-2.0-flash',
+        'strong_model': 'gemini-2.5-flash',
         # 'strong_model': 'gemini-2.5-flash-lite',
-        'weak_model': 'gemini-2.5-flash-lite',
-        'strong_model': 'gemini-2.5-pro',
+        # 'weak_model': 'gemini-2.5-flash-lite',
+        # 'strong_model': 'gemini-2.5-pro',
         'default_params': {
             'temperature': 0,
             'max_tokens': None,

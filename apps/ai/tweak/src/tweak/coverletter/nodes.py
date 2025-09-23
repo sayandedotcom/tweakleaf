@@ -3,6 +3,7 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from tweak.coverletter.schemas import CoverLetterStructuredOutput, CoverLetterHumanizeStructuredOutput
 from tweak.coverletter.prompts import human_prompt_to_tweak_coverletter, system_prompt_to_tweak_coverletter, system_prompt_to_humanize_pro_for_coverletter
+from tweak.coverletter.fewshortprompt import few_shot_latex_prompt
 
 from tweak.models.factory import ModelFactory
 
@@ -156,6 +157,7 @@ class CoverLetterNodes:
         
         chat_template = ChatPromptTemplate([
             ('system', system_prompt_to_tweak_coverletter),
+            few_shot_latex_prompt,
             MessagesPlaceholder("history"),
             ('human', human_prompt_to_tweak_coverletter)
         ])
