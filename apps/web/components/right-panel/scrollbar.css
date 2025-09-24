@@ -1,0 +1,36 @@
+/* Custom scrollbar for editor - higher specificity to override global styles */
+#latex-editor .cm-editor::-webkit-scrollbar,
+#latex-editor .cm-scroller::-webkit-scrollbar,
+#latex-editor .cm-content::-webkit-scrollbar {
+  width: 12px !important;
+  background: #f0f0f0 !important;
+}
+
+#latex-editor .cm-editor::-webkit-scrollbar-track,
+#latex-editor .cm-scroller::-webkit-scrollbar-track,
+#latex-editor .cm-content::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 4px !important;
+}
+
+#latex-editor .cm-editor::-webkit-scrollbar-thumb,
+#latex-editor .cm-scroller::-webkit-scrollbar-thumb,
+#latex-editor .cm-content::-webkit-scrollbar-thumb {
+  background: #888 !important;
+  border-radius: 4px !important;
+  border: 2px solid #f1f1f1 !important;
+}
+
+#latex-editor .cm-editor::-webkit-scrollbar-thumb:hover,
+#latex-editor .cm-scroller::-webkit-scrollbar-thumb:hover,
+#latex-editor .cm-content::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
+}
+
+/* Force scrollbar to be visible with higher specificity */
+#latex-editor .cm-editor,
+#latex-editor .cm-scroller,
+#latex-editor .cm-content {
+  /* scrollbar-width: thin !important; */
+  scrollbar-color: #888 #f1f1f1 !important;
+}

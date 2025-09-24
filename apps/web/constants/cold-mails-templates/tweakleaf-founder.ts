@@ -34,7 +34,7 @@ export const TWEAKLEAF_FOUNDER = String.raw`
 
 <p>
   Best,<br />
-  Sayan De (<a href="">[Your Portfolio Link]</a>)
+  [Your Name] (<a href="">[Your Portfolio Link]</a>)
 </p>
 
 <p>

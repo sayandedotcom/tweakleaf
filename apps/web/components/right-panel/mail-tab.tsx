@@ -3,14 +3,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MailContent } from "@/components/right-panel/mail/mail-content";
 import { TooltipComponent } from "@/components/tooltip-component";
-import { Copy, Download, RotateCcw, Save, Send } from "lucide-react";
+import { RotateCcw, Save, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { MailTo, MailToBody, MailToTrigger } from "@slalombuild/react-mailto";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 import { compile } from "html-to-text";
-
 import {
   Select,
   SelectContent,
@@ -261,11 +260,6 @@ export default function MailTab() {
     }
   }, []);
 
-  const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(emailContent);
-    toast.success("Email content copied to clipboard");
-  }, [emailContent]);
-
   const handleDownload = useCallback(() => {
     if (!emailContent) {
       toast.error("No content to download");
@@ -346,11 +340,6 @@ export default function MailTab() {
   // Memoize button disabled states
   const isContentEmpty = useMemo(() => !emailContent, [emailContent]);
 
-  const isCopyDisabled = useMemo(
-    () => isContentEmpty || true,
-    [isContentEmpty],
-  );
-
   const isSendDisabled = useMemo(
     () => isContentEmpty || true,
     [isContentEmpty],
@@ -358,11 +347,10 @@ export default function MailTab() {
 
   return (
     <Tabs defaultValue="mail">
-      <div className="flex items-center gap-4">
+      <header className="flex items-center gap-2 px-2 py-0.5 border-b">
         <TabsList className="grid w-[140px] grid-cols-1">
           <TabsTrigger value="mail">Cold Email</TabsTrigger>
         </TabsList>
-        <CommingSoon />
         <Select value={selectedTemplate} onValueChange={handleTemplateChange}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Select Template" />
@@ -374,34 +362,19 @@ export default function MailTab() {
             </SelectGroup>
           </SelectContent>
         </Select>
-
+        <CommingSoon />
         <div className="flex gap-2 justify-end ml-auto">
-          <TooltipComponent content="Copy">
-            <Button
-              size="icon"
-              variant="outline"
-              onClick={handleCopy}
-              disabled={isCopyDisabled}
-            >
-              <Copy />
-            </Button>
-          </TooltipComponent>
           <TooltipComponent content="Send Mail">
             <MailTo to={recipientEmail} subject={subject}>
               <MailToTrigger>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  disabled={isSendDisabled}
-                  onClick={handleSendClick}
-                >
-                  <Send />
+                <Button disabled={isSendDisabled} onClick={handleSendClick}>
+                  Send Email <Send />
                 </Button>
               </MailToTrigger>
               <MailToBody>{plainTextContent}</MailToBody>
             </MailTo>
           </TooltipComponent>
-          <TooltipComponent content="Download">
+          {/* <TooltipComponent content="Download">
             <Button
               size="icon"
               variant="outline"
@@ -410,7 +383,7 @@ export default function MailTab() {
             >
               <Download />
             </Button>
-          </TooltipComponent>
+          </TooltipComponent> */}
           <TooltipComponent content="Save">
             <Button size="icon" variant="outline" disabled={true}>
               <Save />
@@ -427,7 +400,7 @@ export default function MailTab() {
             </Button>
           </AlertDialogComponent>
         </div>
-      </div>
+      </header>
       <TabsContent value="mail">
         <MailContent subject={subject} emailContent={emailContent} />
       </TabsContent>

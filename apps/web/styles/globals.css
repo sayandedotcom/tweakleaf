@@ -158,39 +158,47 @@
     }
   }
 
-  --animate-shiny-text: shiny-text 8s infinite
-;
+  --animate-shiny-text: shiny-text 8s infinite;
   @keyframes shiny-text {
-  0%, 90%, 100% {
-    background-position: calc(-100% - var(--shiny-width)) 0;
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
     }
-  30%, 60% {
-    background-position: calc(100% + var(--shiny-width)) 0;
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
-  }}
+  }
+}
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
     /* width */
+    /* scrollbar-width: thin;  */
+    scrollbar-color: var(--color-secondary) var(--color-background);
+
     ::-webkit-scrollbar {
-      width: 10px;
+      width: 12px;
+      background: #f0f0f0;
     }
 
-    /* Track */
     ::-webkit-scrollbar-track {
-      background: var(--color-background);
+      background: #f1f1f1;
+      border-radius: 4px;
     }
 
-    /* Handle */
     ::-webkit-scrollbar-thumb {
-      background: var(--color-secondary);
+      background: #888;
+      border-radius: 4px;
+      border: 2px solid #f1f1f1;
     }
 
-    /* Handle on hover */
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--color-secondary);
+      background: #555;
     }
+
     /* * ::selection {
       color: var(--muted);
       background: var(--muted-foreground);
