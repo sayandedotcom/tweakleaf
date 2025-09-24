@@ -14,7 +14,6 @@ Align the cover letter writting with Cover letter context that will be provided 
 8. NEVER change personal information (names, emails, links, skills, experience, etc.) unless explicitly provided by user
 9. NEVER change line break and start a new line commands
 10. Line break commands are `\\` should be preserved as is as `\\`
-11. At closing after Sincerely, there should be a line break with `\\`. eg:- \closing{Sincerely,\\....}
 
 **COVER LETTER WRITING PRINCIPLES:**
 - Write in clear, professional language appropriate for business communication

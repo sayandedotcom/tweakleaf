@@ -62,9 +62,14 @@ Leetcode
 \lettercontent{Praesent non elementum enim, id aliquet risus. Morbi sit amet urna condimentum, pulvinar lacus sit amet, accumsan lectus. Morbi facilisis mauris ut turpis tincidunt, vel convallis nibh placerat.}
 \vspace{0.5cm}
 
-\closing{Sincerely,\\
-\vspace{.1cm} \includegraphics[width=4cm]{signature} \vspace{-1cm} }
-
+\closing{Sincerely,}
+\vspace{-0.3cm}
+\signature{
+    \begin{tabular}{c}
+        \includegraphics[width=4cm]{signature} \\
+        \vspace{-1em}
+    \end{tabular}
+}
 \signature{John Doe}
 
 \end{document}  

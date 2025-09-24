@@ -18,8 +18,6 @@ few_shot_latex_system_prompt = """
 - NEVER modify LaTeX document structure, packages, or commands
 - CHANGE only the content of the cover letter, do not change the structure or formatting
 - **ABSOLUTELY DO NOT** modify or simplify line break and start a new line commands
-- Line break commands are `\\` should be preserved as is as `\\`
-- At closing after Sincerely, there should be a line break with `\\`. eg:- \closing{Sincerely,\\....}
 """
 
 # Few-shot examples demonstrating proper LaTeX special character handling
@@ -35,14 +33,6 @@ examples = [
     {
         "input": "Mention that I have 5+ years of experience with JavaScript & React, and I'm available at 90% capacity.",
         "output": "With over 5+ years of experience in JavaScript \& React development, I bring a strong foundation in modern web technologies. I am currently available at 90\% capacity, allowing me to dedicate significant time to this role."
-    },
-    {
-        "input": "`\closing{Sincerely,\\ \vspace{.1cm} \includegraphics[width=4cm]{signature} \vspace{-1cm} }`",
-        "output": "`\closing{Sincerely,\\ \vspace{.1cm} \includegraphics[width=4cm]{signature} \vspace{-1cm} }`"
-    },
-    {
-        "input": "At closing after Sincerely, add a line break with `\\`",
-        "output": "\closing{Sincerely,\\....}"
     }
 ]
 

@@ -3,6 +3,11 @@
 import { useEffect, useCallback, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   Select,
   SelectContent,
   SelectGroup,
@@ -16,7 +21,14 @@ import { TooltipComponent } from "@/components/tooltip-component";
 import { navigation } from "@/configs/navigation";
 import { useLatexCompilation } from "@/hooks/use-latex-compilation";
 import { toast } from "sonner";
-import { Download, RefreshCw, Play, ListRestart, Logs } from "lucide-react";
+import {
+  Download,
+  RefreshCw,
+  Play,
+  ListRestart,
+  Logs,
+  Info,
+} from "lucide-react";
 import { PdfTab } from "./pdf-tab";
 import { LatexTab } from "./latex-tab";
 import { CommingSoon } from "@/components/comming-soon";
@@ -478,7 +490,7 @@ export default function ResumeCoverLetterTabs() {
   );
 
   const compileButtonText = useMemo(() => {
-    if (isPending) return "Compiling...";
+    if (isPending) return "Compiling";
     if (compilationAttempts >= 3) return "Wait";
     if (compilationError) return "Error";
     if (currentPdfBlob) return "Recompile";
@@ -505,6 +517,25 @@ export default function ResumeCoverLetterTabs() {
             )}
           </TabsTrigger>
         </TabsList>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Info className="w-4 h-4 cursor-pointer" />
+          </TooltipTrigger>
+          <TooltipContent className="w-60">
+            <>
+              <p className="text-center"> About LaTeX Compiler </p>
+              <br />
+              <p>
+                Our compiler works perfectly with given LaTeX templates.
+                <br />
+                <br /> However, if you want to use your own LaTeX templates, you
+                can use the LaTeX tab to edit the content and compile it
+                yourself, but LaTeX file that has specialized fonts, packages (
+                like fontawesome, etc.) may not work perfectly.
+              </p>
+            </>
+          </TooltipContent>
+        </Tooltip>
         <Select
           value={currentTemplateValue}
           onValueChange={handleTemplateChange}
