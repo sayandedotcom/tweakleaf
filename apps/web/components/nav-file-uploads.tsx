@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronRight, File, Trash2, Download, Upload } from "lucide-react";
-import { useState, useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect, useMemo } from "react";
 
 import {
   Collapsible,
@@ -15,7 +15,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import useLocalStorage from "use-local-storage";
@@ -42,7 +41,7 @@ export function NavFileUploads() {
   );
 
   // Ensure uploadedFiles is always an array
-  const files = uploadedFiles || [];
+  const files = useMemo(() => uploadedFiles || [], [uploadedFiles]);
 
   const handleFileUpload = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +75,19 @@ export function NavFileUploads() {
       }
 
       if (newFiles.length > 0) {
-        setUploadedFiles((prev) => [...(prev || []), ...newFiles]);
+        setUploadedFiles((prev) => {
+          const updatedFiles = [...(prev || []), ...newFiles];
+
+          // Mark that user has customized their signature if they uploaded a signature file
+          const hasSignatureUpload = newFiles.some((file) =>
+            isSignatureFile(file),
+          );
+          if (hasSignatureUpload) {
+            localStorage.setItem("hasUserCustomizedSignature", "true");
+          }
+
+          return updatedFiles;
+        });
       }
 
       // Reset input
@@ -89,9 +100,17 @@ export function NavFileUploads() {
 
   const handleDeleteFile = useCallback(
     (fileId: string) => {
-      setUploadedFiles((prev) =>
-        (prev || []).filter((file) => file.id !== fileId),
-      );
+      setUploadedFiles((prev) => {
+        const newFiles = (prev || []).filter((file) => file.id !== fileId);
+
+        // Mark that user has customized their signature if they deleted a signature file
+        const deletedFile = (prev || []).find((file) => file.id === fileId);
+        if (deletedFile && isSignatureFile(deletedFile)) {
+          localStorage.setItem("hasUserCustomizedSignature", "true");
+        }
+
+        return newFiles;
+      });
     },
     [setUploadedFiles],
   );
@@ -105,14 +124,6 @@ export function NavFileUploads() {
     document.body.removeChild(link);
   }, []);
 
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
   const formatDate = (timestamp: number): string => {
     return new Date(timestamp).toLocaleDateString();
   };
@@ -124,6 +135,65 @@ export function NavFileUploads() {
       file.type.startsWith("image/")
     );
   };
+
+  // Helper function to check if a file is the default signature
+  const isDefaultSignature = (file: UploadedFile): boolean => {
+    return file.id.startsWith("default-signature-");
+  };
+
+  // Function to load default signature.png file
+  const loadDefaultSignature = useCallback(async () => {
+    try {
+      // Check if user has already customized their signature files
+      const hasUserCustomized = localStorage.getItem(
+        "hasUserCustomizedSignature",
+      );
+
+      // If user has customized, don't load default
+      if (hasUserCustomized === "true") {
+        return;
+      }
+
+      // Check if signature.png is already uploaded by checking localStorage directly
+      const storedFiles = localStorage.getItem("uploadedFiles");
+      const currentFiles = storedFiles ? JSON.parse(storedFiles) : [];
+      const hasSignature = currentFiles.some((file: UploadedFile) =>
+        file.name.toLowerCase().includes("signature.png"),
+      );
+
+      if (!hasSignature) {
+        // Fetch the signature.png file from public directory
+        const response = await fetch("/signature.png");
+        if (response.ok) {
+          const blob = await response.blob();
+          const base64Data = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+
+          const signatureFile: UploadedFile = {
+            id: `default-signature-${Date.now()}`,
+            name: "signature.png",
+            size: blob.size,
+            type: blob.type,
+            lastModified: Date.now(),
+            data: base64Data,
+          };
+
+          setUploadedFiles((prev) => [signatureFile, ...(prev || [])]);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading default signature file:", error);
+    }
+  }, [setUploadedFiles]);
+
+  // Load default signature on component mount only
+  useEffect(() => {
+    loadDefaultSignature();
+  }, [loadDefaultSignature]);
 
   return (
     <SidebarGroup>
@@ -161,10 +231,16 @@ export function NavFileUploads() {
                                 </span>
                                 {isSignatureFile(file) && (
                                   <Badge
-                                    variant="secondary"
+                                    variant={
+                                      isDefaultSignature(file)
+                                        ? "outline"
+                                        : "secondary"
+                                    }
                                     className="text-xs"
                                   >
-                                    Signature
+                                    {isDefaultSignature(file)
+                                      ? "Default (Replaceable)"
+                                      : "Signature"}
                                   </Badge>
                                 )}
                               </div>
@@ -226,8 +302,9 @@ export function NavFileUploads() {
                           accept="*/*"
                         />
                         <p className="text-xs text-muted-foreground">
-                          💡 Upload files with "signature" in the name to use
-                          them in LaTeX compilation
+                          💡 Upload files with &quot;signature&quot; in the name
+                          to use them in LaTeX compilation. You can replace the
+                          default signature.
                         </p>
                       </div>
                     </div>

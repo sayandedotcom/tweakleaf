@@ -107,7 +107,7 @@ function FreePage() {
               Click on the configure button to access your settings panel.
             </p>
             <Image
-              src="/step-2.png"
+              src="/step-2.webp"
               alt="Configure button screenshot"
               width={1400}
               height={1400}
@@ -141,7 +141,7 @@ function FreePage() {
               </a>
             </div>
             <Image
-              src="/step-3.png"
+              src="/step-3.webp"
               alt="Google AI Studio API key generation"
               width={1400}
               height={1400}
@@ -165,7 +165,7 @@ function FreePage() {
               Tweakleaf configuration.
             </p>
             <Image
-              src="/step-4.png"
+              src="/step-4.webp"
               alt="API key configuration"
               width={1400}
               height={1400}
