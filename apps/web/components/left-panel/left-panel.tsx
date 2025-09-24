@@ -64,9 +64,9 @@ export function LeftPanel() {
           <TabsTrigger value={navigation.LEFT_PANEL.CONTEXTS}>
             Contexts
           </TabsTrigger>
-          <TabsTrigger value={navigation.LEFT_PANEL.PROMPTS}>
+          {/* <TabsTrigger value={navigation.LEFT_PANEL.PROMPTS}>
             Prompts
-          </TabsTrigger>
+          </TabsTrigger> */}
         </TabsList>
       </header>
       <TabsContent value={navigation.LEFT_PANEL.JOB}>
@@ -78,9 +78,9 @@ export function LeftPanel() {
       <TabsContent value={navigation.LEFT_PANEL.CONTEXTS}>
         <MemoizedContextTab />
       </TabsContent>
-      <TabsContent value={navigation.LEFT_PANEL.PROMPTS}>
+      {/* <TabsContent value={navigation.LEFT_PANEL.PROMPTS}>
         <MemoizedPromptsTab />
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 }

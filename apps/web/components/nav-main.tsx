@@ -55,36 +55,32 @@ const items: {
         url: navigation.RIGHT_PANEL.COVER_LETTER,
       },
       // {
-      //   title: "Email / DMs Context",
+      //   title: "Cold Mail Context",
       //   url: navigation.RIGHT_PANEL.EMAIL,
       // },
-      {
-        title: "Cold Mail Context",
-        url: navigation.RIGHT_PANEL.EMAIL,
-      },
     ],
   },
-  {
-    title: "Prompts",
-    url: navigation.LEFT_PANEL.PROMPTS,
-    icon: SquareTerminal,
-    isActive: false,
-    baseUrl: "tweak",
-    items: [
-      {
-        title: "Resume Prompt",
-        url: navigation.RIGHT_PANEL.RESUME,
-      },
-      {
-        title: "Cover Letter Prompt",
-        url: navigation.RIGHT_PANEL.COVER_LETTER,
-      },
-      {
-        title: "Cold Mail Prompt",
-        url: navigation.RIGHT_PANEL.EMAIL,
-      },
-    ],
-  },
+  // {
+  //   title: "Prompts",
+  //   url: navigation.LEFT_PANEL.PROMPTS,
+  //   icon: SquareTerminal,
+  //   isActive: false,
+  //   baseUrl: "tweak",
+  //   items: [
+  //     {
+  //       title: "Resume Prompt",
+  //       url: navigation.RIGHT_PANEL.RESUME,
+  //     },
+  //     {
+  //       title: "Cover Letter Prompt",
+  //       url: navigation.RIGHT_PANEL.COVER_LETTER,
+  //     },
+  //     {
+  //       title: "Cold Mail Prompt",
+  //       url: navigation.RIGHT_PANEL.EMAIL,
+  //     },
+  //   ],
+  // },
   // {
   //   title: "Settings",
   //   url: "/settings",

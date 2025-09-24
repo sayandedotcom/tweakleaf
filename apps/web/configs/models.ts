@@ -34,7 +34,7 @@ export const models: ModelConfig[] = [
     name: "Gemini",
     logo: llmModelsSvg.gemini,
     url: navigation.MODEL.GEMINI,
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.5-flash",
     configured: false, // This will be dynamically updated
     apiKeyUrl: "https://aistudio.google.com/app/apikey",
     isConfigured: () => checkModelConfiguration(navigation.MODEL.GEMINI),

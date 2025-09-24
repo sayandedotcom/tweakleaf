@@ -27,6 +27,7 @@ const MailContextComponent = dynamic(
 );
 
 import { useQueryParam } from "@/hooks/use-query-param";
+import { CommingSoon } from "@/components/comming-soon";
 
 function ContextTab() {
   // const router = useRouter();
@@ -56,8 +57,8 @@ function ContextTab() {
         <TabsTrigger value={navigation.RIGHT_PANEL.COVER_LETTER}>
           Cover Letter
         </TabsTrigger>
-        <TabsTrigger value={navigation.RIGHT_PANEL.EMAIL}>
-          Cold mail
+        <TabsTrigger disabled={true} value={navigation.RIGHT_PANEL.EMAIL}>
+          Cold Mail <CommingSoon />
         </TabsTrigger>
       </TabsList>
       <TabsContent value={navigation.RIGHT_PANEL.RESUME}>

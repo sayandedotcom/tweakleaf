@@ -17,6 +17,7 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { navigation } from "@/configs/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CommingSoon } from "./comming-soon";
 
 const projects: {
   name: string;
@@ -52,7 +53,11 @@ export function NavProjects() {
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton className="cursor-pointer" asChild>
+            <SidebarMenuButton
+              disabled={item.url === navigation.RIGHT_PANEL.EMAIL}
+              className="cursor-pointer"
+              asChild
+            >
               <Button
                 variant="ghost"
                 onClick={() => {
@@ -66,6 +71,7 @@ export function NavProjects() {
               >
                 <item.icon />
                 <span>{item.name}</span>
+                {item.url === navigation.RIGHT_PANEL.EMAIL && <CommingSoon />}
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
