@@ -205,6 +205,12 @@ export default function ModelsSettingsPage() {
         </p>
       </div>
 
+      <div className="border-b border-muted pb-4">
+        Want to know how to use teakleaf free forever?{" "}
+        <a href="/blogs/free" className="text-primary underline">
+          Click here
+        </a>
+      </div>
       <div className="grid gap-4">
         {models.map((model) => {
           const modelKey = model.url.toLowerCase();
