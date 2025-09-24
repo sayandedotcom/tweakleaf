@@ -5,6 +5,9 @@
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   height: calc(100vh - 68px);
   overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  max-height: calc(100vh - 68px);
 }
 
 /* Toolbar styles */
@@ -12,6 +15,8 @@
   background: #f9fafb;
   border-bottom: 1px solid #e5e7eb;
   padding: 12px 16px;
+  grid-row: 1;
+  overflow: visible;
 }
 
 .button-group {
@@ -82,11 +87,15 @@
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  min-height: 300px;
+  min-height: 0;
   outline: none;
   padding: 16px;
   overflow-y: auto;
-  max-height: calc(100vh - 68px - 60px);
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .tiptap :first-child {
@@ -245,4 +254,92 @@
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+.font-family-sans {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Fixed header container for recipient and subject */
+.email-fields-container {
+  grid-row: 2;
+  overflow: visible;
+}
+
+/* Custom scrollbar for editor */
+.tiptap::-webkit-scrollbar {
+  width: 12px;
+  background: #f0f0f0;
+}
+
+.tiptap::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.tiptap::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+  border: 2px solid #f1f1f1;
+}
+
+.tiptap::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Force scrollbar to be visible */
+.tiptap {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Editor content wrapper */
+.editor-content-wrapper {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  grid-row: 3;
+}
+
+/* TipTap's internal wrapper div */
+.editor-content-wrapper > div {
+  height: 100% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Force TipTap editor to have proper height and scrolling */
+.editor-content-wrapper .ProseMirror {
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  outline: none !important;
+  flex: 1 !important;
+}
+
+/* Custom scrollbar for ProseMirror */
+.editor-content-wrapper .ProseMirror::-webkit-scrollbar {
+  width: 12px !important;
+  background: #f0f0f0 !important;
+}
+
+.editor-content-wrapper .ProseMirror::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 4px !important;
+}
+
+.editor-content-wrapper .ProseMirror::-webkit-scrollbar-thumb {
+  background: #888 !important;
+  border-radius: 4px !important;
+  border: 2px solid #f1f1f1 !important;
+}
+
+.editor-content-wrapper .ProseMirror::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
 }

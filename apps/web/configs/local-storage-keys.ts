@@ -9,6 +9,7 @@ export const LOCAL_STORAGE_KEYS = {
   MODEL_API_KEYS: "modelApiKeys",
   MAIL_EDITOR_STORAGE_KEY: "mail-editor-content",
   MAIL_EDITOR_SCROLL_KEY: "mail-editor-scroll-position",
+  MAIL_EDITOR_SUBJECT_KEY: "mail-editor-subject",
   COVER_LETTER_CONTEXT: "coverLetterContext",
   RESUME_CONTEXT: "resumeContext",
   HUMANIZE_PRO_FOR_COVER_LETTER: "humanizeProForCoverLetter",

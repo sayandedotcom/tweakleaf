@@ -26,7 +26,6 @@ import { Button } from "./ui/button";
 import { navigation } from "@/configs/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { settingsTabs } from "@/configs/settings-tabs";
 
 const items: {
   title: string;
@@ -54,10 +53,10 @@ const items: {
         title: "Cover Letter Context",
         url: navigation.RIGHT_PANEL.COVER_LETTER,
       },
-      // {
-      //   title: "Cold Mail Context",
-      //   url: navigation.RIGHT_PANEL.EMAIL,
-      // },
+      {
+        title: "Cold Email Context",
+        url: navigation.RIGHT_PANEL.EMAIL,
+      },
     ],
   },
   // {
@@ -76,7 +75,7 @@ const items: {
   //       url: navigation.RIGHT_PANEL.COVER_LETTER,
   //     },
   //     {
-  //       title: "Cold Mail Prompt",
+  //       title: "Cold Email Prompt",
   //       url: navigation.RIGHT_PANEL.EMAIL,
   //     },
   //   ],

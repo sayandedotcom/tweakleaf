@@ -21,14 +21,7 @@ import { TooltipComponent } from "@/components/tooltip-component";
 import { navigation } from "@/configs/navigation";
 import { useLatexCompilation } from "@/hooks/use-latex-compilation";
 import { toast } from "sonner";
-import {
-  Download,
-  RefreshCw,
-  Play,
-  ListRestart,
-  Logs,
-  Info,
-} from "lucide-react";
+import { Download, RefreshCw, Play, Logs, Info, RotateCcw } from "lucide-react";
 import { PdfTab } from "./pdf-tab";
 import { LatexTab } from "./latex-tab";
 import { CommingSoon } from "@/components/comming-soon";
@@ -609,7 +602,7 @@ export default function ResumeCoverLetterTabs() {
             onConfirm={handleReset}
           >
             <Button variant="outline" size="icon">
-              <ListRestart className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4" />
             </Button>
           </AlertDialogComponent>
         </div>

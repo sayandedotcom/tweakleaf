@@ -13,18 +13,18 @@ export async function POST(request: NextRequest) {
 
   const supabase = createServerSupabaseClient();
 
-  // const { data: coverletter, error } = await supabase
+  // const { data: resume, error } = await supabase
   //   .from("users")
-  //   .update({ coverletter_context: data })
+  //   .update({ resume_context: data })
   //   .eq("user_id", userId)
   //   .select();
 
-  const { data: coverletter, error } = await supabase
+  const { data: resume, error } = await supabase
     .from("threads")
     .insert({ thread_id: "data", user_id: userId })
     .select();
 
-  console.log(coverletter);
+  console.log(resume);
 
   console.log(error);
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data: coverletter });
+  return NextResponse.json({ data: resume });
 }
 
 export async function GET(request: NextRequest) {
@@ -44,17 +44,17 @@ export async function GET(request: NextRequest) {
 
   const supabase = createServerSupabaseClient();
 
-  const { data: coverletter, error } = await supabase
+  const { data: resume, error } = await supabase
     .from("users")
-    .select("coverletter_context")
+    .select("resume_context")
     .eq("user_id", userId)
     .select();
 
-  console.log(coverletter);
+  console.log(resume);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data: coverletter });
+  return NextResponse.json({ data: resume });
 }

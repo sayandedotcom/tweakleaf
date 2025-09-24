@@ -9,7 +9,13 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Link from "@tiptap/extension-link";
-import { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   Bold,
   Italic,
@@ -44,7 +50,7 @@ const extensions = [
   }),
 ];
 
-function MenuBar({
+const MenuBar = React.memo(function MenuBar({
   editor,
   onClear,
 }: {
@@ -242,17 +248,30 @@ function MenuBar({
       </div>
     </div>
   );
+});
+
+interface MailContentProps {
+  subject?: string;
+  emailContent?: string;
 }
 
-export function MailContent() {
+export function MailContent({
+  subject = "",
+  emailContent = "",
+}: MailContentProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [localSubject, setLocalSubject] = useState(subject);
   const editorRef = useRef<HTMLDivElement>(null);
+  const isUserEditingRef = useRef(false);
 
   const editor = useEditor({
     immediatelyRender: false,
     extensions,
     content: "",
     onUpdate: ({ editor }) => {
+      // Mark that user is currently editing
+      isUserEditingRef.current = true;
+
       // Save content to localStorage on every update
       const content = editor.getHTML();
       localStorage.setItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_STORAGE_KEY, content);
@@ -263,69 +282,118 @@ export function MailContent() {
           detail: { content },
         }),
       );
+
+      // Reset the flag after a short delay
+      setTimeout(() => {
+        isUserEditingRef.current = false;
+      }, 100);
     },
   });
 
-  // Load content from localStorage on component mount
+  // Sync props with local state and update editor content
+  useEffect(() => {
+    if (subject && subject !== localSubject) {
+      setLocalSubject(subject);
+      // Save to localStorage when subject is updated from parent
+      localStorage.setItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_SUBJECT_KEY, subject);
+    }
+  }, [subject, localSubject]);
+
+  // Listen for subject updates from other components
+  useEffect(() => {
+    const handleSubjectUpdate = (e: CustomEvent) => {
+      if (e.detail?.subject !== undefined) {
+        setLocalSubject(e.detail.subject);
+      }
+    };
+
+    window.addEventListener(
+      "mail-subject-updated",
+      handleSubjectUpdate as EventListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        "mail-subject-updated",
+        handleSubjectUpdate as EventListener,
+      );
+    };
+  }, []);
+
+  // Load content and subject from localStorage on component mount
   useEffect(() => {
     if (editor && !isLoaded) {
       const savedContent = localStorage.getItem(
         LOCAL_STORAGE_KEYS.MAIL_EDITOR_STORAGE_KEY,
       );
+      const savedSubject = localStorage.getItem(
+        LOCAL_STORAGE_KEYS.MAIL_EDITOR_SUBJECT_KEY,
+      );
+
       if (savedContent) {
         editor.commands.setContent(savedContent);
       }
+
+      if (savedSubject && !subject) {
+        setLocalSubject(savedSubject);
+      }
+
       setIsLoaded(true);
     }
-  }, [editor, isLoaded]);
+  }, [editor, isLoaded, subject]);
 
-  // Save scroll position on scroll
+  // Only update content from props if we're not in initial load and user isn't editing
   useEffect(() => {
-    const editorElement = editorRef.current?.querySelector(".tiptap");
-    if (editorElement) {
-      const handleScroll = () => {
-        const scrollTop = editorElement.scrollTop;
-        localStorage.setItem(
-          LOCAL_STORAGE_KEYS.MAIL_EDITOR_SCROLL_KEY,
-          scrollTop.toString(),
-        );
-      };
-
-      editorElement.addEventListener("scroll", handleScroll);
-
-      return () => {
-        editorElement.removeEventListener("scroll", handleScroll);
-      };
-    }
-  }, [isLoaded]);
-
-  // Restore scroll position after content is loaded
-  useEffect(() => {
-    if (isLoaded) {
-      const editorElement = editorRef.current?.querySelector(".tiptap");
-      if (editorElement) {
-        const savedScrollPosition = localStorage.getItem(
-          LOCAL_STORAGE_KEYS.MAIL_EDITOR_SCROLL_KEY,
-        );
-        if (savedScrollPosition) {
-          const scrollTop = parseInt(savedScrollPosition, 10);
-          // Use setTimeout to ensure the content is fully rendered
-          setTimeout(() => {
-            editorElement.scrollTop = scrollTop;
-          }, 100);
-        }
+    if (isLoaded && emailContent && editor && !isUserEditingRef.current) {
+      const currentContent = editor.getHTML();
+      if (currentContent !== emailContent) {
+        editor.commands.setContent(emailContent);
       }
     }
-  }, [isLoaded]);
+  }, [emailContent, editor, isLoaded]);
 
   // Clear content function (useful for resetting the editor)
-  const clearContent = () => {
+  const clearContent = useCallback(() => {
     if (editor) {
       editor.commands.clearContent();
+      setLocalSubject("");
       localStorage.removeItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_STORAGE_KEY);
-      localStorage.removeItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_SCROLL_KEY);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_SUBJECT_KEY);
     }
-  };
+  }, [editor]);
+
+  const handleSubjectChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newSubject = e.target.value;
+      setLocalSubject(newSubject);
+
+      // Save to localStorage
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.MAIL_EDITOR_SUBJECT_KEY,
+        newSubject,
+      );
+
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(
+        new CustomEvent("mail-subject-updated", {
+          detail: { subject: newSubject },
+        }),
+      );
+    },
+    [],
+  );
+
+  // Memoize the subject input props to prevent unnecessary re-renders
+  const subjectInputProps = useMemo(
+    () => ({
+      value: localSubject,
+      onChange: handleSubjectChange,
+      placeholder: "Enter email subject",
+      className:
+        "font-family-sans w-full bg-white border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 outline-none transition-all duration-150 focus:border-blue-500 focus:shadow-[0_0_0_1px_#3b82f6] hover:border-gray-400 placeholder:text-gray-400 placeholder:font-normal leading-6",
+    }),
+    [localSubject, handleSubjectChange],
+  );
 
   if (!editor) {
     return null;
@@ -334,7 +402,18 @@ export function MailContent() {
   return (
     <div className="mail-editor" ref={editorRef}>
       <MenuBar editor={editor} onClear={clearContent} />
-      <EditorContent editor={editor} />
+      <div className="bg-gray-50 border-b border-gray-200 px-3 py-2.5 space-y-2 email-fields-container">
+        <input
+          id="email-recipient"
+          className="cursor-not-allowed w-full bg-white border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 outline-none transition-all duration-150 focus:border-blue-500 focus:shadow-[0_0_0_1px_#3b82f6] hover:border-gray-400 placeholder:text-gray-400 placeholder:font-normal leading-6 font-family-sans"
+          placeholder="Recipient"
+          disabled
+        />
+        <input id="email-subject" {...subjectInputProps} />
+      </div>
+      <div className="editor-content-wrapper">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }

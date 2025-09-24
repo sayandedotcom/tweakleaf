@@ -1,11 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { ResumeTab } from "@/components/left-panel/ai-tabs/resume-ai-tab";
-// import { CoverLetterTab } from "@/components/left-panel/ai-tabs/cover-letter-ai-tab";
-// import { useRouter, useSearchParams } from "next/navigation";
 import { navigation } from "@/configs/navigation";
-// import { MailTab } from "@/components/left-panel/ai-tabs/mail-ai-tab";
 import { screenToLayoutHeight } from "@/configs/screen-to-layout-height";
 import { useQueryParam } from "@/hooks/use-query-param";
 import dynamic from "next/dynamic";
@@ -62,7 +58,7 @@ function AiTab() {
           Cover Letter
         </TabsTrigger>
         <TabsTrigger disabled={true} value={navigation.RIGHT_PANEL.EMAIL}>
-          Cold Mail <CommingSoon />
+          Cold Email <CommingSoon />
         </TabsTrigger>
       </TabsList>
       <TabsContent value={navigation.RIGHT_PANEL.RESUME}>
@@ -74,9 +70,9 @@ function AiTab() {
       >
         <CoverLetterTab />
       </TabsContent>
-      <TabsContent value={navigation.RIGHT_PANEL.EMAIL}>
+      {/* <TabsContent value={navigation.RIGHT_PANEL.EMAIL}>
         <MailTab />
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 }

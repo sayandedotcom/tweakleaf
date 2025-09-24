@@ -58,7 +58,7 @@ function ContextTab() {
           Cover Letter
         </TabsTrigger>
         <TabsTrigger disabled={true} value={navigation.RIGHT_PANEL.EMAIL}>
-          Cold Mail <CommingSoon />
+          Cold Email <CommingSoon />
         </TabsTrigger>
       </TabsList>
       <TabsContent value={navigation.RIGHT_PANEL.RESUME}>
@@ -67,9 +67,9 @@ function ContextTab() {
       <TabsContent value={navigation.RIGHT_PANEL.COVER_LETTER}>
         <CoverLetterContextComponent />
       </TabsContent>
-      <TabsContent value={navigation.RIGHT_PANEL.EMAIL}>
+      {/* <TabsContent value={navigation.RIGHT_PANEL.EMAIL}>
         <MailContextComponent />
-      </TabsContent>
+      </TabsContent> */}
     </Tabs>
   );
 }

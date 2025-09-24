@@ -28,7 +28,7 @@ function PromptTab() {
           Cover Letter
         </TabsTrigger>
         <TabsTrigger value={navigation.RIGHT_PANEL.EMAIL}>
-          Cold mail
+          Cold Email
         </TabsTrigger>
       </TabsList>
       <div className="text-sm text-muted-foreground border bg-accent p-0.5 text-center">
