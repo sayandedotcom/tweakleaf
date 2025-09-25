@@ -88,7 +88,6 @@ class CoverLetterService:
                 status=status,
                 coverletter=coverletter_content,
                 thread_id=thread_id,
-                new_coverletter_context=result.get("new_coverletter_context", ""),
                 llm_type=result.get("llm_type", "unknown"),
                 model_used=result.get("model_used", "unknown")
             )
@@ -101,7 +100,6 @@ class CoverLetterService:
                 status=500,
                 coverletter="",
                 thread_id="",
-                new_coverletter_context="",
                 llm_type="unknown",
                 model_used="unknown"
             )
