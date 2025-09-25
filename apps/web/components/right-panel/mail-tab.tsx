@@ -7,9 +7,9 @@ import { RotateCcw, Save, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { MailTo, MailToBody, MailToTrigger } from "@slalombuild/react-mailto";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 import { compile } from "html-to-text";
+import mailtoLink from "mailto-link";
 import {
   Select,
   SelectContent,
@@ -135,9 +135,10 @@ export default function MailTab() {
   const [emailContent, setEmailContent] = useState("");
   const [subject, setSubject] = useState("Cold Email");
   const [selectedTemplate, setSelectedTemplate] = useState("");
-  const recipientEmail = "john.doe@example.com";
+  const [recipientEmail, setRecipientEmail] = useState("");
   const emailContentRef = useRef(emailContent);
   const subjectRef = useRef(subject);
+  const recipientEmailRef = useRef(recipientEmail);
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -147,6 +148,19 @@ export default function MailTab() {
   useEffect(() => {
     subjectRef.current = subject;
   }, [subject]);
+
+  useEffect(() => {
+    recipientEmailRef.current = recipientEmail;
+  }, [recipientEmail]);
+
+  // Handlers for changes from MailContent component
+  const handleRecipientChange = useCallback((recipient: string) => {
+    setRecipientEmail(recipient);
+  }, []);
+
+  const handleSubjectChange = useCallback((newSubject: string) => {
+    setSubject(newSubject);
+  }, []);
 
   // Memoize template options to prevent re-computation
   const templateOptions = useMemo(() => {
@@ -260,27 +274,50 @@ export default function MailTab() {
     }
   }, []);
 
-  const handleDownload = useCallback(() => {
-    if (!emailContent) {
-      toast.error("No content to download");
+  // Convert HTML to readable plain text for mailto body
+  const getPlainTextContent = useCallback((html: string) => {
+    if (!html) return "";
+    try {
+      const plainText = htmlToTextConverter(html);
+      console.log("Converted HTML to plain text:", plainText);
+      return plainText;
+    } catch (error) {
+      console.error("Error converting HTML to text:", error);
+      return html; // Fallback to original HTML if conversion fails
+    }
+  }, []);
+
+  const handleSendClick = useCallback(() => {
+    if (!recipientEmail.trim()) {
+      toast.error("Please enter a recipient email address");
       return;
     }
 
-    const blob = new Blob([emailContent], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "email-content.html";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast.success("Email content downloaded");
-  }, [emailContent]);
+    if (!emailContent.trim()) {
+      toast.error("Please add some content to your email");
+      return;
+    }
 
-  const handleSendClick = useCallback(() => {
-    toast.success("Opening email client...");
-  }, []);
+    try {
+      // Convert HTML content to plain text
+      const plainTextBody = getPlainTextContent(emailContent);
+
+      // Create mailto URL using mailto-link package
+      const mailtoUrl = mailtoLink({
+        to: recipientEmail.trim(),
+        subject: subject.trim() || "Message via TweakLeaf",
+        body: plainTextBody,
+      });
+
+      // Open the user's default email client in a new tab
+      window.open(mailtoUrl, "_blank");
+
+      toast.success("Opening email client...");
+    } catch (error) {
+      console.error("Error creating mailto link:", error);
+      toast.error("Failed to open email client");
+    }
+  }, [recipientEmail, emailContent, subject, getPlainTextContent]);
 
   const handleReset = useCallback(() => {
     // Find the default template
@@ -317,32 +354,16 @@ export default function MailTab() {
     }
   }, []);
 
-  // Convert HTML to readable plain text for mailto body
-  const getPlainTextContent = useCallback((html: string) => {
-    if (!html) return "";
-    try {
-      const plainText = htmlToTextConverter(html);
-      console.log("Converted HTML to plain text:", plainText);
-      return plainText;
-    } catch (error) {
-      console.error("Error converting HTML to text:", error);
-      return html; // Fallback to original HTML if conversion fails
-    }
-  }, []);
-
-  // Memoize the plain text content for mailto body
-  const plainTextContent = useMemo(() => {
-    return emailContent
-      ? getPlainTextContent(emailContent)
-      : "No content available";
-  }, [emailContent, getPlainTextContent]);
-
   // Memoize button disabled states
   const isContentEmpty = useMemo(() => !emailContent, [emailContent]);
+  const isRecipientEmpty = useMemo(
+    () => !recipientEmail.trim(),
+    [recipientEmail],
+  );
 
   const isSendDisabled = useMemo(
-    () => isContentEmpty || true,
-    [isContentEmpty],
+    () => isContentEmpty || isRecipientEmpty,
+    [isContentEmpty, isRecipientEmpty],
   );
 
   return (
@@ -365,14 +386,9 @@ export default function MailTab() {
         <CommingSoon />
         <div className="flex gap-2 justify-end ml-auto">
           <TooltipComponent content="Send Mail">
-            <MailTo to={recipientEmail} subject={subject}>
-              <MailToTrigger>
-                <Button disabled={isSendDisabled} onClick={handleSendClick}>
-                  Send Email <Send />
-                </Button>
-              </MailToTrigger>
-              <MailToBody>{plainTextContent}</MailToBody>
-            </MailTo>
+            <Button disabled={isSendDisabled} onClick={handleSendClick}>
+              Send Email <Send />
+            </Button>
           </TooltipComponent>
           {/* <TooltipComponent content="Download">
             <Button
@@ -402,7 +418,13 @@ export default function MailTab() {
         </div>
       </header>
       <TabsContent value="mail">
-        <MailContent subject={subject} emailContent={emailContent} />
+        <MailContent
+          subject={subject}
+          emailContent={emailContent}
+          recipientEmail={recipientEmail}
+          onRecipientChange={handleRecipientChange}
+          onSubjectChange={handleSubjectChange}
+        />
       </TabsContent>
     </Tabs>
   );

@@ -57,11 +57,25 @@ function FreePage() {
                 </p>
                 <ul className="text-muted-foreground space-y-1 text-sm">
                   <li>• You can generate up to 5 documents per minute</li>
-                  <li>• We use advanced prompt compression for efficiency</li>
                   <li>
-                    • We use smart LLM routing with strong and weak models
+                    • We use advanced prompt compression to reduce LLM tokens
                   </li>
-                  <li>• We use optimized context engineering</li>
+                  <li>
+                    • We use smart LLM routing technique with strong and weak
+                    models to reduce costs
+                  </li>
+                  <li>
+                    • We reduced hallucinations with advanced context
+                    engineering
+                  </li>
+                  <li>
+                    • We use proven prompts from experts to generate content
+                    that is ATS optimized
+                  </li>
+                  <li>
+                    • We use advanced prompts to humanize the content to pass AI
+                    detection
+                  </li>
                   <li>• We never hit rate limits with our optimizations</li>
                   <li>• We are using AWS credits to power this platform</li>
                   <li>

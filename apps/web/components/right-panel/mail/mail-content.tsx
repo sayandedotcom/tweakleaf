@@ -253,14 +253,21 @@ const MenuBar = React.memo(function MenuBar({
 interface MailContentProps {
   subject?: string;
   emailContent?: string;
+  recipientEmail?: string;
+  onRecipientChange?: (recipient: string) => void;
+  onSubjectChange?: (subject: string) => void;
 }
 
 export function MailContent({
   subject = "",
   emailContent = "",
+  recipientEmail = "",
+  onRecipientChange,
+  onSubjectChange,
 }: MailContentProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [localSubject, setLocalSubject] = useState(subject);
+  const [localRecipient, setLocalRecipient] = useState(recipientEmail);
   const editorRef = useRef<HTMLDivElement>(null);
   const isUserEditingRef = useRef(false);
 
@@ -298,6 +305,12 @@ export function MailContent({
       localStorage.setItem(LOCAL_STORAGE_KEYS.MAIL_EDITOR_SUBJECT_KEY, subject);
     }
   }, [subject, localSubject]);
+
+  useEffect(() => {
+    if (recipientEmail && recipientEmail !== localRecipient) {
+      setLocalRecipient(recipientEmail);
+    }
+  }, [recipientEmail, localRecipient]);
 
   // Listen for subject updates from other components
   useEffect(() => {
@@ -373,6 +386,9 @@ export function MailContent({
         newSubject,
       );
 
+      // Notify parent component
+      onSubjectChange?.(newSubject);
+
       // Dispatch custom event to notify other components
       window.dispatchEvent(
         new CustomEvent("mail-subject-updated", {
@@ -380,7 +396,16 @@ export function MailContent({
         }),
       );
     },
-    [],
+    [onSubjectChange],
+  );
+
+  const handleRecipientChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newRecipient = e.target.value;
+      setLocalRecipient(newRecipient);
+      onRecipientChange?.(newRecipient);
+    },
+    [onRecipientChange],
   );
 
   // Memoize the subject input props to prevent unnecessary re-renders
@@ -405,9 +430,11 @@ export function MailContent({
       <div className="bg-gray-50 border-b border-gray-200 px-3 py-2.5 space-y-2 email-fields-container">
         <input
           id="email-recipient"
-          className="cursor-not-allowed w-full bg-white border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 outline-none transition-all duration-150 focus:border-blue-500 focus:shadow-[0_0_0_1px_#3b82f6] hover:border-gray-400 placeholder:text-gray-400 placeholder:font-normal leading-6 font-family-sans"
-          placeholder="Recipient"
-          disabled
+          type="email"
+          className="w-full bg-white border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 outline-none transition-all duration-150 focus:border-blue-500 focus:shadow-[0_0_0_1px_#3b82f6] hover:border-gray-400 placeholder:text-gray-400 placeholder:font-normal leading-6 font-family-sans"
+          placeholder="Recipient email"
+          value={localRecipient}
+          onChange={handleRecipientChange}
         />
         <input id="email-subject" {...subjectInputProps} />
       </div>
