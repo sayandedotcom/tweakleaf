@@ -11,7 +11,6 @@ class State(TypedDict):
     job_description: str
     resume: str
     resume_context: Optional[str]
-    new_resume_context: Optional[str]
     llm_type: Optional[str]
     model_used: Optional[str]
     messages: Annotated[List[BaseMessage], add_messages]
@@ -43,7 +42,6 @@ class ResumeResponseSchemaSerializable(BaseModel):
     status: int
     resume: str
     thread_id: str
-    new_resume_context: Optional[str] = Field(default="", description="New context message to be added to resume context")
     llm_type: Optional[str] = Field(default="unknown", description="Type of LLM used for processing (weak/strong)")
     model_used: Optional[str] = Field(default="unknown", description="Specific model name used for processing")
 

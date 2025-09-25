@@ -13,6 +13,10 @@ Personal Information:
 - Specific achievements
 `;
 
+export const coverletterContextDescription = `Provide your professional information like email, social links,
+phone number, your preferences about how the cover letter should
+be written eg:- your way of writing introduction.`;
+
 export const resumeContextPlaceholders = `Tell us a little bit about yourself to help us craft a personalized resume.
 
 My name is Sayan De. I am a software engineer with 5 years of experience in full-stack development. I have a strong background in JavaScript, React, and Node.js. I have worked on various projects ranging from small startups to large enterprises.

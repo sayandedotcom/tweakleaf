@@ -88,7 +88,6 @@ class ResumeService:
                 status=status,
                 resume=resume_content,
                 thread_id=thread_id,
-                new_resume_context=result.get("new_resume_context", ""),
                 llm_type=result.get("llm_type", "unknown"),
                 model_used=result.get("model_used", "unknown")
             )
@@ -101,7 +100,6 @@ class ResumeService:
                 status=500,
                 resume="",
                 thread_id="",
-                new_resume_context="",
                 llm_type="unknown",
                 model_used="unknown"
             )

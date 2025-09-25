@@ -18,7 +18,10 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { PartyPopper } from "lucide-react";
-import { coverletterContextPlaceholders } from "@/configs/context-placeholders";
+import {
+  coverletterContextPlaceholders,
+  coverletterContextDescription,
+} from "@/configs/context-placeholders";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 
 const FormSchema = z.object({
@@ -55,6 +58,12 @@ export default function CoverLetterContextComponent() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 w-full h-full p-5"
       >
+        <div className="space-y-2 text-sm">
+          <span className="text-muted-foreground">
+            Before filling the cover letter context, make sure you have make
+            necessary changes in the cover letter LaTeX file from LaTeX tab.
+          </span>
+        </div>
         <FormField
           control={form.control}
           name="coverLetterContext"
@@ -68,11 +77,7 @@ export default function CoverLetterContextComponent() {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                Provide your professional information like email, social links,
-                phone number, your preferences about how the cover letter should
-                be written eg:- your way of writing introduction.
-              </FormDescription>
+              <FormDescription>{coverletterContextDescription}</FormDescription>
               <FormMessage />
             </FormItem>
           )}

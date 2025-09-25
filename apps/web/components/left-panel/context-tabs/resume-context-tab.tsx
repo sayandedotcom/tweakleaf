@@ -55,6 +55,12 @@ export default function ResumeContextComponent() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-6 w-full h-full p-5"
       >
+        <div className="space-y-2 text-sm">
+          <span className="text-muted-foreground">
+            Before filling the resume context, make sure you have make necessary
+            changes in the resume LaTeX file from LaTeX tab.
+          </span>
+        </div>
         <FormField
           control={form.control}
           name="resumeContext"

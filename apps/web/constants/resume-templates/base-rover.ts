@@ -1,0 +1,102 @@
+export const BASE_ROVER = String.raw`
+%-------------------------
+% Rover Resume - Base Template
+% Link: https://github.com/subidit/rover-resume
+%
+% Shows code for various formatting options for different resume sections.
+% Education and Projects have single-line headers; while Experience uses double-line.
+% Some formatting codes are kept inline; consider \newcommand{cmd}{def}.
+% Excludes hyperref and icons for readability; MVP version.
+% Explore other templates for more options.
+% Mix and match as desired. Be consistent with headers and sub-headers.
+%------------------------
+
+\documentclass[11pt]{article} % fontsize 10pt/11pt/12pt
+
+\usepackage[margin=1in, a4paper]{geometry}
+\setcounter{secnumdepth}{0} % remove section numbering
+\usepackage{titlesec}
+\titlespacing{\subsection}{0pt}{*0}{*0} % remove vertical spacing above and below
+\titlespacing{\subsubsection}{0pt}{*0}{*0}
+\titleformat{\section}{\large\bfseries\uppercase}{}{}{}[\titlerule]
+\titleformat*{\subsubsection}{\large\itshape}
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep,left=0pt .. \parindent}
+\pagestyle{empty} % remove page number
+\pdfgentounicode=1
+
+
+\begin{document}
+
+\begin{center}
+	\begin{minipage}{0.5\textwidth}
+		{\Huge\bfseries
+			BASE ROVER % Name Here
+		} \\ \medskip
+		Resume Template % Title [optional]
+	\end{minipage} \hfill
+	\begin{minipage}{0.4\textwidth}
+		\raggedleft
+		Email: base@rover.com \\
+		Mobile: 123 456 7890 \\
+		LinkedIn: linkedin.com/username \\
+		GitHub: github.com/username
+	\end{minipage}
+\end{center}
+
+\section{Education}
+%=================%
+\subsection{University of Post Graduation, City $|$ {\normalfont\itshape Degree Name} \hfill 2024}
+\begin{itemize}
+	\item Cumulative GPA: 3.69
+	\item \textit{magna cum laude} 
+  \item Related Coursework: Computer Architecture, Database Management, Cybersecurity
+\end{itemize}
+
+\section{Experience}
+%=================%
+\subsection{Company ABC \hfill City, State (or Remote)}
+\subsubsection{Position Title \hfill  Month Year - Month Year}
+\begin{itemize}
+	\item Beginning with your most recent position, describe your experience, skills, and resulting outcomes in bullet or paragraph form.
+	\item Begin each line with an action verb and include details that will help the reader understand your accomplishments, skills, knowledge, abilities, or achievements.
+	\item Quantify where possible. Do not use personal pronouns; each line should be a phrase rather than a full sentence.
+\end{itemize}
+
+\subsection{Position Title \hfill Mar 2020 - Nov 2022}
+\subsubsection{Company XYZ \hfill City, State}
+\begin{itemize}
+	\item XYZ method - Accomplished [X] as measured by [Y], by doing [Z].
+	\item CAR method - Context, Action, Result. 
+	\item STAR method - Situation, Task, Action, Result.
+	\item Be consistent with headers and sub-headers. 
+\end{itemize}
+
+\section{Certification \& Awards}
+%===============================%
+\begin{enumerate}[label=\null, left=0pt..0pt, itemsep=0pt]
+	\item Some programming bootcamp, Location. \hfill 2023
+	\item Forbes Top 15 Procrastinators under 15. \hfill 2022
+	\item Perticipation award for attending workshop. \hfill 2021
+\end{enumerate}
+
+\section{Skills \& Interests}
+%===========================%
+\begin{description}[itemsep=0pt]
+	\item[Technical] List computer software and programming languages
+	\item[Language] List foreign languages and your level of fluency
+	\item[Laboratory] List scientific / research lab techniques or tools [If Applicable]
+	\item[Interests] List activities you enjoy that may spark interview conversation
+\end{description}
+
+\section{Projects}
+%=================
+\subsection{Project Neme $|$ \normalfont\textit{github.com/project-link} \hfill 2019}
+\begin{itemize}
+  \item Tech used, Language, Frameworks etc.
+  \item Implemented ABC feature
+  \item Optimised XYZ by 50\%
+\end{itemize}
+
+\end{document}
+`;

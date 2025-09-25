@@ -39,76 +39,15 @@ class ResumeNodes:
         return self._llm_cache[cache_key]
     
     def analyze_update_context_for_resume(self, state: dict) -> dict:
-        """Smart rule-based context filtering without LLM calls or database operations"""
+        """Pass through user message for direct processing"""
         
         user_message = state.get("user_message", "").strip()
-        existing_context = state.get("resume_context", "")
         
-        print(f"🔧 Smart context filtering for message: '{user_message}'")
-        print(f"🔧 Existing context length: {len(existing_context)}")
+        print(f"🔧 Processing user message: '{user_message}'")
         
-        # Rule-based filtering to determine if message should be appended
-        should_append = self._should_append_to_context(user_message)
-        
-        if should_append:
-            # Store user message separately instead of concatenating
-            state["new_resume_context"] = user_message
-            print(f"🔧 User message stored as new context: '{user_message}'")
-        else:
-            # Clear new context if message is filtered out
-            state["new_resume_context"] = ""
-            print("🔧 Message filtered out, no new context added")
-        
+        # Simply pass through the user message for direct processing
         return state
     
-    def _should_append_to_context(self, user_message: str) -> bool:
-        """Rule-based logic to determine if message should be appended to context"""
-        if not user_message or len(user_message.strip()) < 3:
-            return False
-        
-        user_message_lower = user_message.lower().strip()
-        
-        # Simple acknowledgments to ignore
-        ignore_patterns = [
-            'ok', 'thanks', 'yes', 'no', 'good', 'hello', 'hi', 'hey',
-            'sure', 'alright', 'fine', 'great', 'awesome', 'perfect',
-            'done', 'got it', 'understood', 'cool', 'nice', 'excellent'
-        ]
-        
-        if user_message_lower in ignore_patterns:
-            return False
-        
-        # Keywords that indicate valuable context
-        valuable_keywords = [
-            'prefer', 'style', 'tone', 'add', 'remove', 'change', 'modify',
-            'emphasize', 'focus', 'highlight', 'mention', 'include', 'exclude',
-            'professional', 'casual', 'formal', 'technical', 'creative',
-            'experience', 'skill', 'achievement', 'background', 'qualification',
-            'company', 'industry', 'role', 'position', 'job', 'career',
-            'leadership', 'team', 'project', 'management', 'development',
-            'shorter', 'longer', 'brief', 'detailed', 'specific', 'general'
-        ]
-        
-        # Check if message contains valuable keywords
-        has_valuable_keywords = any(keyword in user_message_lower for keyword in valuable_keywords)
-        
-        # Check if message is substantial (not just single words)
-        is_substantial = len(user_message.split()) >= 2
-        
-        # Check if message contains specific instructions or preferences
-        has_instructions = any(word in user_message_lower for word in [
-            'make', 'do', 'should', 'want', 'need', 'like', 'dislike',
-            'instead', 'rather', 'better', 'worse', 'more', 'less'
-        ])
-        
-        # Append if it has valuable keywords, is substantial, or contains instructions
-        should_append = has_valuable_keywords or (is_substantial and has_instructions)
-        
-        print(f"🔧 Context decision - Valuable keywords: {has_valuable_keywords}, "
-              f"Substantial: {is_substantial}, Instructions: {has_instructions}, "
-              f"Append: {should_append}")
-        
-        return should_append
     
     def llm_router(self, state: dict) -> dict:
         """Route to weak or strong LLM based on user message length and existing messages"""
@@ -211,7 +150,6 @@ class ResumeNodes:
                 "resume": cleaned_content,
                 "status": 200,
                 "message": f"Resume processed successfully with {model_name}",
-                "new_resume_context": state.get("new_resume_context", ""),
                 "llm_type": state.get("llm_type", "unknown"),
                 "model_used": model_name
             }
@@ -224,7 +162,6 @@ class ResumeNodes:
                 "status": 400,
                 "error": f"Invalid input: {str(e)}",
                 "message": f"Resume processing failed due to invalid input with {model_name}",
-                "new_resume_context": state.get("new_resume_context", ""),
                 "llm_type": state.get("llm_type", "unknown"),
                 "model_used": model_name
             }
@@ -236,7 +173,6 @@ class ResumeNodes:
                 "status": 500,
                 "error": f"Failed to process resume: {str(e)}",
                 "message": f"Resume processing failed with {model_name}",
-                "new_resume_context": state.get("new_resume_context", ""),
                 "llm_type": state.get("llm_type", "unknown"),
                 "model_used": model_name
             }
@@ -287,7 +223,6 @@ class ResumeNodes:
                 "resume": cleaned_content,
                 "status": 200,
                 "message": f"Resume humanized with {weak_model}",
-                "new_resume_context": state.get("new_resume_context", ""),
                 "llm_type": "humanized",
                 "model_used": weak_model
             }
@@ -300,7 +235,6 @@ class ResumeNodes:
                 "status": 500,
                 "error": f"Failed to humanize resume: {str(e)}",
                 "message": f"Resume humanization failed with {weak_model}",
-                "new_resume_context": state.get("new_resume_context", ""),
                 "llm_type": "humanized",
                 "model_used": weak_model
             }
