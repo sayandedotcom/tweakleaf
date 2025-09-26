@@ -35,7 +35,7 @@ Tweakleaf is an AI-powered platform that revolutionizes job applications by auto
 - **🎯 ATS Optimized**: Superior compatibility with Applicant Tracking Systems
 - **🤖 AI-Powered**: Multiple LLM models with advanced context engineering
 - **💾 Long-term Memory**: AI learns your preferences across all interactions
-- **💰 Cost-Effective**: Only $0.50 per 100 documents
+- **💰 Cost-Effective**: Only $0.50 per 100 documents if you use OpenAI API key & Free if you use Gemini API key
 - **📝 LaTeX Support**: Professional document formatting
 
 ## ✨ Want to use Tweakleaf for free? Click here
