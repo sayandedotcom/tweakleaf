@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FaLinkedin, FaTwitter } from "react-icons/fa";
+import { site } from "@/configs/site";
 
 interface FooterProps {
   logo?: {
@@ -99,7 +100,7 @@ const Footer = ({
             <div className="flex items-center gap-2 lg:justify-start">
               <a href={logo.url}>
                 <Image
-                  src={logo.src}
+                  src={site.logo}
                   alt={logo.alt}
                   title={logo.title}
                   width={100}
@@ -107,7 +108,7 @@ const Footer = ({
                   className="h-10 w-10"
                 />
               </a>
-              <h2 className="text-xl font-semibold">{logo.title}</h2>
+              <h2 className="text-xl font-semibold">{site.name}</h2>
             </div>
             <p className="text-muted-foreground max-w-[70%] text-sm">
               {description}
