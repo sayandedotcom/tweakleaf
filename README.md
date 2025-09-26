@@ -26,7 +26,7 @@
 Tweakleaf is an AI-powered platform that revolutionizes job applications by automatically generating and optimizing LaTeX resumes and cover letters. Our advanced AI agents use multiple LLM models with sophisticated context engineering to create unique, ATS-optimized documents that are indistinguishable from human-written content.
 
 <p align="center">
-  <img src="apps/web/app/opengraph-image.png" alt="Tweakleaf Logo" width="200" />
+  <img src="apps/web/app/opengraph-image.png" alt="Tweakleaf Logo" />
 </p>
 
 ### Key Benefits
@@ -41,7 +41,7 @@ Tweakleaf is an AI-powered platform that revolutionizes job applications by auto
 ## ✨ Want to use Tweakleaf for free? Click here
 
 <a href="https://tweakleaf.com/blogs/free">
-  <img src="apps/web/app/blogs/free/opengraph-image.png" alt="Tweakleaf Free" width="200" />
+  <img src="apps/web/app/blogs/free/opengraph-image.png" alt="Tweakleaf Free" />
   <br />
 </a>
 
