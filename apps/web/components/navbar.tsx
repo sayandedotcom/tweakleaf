@@ -23,13 +23,13 @@ function Navbar() {
                   W3
                 </span>
               </div> */}
-            {/* <Image
-              src="/2.svg"
+            <Image
+              src={site.logo}
               alt="logo"
               width={60}
               height={60}
               className="rounded-lg"
-            /> */}
+            />
             {/* <Image
               src="/1.svg"
               alt="logo"
