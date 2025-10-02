@@ -4,6 +4,7 @@ import { Space_Mono } from "next/font/google";
 import { RootProvider } from "@/providers/root-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import "../styles/globals.css";
 import { site } from "@/configs/site";
@@ -29,6 +30,7 @@ export default function RootLayout({
         <body className={spaceMono.className}>
           <RootProvider>{children}</RootProvider>
           <Toaster position="bottom-left" />
+          <Analytics mode="production" />
           <GoogleAnalytics gaId="G-PP6B6F1C3D" />
         </body>
       </html>
