@@ -14,15 +14,6 @@ export const resumeTemplates = [
   },
   {
     id: 2,
-    name: "BASE ROVER",
-    value: "base-rover",
-    compiler: "pdflatex",
-    latex: BASE_ROVER,
-    isDefault: false,
-    isDisabled: false,
-  },
-  {
-    id: 3,
     name: "Deedy CV",
     value: "deedy-cv",
     compiler: "xelatex",
