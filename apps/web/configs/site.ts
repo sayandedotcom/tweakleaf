@@ -6,7 +6,7 @@ export const site = {
   url: "https://tweakleaf.com",
   ogImage: "https://tweakleaf.com/opengraph-image.png",
   links: {
-    github: "https://github.com/tweakleaf",
+    github: "https://github.com/sayandedotcom/tweakleaf",
     linkedin: "https://www.linkedin.com/company/tweakleaf",
     instagram: "https://www.instagram.com/tweakleaf",
     facebook: "https://www.facebook.com/tweakleaf",
@@ -66,5 +66,5 @@ export const site = {
     headerFive: "About",
     headerSix: "About",
   },
-  notifications: "Tweak is under development, will be live sooooon ! 🎉",
+  notifications: "Tweakleaf is live now! 🎉",
 };

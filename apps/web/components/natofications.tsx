@@ -6,7 +6,13 @@ export function Notifications() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-center text-center">
           <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
-            🚨 {site.notifications}
+            🚨 {site.notifications}, Proudly Open Source!{" "}
+            <a
+              href={site.links.github}
+              className="text-yellow-600 dark:text-yellow-400 underline"
+            >
+              Link
+            </a>
           </span>
         </div>
       </div>
