@@ -67,6 +67,31 @@ class LatexCompilerService:
         logger.info(f"cover.cls exists: {cls_file.exists()}")
         logger.info(f"cover.cls size: {cls_file.stat().st_size} bytes")
         
+        # Copy the deedy-resume-openfont.cls file for resume templates
+        source_resume_cls = current_dir / "src/compiler/deedy-resume-openfont.cls"
+        resume_cls_file = temp_path / "deedy-resume-openfont.cls"
+        
+        if not source_resume_cls.exists():
+            # Try alternative paths in case we're in a different context
+            alt_paths = [
+                current_dir / "deedy-resume-openfont.cls",
+                current_dir / "src/compiler/deedy-resume-openfont.cls",
+                current_dir / "compiler/deedy-resume-openfont.cls"
+            ]
+            
+            for alt_path in alt_paths:
+                if alt_path.exists():
+                    source_resume_cls = alt_path
+                    break
+            else:
+                checked_paths = [str(source_resume_cls)] + [str(p) for p in alt_paths]
+                raise HTTPException(status_code=500, detail=f"deedy-resume-openfont.cls file not found. Checked paths: {', '.join(checked_paths)}")
+        
+        shutil.copy2(source_resume_cls, resume_cls_file)
+        logger.info(f"Copied deedy-resume-openfont.cls from {source_resume_cls} to: {resume_cls_file}")
+        logger.info(f"deedy-resume-openfont.cls exists: {resume_cls_file.exists()}")
+        logger.info(f"deedy-resume-openfont.cls size: {resume_cls_file.stat().st_size} bytes")
+        
         # Copy the entire OpenFonts directory structure to the temporary directory
         source_fonts = current_dir / "compiler/OpenFonts"
         if not source_fonts.exists():
@@ -210,7 +235,7 @@ class LatexCompilerService:
             # Create the LaTeX file
             latex_file = self.create_latex_file(latex_content, temp_path)
             
-            logger.info(f"cover.cls copied and LaTeX file created in temporary directory: {temp_dir}")
+            logger.info(f"Class files copied and LaTeX file created in temporary directory: {temp_dir}")
             
             # Compile LaTeX
             result = self.compile_latex(compiler, temp_dir, latex_file)
