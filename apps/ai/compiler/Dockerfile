@@ -20,7 +20,7 @@ RUN apt-get update -y && \
         texlive-xetex \
         texlive-fonts-recommended \
         texlive-latex-extra \
-        fonts-font-awesome && \
+        texlive-fonts-extra && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -48,7 +48,7 @@ RUN apt-get update -y && \
         texlive-xetex \
         texlive-fonts-recommended \
         texlive-latex-extra \
-        fonts-font-awesome && \
+        texlive-fonts-extra && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* && \
