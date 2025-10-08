@@ -1,4 +1,5 @@
-export const DEEDY_COVER_LETTER = String.raw`% Deedy - Cover Letter Template
+export const DEEDY_COVER_LETTER = String.raw`
+% Deedy - Cover Letter Template
 
 \documentclass[]{cover}
 \usepackage{fancyhdr}
@@ -73,4 +74,5 @@ Leetcode
 \signature{John Doe}
 
 \end{document}  
-\documentclass[]{article}`;
+\documentclass[]{article}
+`;
