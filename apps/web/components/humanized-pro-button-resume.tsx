@@ -21,7 +21,6 @@ import { Info, Sparkles } from "lucide-react";
 import { TooltipComponent } from "./tooltip-component";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
 import useLocalStorage from "use-local-storage";
-import { useState } from "react";
 
 export function HumanizedProButtonResume() {
   const [humanizePro, setHumanizePro] = useLocalStorage(
@@ -45,7 +44,7 @@ export function HumanizedProButtonResume() {
           >
             <Switch
               id="humanize-pro"
-              className="cursor-pointer rounded-none"
+              className="cursor-pointer"
               checked={humanizePro}
             />
           </AlertDialogTrigger>

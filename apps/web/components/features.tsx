@@ -72,15 +72,9 @@ const FeatureCard = ({
   icon: React.ReactNode;
 }) => {
   return (
-    <div className="bg-card/50 backdrop-blur-sm border border-border p-6 hover:shadow-lg transition-all duration-200">
-      <div className="relative w-12 h-12 mb-4">
-        <div className="w-12 h-12 bg-primary/20 flex items-center justify-center text-primary">
-          {icon}
-        </div>
-        {/* Continuous glowing effect */}
-        <div className="absolute inset-0 w-12 h-12 bg-primary/30 blur-sm animate-pulse"></div>
-        {/* Continuous neon glow */}
-        <div className="absolute inset-0 w-12 h-12 bg-primary/20 blur-md"></div>
+    <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:shadow-lg transition-all duration-200">
+      <div className="w-12 h-12 mb-4 bg-primary/20 rounded-md flex items-center justify-center text-primary">
+        {icon}
       </div>
       <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
       <p className="text-muted-foreground">{description}</p>
@@ -91,7 +85,7 @@ const FeatureCard = ({
 export function Features() {
   return (
     <div className="relative z-10 mx-auto px-4 pb-20">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-0 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {features.map((feature) => (
           <FeatureCard
             key={feature.title}
