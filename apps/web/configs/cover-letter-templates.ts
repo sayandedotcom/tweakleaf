@@ -33,7 +33,7 @@ export const coverLetterTemplates = [
   {
     id: 4,
     name: "More Templates",
-    value: "base-rover",
+    value: "none",
     compiler: "xelatex",
     latex: ENTRY_LEVEL_COVER_LETTER,
     isDefault: false,

@@ -33,7 +33,7 @@ export const resumeTemplates = [
   {
     id: 4,
     name: "More Templates",
-    value: "base-rover",
+    value: "none",
     compiler: "xelatex",
     latex: BASE_ROVER,
     isDefault: false,
