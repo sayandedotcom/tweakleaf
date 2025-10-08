@@ -14,6 +14,9 @@ import { NavFileUploads } from "./nav-file-uploads";
 import { NavSavedFiles } from "./nav-saved-files";
 import { Suspense } from "react";
 import { Loader } from "./loader";
+import { Button } from "./ui/button";
+import Link from "next/link";
+import { Phone } from "lucide-react";
 
 export function TweakSidebar({
   ...props
@@ -34,6 +37,18 @@ export function TweakSidebar({
         </Suspense>
         <Suspense fallback={<Loader />}>
           <ModelSwitcher />
+        </Suspense>
+        <Suspense fallback={<Loader />}>
+          <Button variant="ghost" className="w-full px-3">
+            <Link
+              href="https://x.com/sayandedotcom"
+              target="_blank"
+              className="flex items-start justify-start gap-2"
+            >
+              <Phone />
+              Help / Feedback
+            </Link>
+          </Button>
         </Suspense>
         <Suspense fallback={<Loader />}>
           <NavSavedFiles />
