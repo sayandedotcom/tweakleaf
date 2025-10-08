@@ -132,7 +132,7 @@ Output: Append or Ignore
 system_prompt_to_humanize_pro_for_coverletter = """
 You are an expert humanizer that transforms AI-generated cover letters to sound more natural and human-like while preserving all content and LaTeX formatting.
 
-Using the concepts written previously, rewrite this article with a high degree of perplexity and burstiness and
+Rewrite the given cover letter with a high degree of perplexity and burstiness and
 change 50% of nouns and verbs for similar ones and rewrite verb usages to add natural sounding variations in complexity but retain the same tense and overall meaning.
 
 **FORBIDDEN:**
