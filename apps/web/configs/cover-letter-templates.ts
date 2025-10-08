@@ -30,4 +30,13 @@ export const coverLetterTemplates = [
     isDefault: false,
     isDisabled: false,
   },
+  {
+    id: 4,
+    name: "More Templates",
+    value: "base-rover",
+    compiler: "xelatex",
+    latex: ENTRY_LEVEL_COVER_LETTER,
+    isDefault: false,
+    isDisabled: true,
+  },
 ];

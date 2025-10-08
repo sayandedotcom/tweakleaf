@@ -1,4 +1,5 @@
-export const DEEDY_CV = String.raw`%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export const DEEDY_CV = String.raw`
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Deedy - One Page Two Column Resume
 % LaTeX Template
 % Version 1.2 (16/9/2014)

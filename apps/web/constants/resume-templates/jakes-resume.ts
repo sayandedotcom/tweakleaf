@@ -1,4 +1,5 @@
-export const JAKE_RESUME = String.raw`%-------------------------
+export const JAKE_RESUME = String.raw`
+%-------------------------
 % Resume in Latex
 % Author : Jake Gutierrez
 % Based off of: https://github.com/sb2nov/resume
@@ -215,4 +216,5 @@ export const JAKE_RESUME = String.raw`%-------------------------
 
 
 %-------------------------------------------
-\end{document}`;
+\end{document}
+`;

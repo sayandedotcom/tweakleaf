@@ -19,7 +19,7 @@ export const resumeTemplates = [
     compiler: "xelatex",
     latex: DEEDY_CV,
     isDefault: false,
-    isDisabled: true,
+    isDisabled: false,
   },
   {
     id: 3,
@@ -29,5 +29,14 @@ export const resumeTemplates = [
     latex: BASE_ROVER,
     isDefault: false,
     isDisabled: false,
+  },
+  {
+    id: 3,
+    name: "More Templates",
+    value: "base-rover",
+    compiler: "xelatex",
+    latex: BASE_ROVER,
+    isDefault: false,
+    isDisabled: true,
   },
 ];
