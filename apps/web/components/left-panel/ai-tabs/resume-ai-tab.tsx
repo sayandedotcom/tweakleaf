@@ -13,6 +13,7 @@ import { useAuth } from "@clerk/nextjs";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useQueryParam } from "@/hooks/use-query-param";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
+import { EmptyComponent } from "@/components/empty";
 
 interface BaseMessage {
   role: string;
@@ -602,13 +603,7 @@ export default function ResumeTab() {
     <div className="grid grid-rows-[1fr_auto] h-full overflow-hidden">
       {/* Messages Container - Scrollable with explicit height */}
       <div className="overflow-y-auto pt-1 overflow-x-hidden min-h-0 relative flex flex-col-reverse">
-        {isEmpty && !companyBio && !jobDescription && (
-          <div className="px-4 pb-4 h-full w-full flex flex-col gap-4 items-center text-center justify-center">
-            <h2 className="text-lg font-semibold">
-              Enter a job description to get started
-            </h2>
-          </div>
-        )}
+        {isEmpty && !companyBio && !jobDescription && <EmptyComponent />}
         {!isEmpty && (
           <div className="px-4 pb-8">
             <div className="space-y-8 ">
