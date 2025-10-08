@@ -29,7 +29,7 @@ export const site = {
   publisher: "Tweakleaf",
   robots: "index, follow",
   google: {
-    analytics: "G-XXXXXXXXXX",
+    analytics: "G-PP6B6F1C3D",
     searchConsole: "XXXXXXXXXX",
   },
   openGraph: {
