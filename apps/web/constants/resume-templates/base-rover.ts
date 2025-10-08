@@ -23,7 +23,6 @@ export const BASE_ROVER = String.raw`
 \usepackage{enumitem}
 \setlist[itemize]{noitemsep,left=0pt .. \parindent}
 \pagestyle{empty} % remove page number
-\pdfgentounicode=1
 
 
 \begin{document}

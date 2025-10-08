@@ -21,4 +21,13 @@ export const resumeTemplates = [
     isDefault: false,
     isDisabled: true,
   },
+  {
+    id: 3,
+    name: "Base Rover",
+    value: "base-rover",
+    compiler: "xelatex",
+    latex: BASE_ROVER,
+    isDefault: false,
+    isDisabled: false,
+  },
 ];
