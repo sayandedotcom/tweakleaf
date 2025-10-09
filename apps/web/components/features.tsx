@@ -10,6 +10,7 @@ import {
   Brain,
   Trophy,
 } from "lucide-react";
+import SpotlightCard from "./SpotlightCard";
 
 const features = [
   {
@@ -87,12 +88,21 @@ export function Features() {
     <div className="relative z-10 mx-auto px-4 pb-20">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {features.map((feature) => (
-          <FeatureCard
+          <SpotlightCard
             key={feature.title}
-            title={feature.title}
-            description={feature.description}
-            icon={feature.icon}
-          />
+            className="custom-spotlight-card cursor-pointer"
+            spotlightColor="rgba(0, 229, 255, 0.2)"
+          >
+            <>
+              <div className="w-12 h-12 mb-4 bg-primary/20 rounded-md flex items-center justify-center text-primary">
+                {feature.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-muted-foreground">{feature.description}</p>
+            </>
+          </SpotlightCard>
         ))}
       </div>
     </div>
