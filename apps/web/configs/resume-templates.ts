@@ -1,6 +1,7 @@
 import { DEEDY_CV } from "../constants/resume-templates/deedy-cv";
-import { BASE_ROVER } from "../constants/resume-templates/base-rover";
 import { JAKE_RESUME } from "../constants/resume-templates/jakes-resume";
+import { BASE_ROVER } from "../constants/resume-templates/base-rover";
+import { SOURABH_BAJAJ_RESUME } from "@/constants/resume-templates/sourabh-bajaj-resume";
 
 export const resumeTemplates = [
   {
@@ -23,6 +24,15 @@ export const resumeTemplates = [
   },
   {
     id: 3,
+    name: "Sourabh Bajaj",
+    value: "sourabh-bajaj-resume",
+    compiler: "xelatex",
+    latex: SOURABH_BAJAJ_RESUME,
+    isDefault: false,
+    isDisabled: false,
+  },
+  {
+    id: 4,
     name: "Base Rover",
     value: "base-rover",
     compiler: "xelatex",
@@ -31,7 +41,7 @@ export const resumeTemplates = [
     isDisabled: false,
   },
   {
-    id: 4,
+    id: 5,
     name: "More Templates",
     value: "none",
     compiler: "xelatex",

@@ -496,7 +496,7 @@ export default function ResumeCoverLetterTabs() {
       className="flex flex-col h-full"
       onValueChange={handleFormatChange}
     >
-      <header className="flex gap-2 items-center w-full justify-between px-2 py-0.5 border-b">
+      <header className="flex items-center w-full justify-between px-2 py-0.5 border-b">
         <TabsList>
           <TabsTrigger value={navigation.FORMAT.PDF}>PDF</TabsTrigger>
           <TabsTrigger value={navigation.FORMAT.LATEX}>LaTeX</TabsTrigger>
@@ -523,50 +523,64 @@ export default function ResumeCoverLetterTabs() {
                 <br />
                 <br /> However, if you want to use your own LaTeX templates, you
                 can use the LaTeX tab to edit the content and compile it
-                yourself, but LaTeX file that has specialized fonts, packages (
-                like fontawesome, etc.) may not work perfectly.
+                yourself, but LaTeX file that has specialized fonts, packages
+                may not work perfectly. You may try to use the compiler.
               </p>
             </>
           </TooltipContent>
         </Tooltip>
-        <Select
-          value={currentTemplateValue}
-          onValueChange={handleTemplateChange}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Templates" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Templates</SelectLabel>
-              {rightPanelCategory === navigation.RIGHT_PANEL.RESUME
-                ? resumeTemplates.map((template) => (
-                    <SelectItem
-                      key={template.id}
-                      value={template.value}
-                      disabled={template.isDisabled}
-                    >
-                      {template.name} {template.isDisabled && <CommingSoon />}
-                    </SelectItem>
-                  ))
-                : coverLetterTemplates.map((template) => (
-                    <SelectItem
-                      key={template.id}
-                      value={template.value}
-                      disabled={template.isDisabled}
-                    >
-                      {template.name}
-                      {template.isDisabled && <CommingSoon />}
-                    </SelectItem>
-                  ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-1 items-center">
+          <Select
+            value={currentTemplateValue}
+            onValueChange={handleTemplateChange}
+          >
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Templates" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Templates</SelectLabel>
+                {rightPanelCategory === navigation.RIGHT_PANEL.RESUME
+                  ? resumeTemplates.map((template) => (
+                      <SelectItem
+                        key={template.id}
+                        value={template.value}
+                        disabled={template.isDisabled}
+                      >
+                        {template.name} {template.isDisabled && <CommingSoon />}
+                      </SelectItem>
+                    ))
+                  : coverLetterTemplates.map((template) => (
+                      <SelectItem
+                        key={template.id}
+                        value={template.value}
+                        disabled={template.isDisabled}
+                      >
+                        {template.name}
+                        {template.isDisabled && <CommingSoon />}
+                      </SelectItem>
+                    ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Select value={currentTemplate?.compiler || "pdflatex"}>
+            <SelectTrigger className="w-28">
+              <SelectValue placeholder="Compiler" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Compiler</SelectLabel>
+                <SelectItem value="pdflatex">pdflatex</SelectItem>
+                <SelectItem value="xelatex">xelatex</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex gap-1 items-center">
           <Button
             onClick={handleCompileOrRecompile}
             disabled={isCompileDisabled}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-30"
           >
             {isPending ? (
               <RefreshCw className="w-4 h-4 animate-spin" />
