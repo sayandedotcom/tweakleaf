@@ -12,7 +12,7 @@ import useLocalStorage from "use-local-storage";
 import { toast } from "sonner";
 import { navigation } from "@/configs/navigation";
 import { models } from "@/configs/models";
-import { useAuth } from "@clerk/nextjs";
+// import { useAuth } from "@clerk/nextjs";
 import { TypingIndicator } from "@/components/ui/typing-indicator";
 import { useQueryParam } from "@/hooks/use-query-param";
 import { LOCAL_STORAGE_KEYS } from "@/configs/local-storage-keys";
@@ -24,7 +24,7 @@ interface BaseMessage {
 }
 
 export default function CoverLetterTab() {
-  const { userId } = useAuth();
+  // const { userId } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "submitted" | "streaming">(
@@ -291,7 +291,7 @@ export default function CoverLetterTab() {
         originalModel: modelName,
         finalModel: finalModelName,
         key: currentApiKey ? `${currentApiKey.substring(0, 10)}...` : "MISSING",
-        user_id: userId,
+        user_id: "fake-user-id-because-auth-removed",
         thread_id: currentThreadId,
         user_message: userMessage,
         chat_history_length: finalChatHistory.length,
@@ -328,7 +328,7 @@ export default function CoverLetterTab() {
         {
           model: finalModelName,
           key: currentApiKey,
-          user_id: userId!,
+          user_id: "fake-user-id-because-auth-removed"!,
           coverletter_context: coverLetterContext,
           company_info: companyBio,
           job_description: jobDescription,
@@ -386,7 +386,6 @@ export default function CoverLetterTab() {
       messages,
       modelName,
       currentThreadId,
-      userId,
       generateCoverLetter,
       setCoverLetterLatexContent,
       setCurrentThreadId,
@@ -464,7 +463,7 @@ export default function CoverLetterTab() {
         {
           model: modelName!,
           key: apiKey,
-          user_id: userId!,
+          user_id: "fake-user-id-because-auth-removed",
           coverletter_context: coverLetterContext,
           company_info: companyBio,
           job_description: jobDescription,
@@ -520,7 +519,6 @@ export default function CoverLetterTab() {
       currentModel,
       coverLetterContext,
       modelName,
-      userId,
       generateCoverLetter,
       setCoverLetterLatexContent,
       setCurrentThreadId,

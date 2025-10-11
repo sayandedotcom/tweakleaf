@@ -1,6 +1,6 @@
 import { NavMain } from "@/components/nav-main";
 import { NavProjects } from "@/components/nav-projects";
-import { NavUser } from "@/components/nav-user";
+// import { NavUser } from "@/components/nav-user";
 import { LogoSidebar } from "@/components/logo-sidebar";
 import {
   Sidebar,
@@ -57,11 +57,9 @@ export function TweakSidebar({
           <NavFileUploads />
         </Suspense>
       </SidebarContent>
-      <SidebarFooter>
-        <Suspense fallback={<Loader />}>
-          <NavUser />
-        </Suspense>
-      </SidebarFooter>
+      {/* <SidebarFooter>
+        <Suspense fallback={<Loader />}> <NavUser /> </Suspense>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );

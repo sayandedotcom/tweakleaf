@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/navbar";
+// import Navbar from "@/components/navbar";
 import { showNabarRoutes } from "@/configs/show-nabar-routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer";
 import { Notifications } from "@/components/natofications";
 import { Suspense } from "react";
 import { Loader } from "@/components/loader";
+import { PillNavComponent } from "@/components/pill-nav";
 
 export function RootProvider({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -25,7 +26,8 @@ export function RootProvider({ children }: { children: React.ReactNode }) {
       {showNabarRoutes.includes(pathname) && (
         <>
           <Notifications />
-          <Navbar />
+          {/* <Navbar /> */}
+          <PillNavComponent />
         </>
       )}
       <Suspense fallback={<Loader />}>{children}</Suspense>

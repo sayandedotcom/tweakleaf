@@ -11,6 +11,7 @@ import {
   Trophy,
 } from "lucide-react";
 import SpotlightCard from "./SpotlightCard";
+import GlassIcons from "./GlassIcons";
 
 const features = [
   {
@@ -18,70 +19,58 @@ const features = [
     description:
       "Just give job description and download resume / cover-letter in ~10 seconds.",
     icon: <Clock />,
+    color: "glass",
   },
   {
     title: "LaTeX Support",
     description:
       "We use LaTeX to write your resume and cover letters, ensuring ATS compatibility.",
     icon: <RemoveFormatting />,
+    color: "glass",
   },
   {
     title: "Humanized Text",
     description:
       "We generate content that is indistinguishable from human-written text, ensuring detectibility with ATS.",
     icon: <PersonStanding />,
+    color: "glass",
   },
   {
     title: "ATS Optimization",
     description:
       "Our AI is designed to generate content that is aware of ATS, ensuring high rankings.",
     icon: <Trophy />,
+    color: "glass",
   },
   {
     title: "Multiple Models",
     description:
       "We provide support for multiple models for your resume and cover letters.",
     icon: <Bot />,
+    color: "glass",
   },
   {
     title: "Low Cost",
     description:
       "Our platfrom is free for you. You have to use your own API key.",
     icon: <DollarSign />,
+    color: "glass",
   },
   {
     title: "Prompts",
     description:
       "We use prompts that are gathered from experts and different sources that are proven to be high ATS ranking.",
     icon: <SquareChevronRight />,
+    color: "glass",
   },
   {
     title: "Memory",
     description:
       "We have long term memory to remember your context across all interactions.",
     icon: <Brain />,
+    color: "glass",
   },
 ];
-
-const FeatureCard = ({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}) => {
-  return (
-    <div className="bg-card/50 backdrop-blur-sm border border-border rounded-lg p-6 hover:shadow-lg transition-all duration-200">
-      <div className="w-12 h-12 mb-4 bg-primary/20 rounded-md flex items-center justify-center text-primary">
-        {icon}
-      </div>
-      <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  );
-};
 
 export function Features() {
   return (
@@ -94,8 +83,17 @@ export function Features() {
             spotlightColor="rgba(0, 229, 255, 0.2)"
           >
             <>
-              <div className="w-12 h-12 mb-4 bg-primary/20 rounded-md flex items-center justify-center text-primary">
-                {feature.icon}
+              <div className="flex justify-center items-center mb-4">
+                <GlassIcons
+                  items={[
+                    {
+                      icon: feature.icon,
+                      color: feature.color,
+                      label: feature.title,
+                    },
+                  ]}
+                  className="!grid-cols-1 !gap-0 !py-0"
+                />
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 {feature.title}

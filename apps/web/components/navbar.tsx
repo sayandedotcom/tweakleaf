@@ -1,13 +1,13 @@
 import { site } from "@/configs/site";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  SignedIn,
-  SignInButton,
-  SignUpButton,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+// import {
+//   SignedIn,
+//   SignInButton,
+//   SignUpButton,
+//   SignedOut,
+//   UserButton,
+// } from "@clerk/nextjs";
 import Link from "next/link";
 import { navigation } from "@/configs/navbar";
 
@@ -59,7 +59,7 @@ function Navbar() {
             )}
           </div>
 
-          <div className="flex items-center gap-x-4">
+          {/* <div className="flex items-center gap-x-4">
             <SignedOut>
               <SignInButton>
                 <Button variant="ghost">Sign in</Button>
@@ -72,7 +72,6 @@ function Navbar() {
               <UserButton />
             </SignedIn>
 
-            {/* Mobile Menu Button */}
             <Button
               variant={"secondary"}
               className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
@@ -91,7 +90,7 @@ function Navbar() {
                 />
               </svg>
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     </nav>
