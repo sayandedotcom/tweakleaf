@@ -30,15 +30,18 @@ export default function LaserFlowDashboard() {
         const y = e.clientY - rect.top;
         const el = revealImgRef.current;
         if (el) {
-          el.style.setProperty("--mx", `${x}px`);
-          el.style.setProperty("--my", `${y + rect.height * 0.5}px`);
+          (el as HTMLElement).style.setProperty("--mx", `${x}px`);
+          (el as HTMLElement).style.setProperty(
+            "--my",
+            `${y + rect.height * 0.5}px`,
+          );
         }
       }}
       onMouseLeave={() => {
         const el = revealImgRef.current;
         if (el) {
-          el.style.setProperty("--mx", "-9999px");
-          el.style.setProperty("--my", "-9999px");
+          (el as HTMLElement).style.setProperty("--mx", "-9999px");
+          (el as HTMLElement).style.setProperty("--my", "-9999px");
         }
       }}
     >
