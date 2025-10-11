@@ -65,78 +65,86 @@ const comparisons = [
 
 export const CompareUs = () => {
   return (
-    <section id="compare-us" className="py-20">
-      <div className="container">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Compare Us
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Why choose us over the well established free AI chat models?
-          </p>
-        </div>
+    <>
+      <section id="compare-us" className="py-20">
+        <div className="container">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Compare Us
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Why choose us over the well established free AI chat models?
+            </p>
+          </div>
 
-        <div className="mx-auto max-w-7xl grid grid-cols-1 gap-0">
-          {comparisons.map((item, index) => (
-            <SpotlightCard
-              key={index}
-              className="custom-spotlight-card cursor-pointer"
-              spotlightColor="rgba(0, 229, 255, 0.2)"
-            >
-              <div className="grid md:grid-cols-3 gap-8">
-                {/* Feature Name */}
-                <div className="flex items-center justify-center md:justify-start">
-                  <h3 className="text-2xl font-bold text-primary">
-                    {item.feature}
-                  </h3>
-                </div>
+          <div className="w-full">
+            {/* Header Row */}
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              <div className="p-6 bg-muted/20 border border-border rounded-tl-2xl">
+                <h3 className="text-lg font-bold">Feature</h3>
+              </div>
+              <div className="p-6 bg-secondary/20 border border-l-0 border-border">
+                <h3 className="text-lg font-bold text-muted-foreground">
+                  AI Chat Models (Ex: ChatGPT)
+                </h3>
+              </div>
+              <div className="p-6 bg-secondary/10 border border-l-0 border-border rounded-tr-2xl">
+                <h3 className="text-lg font-bold text-primary">{site.name}</h3>
+              </div>
+            </div>
 
-                {/* Others Column */}
-                <div className="space-y-3 relative pl-8 border-l-2 border-border/50">
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground mb-2">
-                      AI Chat Models (Ex: ChatGPT)
-                    </p>
+            {/* Comparison Rows */}
+            {comparisons.map((item, index) => (
+              <SpotlightCard
+                key={index}
+                className="border-t-0 rounded-none"
+                spotlightColor="rgba(0, 229, 255, 0.2)"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3">
+                  {/* Feature Name */}
+                  <div className="flex items-center justify-center p-6 border-0 rounded-none">
+                    <h3 className="text-xl font-bold text-primary">
+                      {item.feature}
+                    </h3>
+                  </div>
+
+                  {/* AI Chat Models Column */}
+                  <div className="space-y-3 p-6 border-0 rounded-none">
                     <p className="text-foreground/90 text-sm leading-relaxed">
                       {item.others}
                     </p>
                     {item.othersNote && (
-                      <p className="text-xs text-muted-foreground mt-3 italic leading-relaxed">
+                      <p className="text-xs text-muted-foreground italic leading-relaxed">
                         {item.othersNote}
                       </p>
                     )}
                   </div>
-                </div>
 
-                {/* Tweakleaf Column with Separator */}
-                <div className="space-y-3 relative pl-8 border-l-2 border-primary/30">
-                  <div>
-                    <p className="text-sm font-semibold text-primary mb-2">
-                      {site.name}
-                    </p>
+                  {/* Tweakleaf Column */}
+                  <div className="space-y-3 p-6 border-0 rounded-none">
                     <p className="text-foreground text-sm leading-relaxed">
                       {item.us}
                     </p>
                     {item.usNote && (
-                      <p className="text-xs text-muted-foreground mt-3 italic leading-relaxed">
+                      <p className="text-xs text-muted-foreground italic leading-relaxed">
                         {item.usNote}
                       </p>
                     )}
                     {item.link && (
                       <a
                         href={item.link.href}
-                        className="text-xs text-primary hover:underline mt-2 inline-block"
+                        className="text-xs text-primary hover:underline inline-block"
                       >
                         {item.link.text}
                       </a>
                     )}
                   </div>
                 </div>
-              </div>
-            </SpotlightCard>
-          ))}
+              </SpotlightCard>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };

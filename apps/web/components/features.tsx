@@ -74,7 +74,18 @@ const features = [
 
 export function Features() {
   return (
-    <div className="relative z-10 mx-auto px-4 pb-20">
+    <div id="features" className="relative z-10 mx-auto px-4 pb-20 mt-20">
+      <div className="container">
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Features
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Our features that make us different from the well established free
+            AI chat models.
+          </p>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
         {features.map((feature) => (
           <SpotlightCard

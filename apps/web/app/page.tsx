@@ -142,7 +142,7 @@ export default function Home() {
           </div>
         </div>
       </Suspense>
-      <Suspense fallback={<Loader />}>
+      {/* <Suspense fallback={<Loader />}>
         <div
           className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 pb-20"
           id="why-us"
@@ -154,10 +154,10 @@ export default function Home() {
             We takes care of all uses pain points in job application process
             including costs, time, and effort.
           </p>
-          {/* <Bento /> */}
+          <Bento />
           <BentoGrid />
         </div>
-      </Suspense>
+      </Suspense> */}
       <Suspense fallback={<Loader />}>
         <div
           className="relative z-10 container mx-auto pb-20"

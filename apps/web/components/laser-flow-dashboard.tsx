@@ -2,6 +2,7 @@
 
 import LaserFlow from "./LaserFlow";
 import { useRef } from "react";
+import { ProductDemoVideoPlayer } from "./product-demo";
 
 // NOTE: You can also adjust the variables in the shader for super detailed customization
 
@@ -18,8 +19,9 @@ export default function LaserFlowDashboard() {
 
   return (
     <div
+      id="demo"
       style={{
-        height: "1200px",
+        height: "1400px",
         position: "relative",
         overflow: "hidden",
         backgroundColor: "#060010",
@@ -56,32 +58,21 @@ export default function LaserFlowDashboard() {
           top: "50%",
           left: "50%",
           transform: "translateX(-50%)",
-          width: "68%",
-          height: "50%",
-          backgroundColor: "#060010",
-          borderRadius: "20px",
-          border: "1px solid #ffffff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "white",
-          fontSize: "2rem",
+          width: "85%",
+          maxWidth: "1200px",
+          height: "auto",
+          aspectRatio: "16/9",
           zIndex: 6,
         }}
-        className="mx-auto w-full border-1 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl"
+        className="mx-auto border border-[#6C6C6C] p-2 md:p-4 bg-gradient-to-br from-[#222222] to-[#1a1a1a] rounded-[30px] shadow-2xl"
       >
-        <img
-          src={`/dashboard-new.png`}
-          alt="dashboard"
-          className="mx-auto rounded-2xl object-cover h-full w-full object-left-top"
-          draggable={false}
-        />
+        <ProductDemoVideoPlayer />
       </div>
 
-      <h1 className="text-6xl font-semibold absolute top-40 left-30 text-white">
-        Sneak Peek <br />
-        <span className="text-6xl md:text-[6rem] font-bold mt-1 leading-none">
-          of dashboard
+      <h1 className="text-4xl md:text-7xl font-semibold absolute top-20 md:top-32 left-4 md:left-12 lg:left-20 text-white z-10 max-w-xl">
+        Watch how <br />
+        <span className="text-5xl md:text-8xl lg:text-[6rem] font-bold mt-1 leading-none bg-gradient-to-r from-[#cf9eff] to-[#8b5cf6] bg-clip-text text-transparent">
+          Tweakleaf works !
         </span>
       </h1>
 
