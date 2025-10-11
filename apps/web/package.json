@@ -89,6 +89,7 @@
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
+    "@types/three": "^0.180.0",
     "eslint": "^9.31.0",
     "tw-animate-css": "^1.3.6",
     "typescript": "5.8.2"
