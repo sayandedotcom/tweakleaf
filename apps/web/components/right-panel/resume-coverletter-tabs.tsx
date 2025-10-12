@@ -83,7 +83,6 @@ export default function ResumeCoverLetterTabs() {
 
   const {
     compilationError,
-    lastCompilationTime,
     compilationAttempts,
     setCompilationError,
     setHasAttemptedCompilation,
@@ -250,13 +249,6 @@ export default function ResumeCoverLetterTabs() {
       return;
     }
 
-    // Prevent rapid successive compilation attempts (minimum 2 seconds between attempts)
-    const now = Date.now();
-    if (now - lastCompilationTime < 2000) {
-      toast.warning("Please wait a moment before trying to compile again");
-      return;
-    }
-
     // Check if we've exceeded maximum compilation attempts
     if (compilationAttempts >= 3) {
       toast.error(
@@ -266,6 +258,7 @@ export default function ResumeCoverLetterTabs() {
     }
 
     // Mark that we've attempted compilation
+    const now = Date.now();
     setHasAttemptedCompilation(true);
     setCompilationError(null);
     setLastCompilationTime(now);
@@ -324,7 +317,6 @@ export default function ResumeCoverLetterTabs() {
     );
   }, [
     currentLatexContent,
-    lastCompilationTime,
     compilationAttempts,
     compileLatex,
     handlePdfGenerated,

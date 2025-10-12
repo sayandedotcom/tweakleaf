@@ -33,9 +33,7 @@ function FreePage() {
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             <div className="p-6 bg-destructive/10 border border-destructive rounded">
               <h3 className="font-semibold text-destructive mb-2">OpenAI</h3>
-              <p className="text-sm text-destructive-foreground">
-                No free tier available
-              </p>
+              <p className="text-sm text-destructive">No free tier available</p>
             </div>
             <div className="p-6 bg-accent border border-border rounded">
               <h3 className="font-semibold text-accent-foreground mb-2">

@@ -3,6 +3,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
+import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { Button } from "./ui/button";
 
 export type PillNavItem = {
   label: string;
@@ -426,6 +429,17 @@ const PillNav: React.FC<PillNavProps> = ({
             style={{ background: "var(--pill-bg, #fff)" }}
           />
         </button>
+        <SignedOut>
+          <SignInButton>
+            <Button className="rounded-full">Sign in</Button>
+          </SignInButton>
+          <SignUpButton>
+            <Button className="rounded-full ml-2">Sign up</Button>
+          </SignUpButton>
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
       </nav>
 
       <div

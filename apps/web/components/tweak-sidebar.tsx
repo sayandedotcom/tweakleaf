@@ -17,6 +17,7 @@ import { Loader } from "./loader";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import { NavUser } from "./nav-user";
 
 export function TweakSidebar({
   ...props
@@ -57,9 +58,11 @@ export function TweakSidebar({
           <NavFileUploads />
         </Suspense>
       </SidebarContent>
-      {/* <SidebarFooter>
-        <Suspense fallback={<Loader />}> <NavUser /> </Suspense>
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <Suspense fallback={<Loader />}>
+          <NavUser />
+        </Suspense>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
