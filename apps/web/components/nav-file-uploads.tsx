@@ -302,9 +302,11 @@ export function NavFileUploads() {
                           accept="*/*"
                         />
                         <p className="text-xs text-muted-foreground">
-                          💡 Upload files with &quot;signature&quot; in the name
-                          to use them in LaTeX compilation. You can replace the
-                          default signature.
+                          💡 If you want to use your signature in given cover
+                          letter template then delete the default signature file
+                          above and upload your signature with file name
+                          &quot;signature&quot; .png or .jpg or any other image
+                          format.
                         </p>
                       </div>
                     </div>
