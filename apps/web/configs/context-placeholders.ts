@@ -11,6 +11,9 @@ Personal Information:
 - Your relevant experience
 - Key skills to highlight
 - Specific achievements
+
+Always add my experience with companies like XYZ, ABC, and DEF in my cover letter.
+Always add my Cloud certifications in my cover letter.
 `;
 
 export const coverletterContextDescription = `Provide your professional information like email, social links,

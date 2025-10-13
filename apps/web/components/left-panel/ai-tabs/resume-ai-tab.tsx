@@ -20,9 +20,17 @@ interface BaseMessage {
   content: string;
 }
 
+interface MessageWithError extends Message {
+  hasError?: boolean;
+  retryData?: {
+    userMessage: string;
+    chatHistory?: Array<{ role: string; content: string }>;
+  };
+}
+
 export default function ResumeTab() {
   // const { userId } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<MessageWithError[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "submitted" | "streaming">(
     "idle",
@@ -364,6 +372,28 @@ export default function ResumeTab() {
 
             setStatus("idle");
 
+            // Mark the last user message with error and store retry data
+            setMessages((prev) => {
+              const updatedMessages = [...prev];
+              // Find the last user message
+              for (let i = updatedMessages.length - 1; i >= 0; i--) {
+                const message = updatedMessages[i];
+                if (message && message.role === "user") {
+                  updatedMessages[i] = {
+                    ...message,
+                    id: message.id || `user-${Date.now()}`,
+                    hasError: true,
+                    retryData: {
+                      userMessage,
+                      chatHistory: finalChatHistory,
+                    },
+                  } as MessageWithError;
+                  break;
+                }
+              }
+              return updatedMessages;
+            });
+
             toast.error("Update Failed", {
               description: "Failed to update resume. Please try again.",
             });
@@ -499,6 +529,28 @@ export default function ResumeTab() {
 
             setStatus("idle");
 
+            // Mark the last user message with error and store retry data
+            setMessages((prev) => {
+              const updatedMessages = [...prev];
+              // Find the last user message
+              for (let i = updatedMessages.length - 1; i >= 0; i--) {
+                const message = updatedMessages[i];
+                if (message && message.role === "user") {
+                  updatedMessages[i] = {
+                    ...message,
+                    id: message.id || `user-${Date.now()}`,
+                    hasError: true,
+                    retryData: {
+                      userMessage,
+                      chatHistory: finalChatHistory,
+                    },
+                  } as MessageWithError;
+                  break;
+                }
+              }
+              return updatedMessages;
+            });
+
             toast.error("Update Failed", {
               description: "Failed to update resume. Please try again.",
             });
@@ -523,6 +575,42 @@ export default function ResumeTab() {
       messages,
       humanizePro,
     ],
+  );
+
+  const handleRetry = useCallback(
+    (messageId: string) => {
+      // Prevent multiple simultaneous requests
+      if (isGenerating) {
+        return;
+      }
+
+      // Find the message with the retry data
+      const messageToRetry = messages.find((msg) => msg.id === messageId);
+      if (!messageToRetry?.retryData) {
+        toast.error("Retry Failed", {
+          description: "No retry data available for this message.",
+        });
+        return;
+      }
+
+      // Clear error state from the message
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId
+            ? { ...msg, hasError: false, retryData: undefined }
+            : msg,
+        ),
+      );
+
+      setStatus("submitted");
+
+      // Retry the API call with the stored data
+      callAIAgent(
+        messageToRetry.retryData.userMessage,
+        messageToRetry.retryData.chatHistory,
+      );
+    },
+    [isGenerating, messages, callAIAgent],
   );
 
   const handleStartResume = useCallback(() => {
@@ -608,6 +696,34 @@ export default function ResumeTab() {
               {messages.map((message, index) => (
                 <div key={message.id || index}>
                   <ChatMessage {...message} showTimeStamp={false} />
+                  {/* Show retry button for user messages with errors */}
+                  {message.role === "user" && message.hasError && (
+                    <div className="flex justify-end mt-2">
+                      <button
+                        onClick={() => handleRetry(message.id)}
+                        disabled={isGenerating}
+                        className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed rounded-md transition-colors flex items-center gap-1.5"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                          <path d="M3 3v5h5" />
+                          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                          <path d="M16 21h5v-5" />
+                        </svg>
+                        Retry
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
 
