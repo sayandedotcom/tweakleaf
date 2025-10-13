@@ -5,7 +5,7 @@ import { YouTubePlayer } from "@/components/ui/youtube-video-player";
 export function ProductDemoVideoPlayer() {
   return (
     <YouTubePlayer
-      videoId="jNQXAC9IVRw"
+      videoId="620GRWeRDts"
       title="Watch Our Product Demo"
       customThumbnail="/dashboard-new.png"
       containerClassName="w-full h-full border-none shadow-none"

@@ -75,7 +75,7 @@ const features = [
 export function Features() {
   return (
     <div id="features" className="relative z-10 mx-auto px-4 pb-20 mt-20">
-      <div className="container">
+      <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
             Features
