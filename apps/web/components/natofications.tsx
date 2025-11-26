@@ -7,6 +7,7 @@ export function Notifications() {
         <div className="flex items-center justify-center text-center">
           <span className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
             🚨 {site.notifications}, Proudly Open Source!{" "}
+          </span>
             <a
               href={site.links.github}
               target="_blank"
@@ -15,7 +16,6 @@ export function Notifications() {
             >
               Link
             </a>
-          </span>
         </div>
       </div>
     </div>
