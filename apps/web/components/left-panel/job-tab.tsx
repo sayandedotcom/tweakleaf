@@ -87,7 +87,7 @@ function JobTab() {
         }}
       >
         <Button disabled={!companyBio || !jobDescription} className="w-60">
-          <Plus color="black" /> Start a new application
+          <Plus /> Start a new application
         </Button>
       </AlertDialogComponent>
       <Form {...form}>
@@ -139,8 +139,7 @@ function JobTab() {
           />
           <div className="flex gap-2">
             <Button type="submit" className="flex items-center gap-2">
-              Update the job information{" "}
-              <RefreshCcw color="black" className="w-4 h-4" />
+              Update the job information <RefreshCcw className="w-4 h-4" />
             </Button>
           </div>
         </form>

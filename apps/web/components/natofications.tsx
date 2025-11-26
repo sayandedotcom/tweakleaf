@@ -9,6 +9,8 @@ export function Notifications() {
             🚨 {site.notifications}, Proudly Open Source!{" "}
             <a
               href={site.links.github}
+              target="_blank"
+              rel="noreferrer"
               className="text-yellow-600 dark:text-yellow-400 underline"
             >
               Link
